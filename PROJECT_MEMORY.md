@@ -262,4 +262,7 @@ Hay un MCP de Outline disponible (`mcp__outline__*`) para leer el wiki directame
 - No agregues dependencias, rutas API en Next, ni funciones fuera del MVP sin consultarlo.
 - Respeta el alcance y el orden del MVP (sección 2).
 - No guardes ni pidas fotos de clientes ni datos biométricos.
+- Usa las skills instaladas en `.agents/skills/` al escribir UI: `ui-ux-pro-max`, `emil-design-eng`, `frontend-design` y `playwright-cli` (regla 8 de `AGENTS.md`). No se suben al repo; `skills-lock.json` las restaura con `npx skills experimental_install`. Si una skill choca con `BRAND.md` o las reglas, mandan estas.
+- Movimiento: animaciones y transiciones cortas (menos de 300 ms), con las curvas de Emil Kowalski definidas en `globals.css`, siempre (regla 9). En caja solo pulsado y cambios de estado.
+- Después de codificar una pantalla o componente, **compáralo con Figma** (capturas con Playwright contra `get_screenshot`) y corrige las diferencias (regla 10).
 - Si el wiki cambia, actualiza este archivo.

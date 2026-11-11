@@ -50,3 +50,5 @@ next-env.d.ts
 .claude/settings.local.json
 CLAUDE.local.md
 .codex/
+.agents/
+.claude/skills/

@@ -234,10 +234,15 @@ Sombras (con tinte azul marino): `shadow-xs`, `shadow-sm` (tarjetas en reposo), 
 
 ## 10. Movimiento
 
-- **150 ms** en hover y pulsado (`duration-150 ease-standard`), con escala 0.98 al presionar (`active:scale-[0.98]`).
-- **200 a 250 ms** en ventanas y paneles que aparecen.
-- Sin rebotes ni animaciones llamativas.
-- Con "reducir movimiento" activado en el dispositivo, las animaciones se desactivan solas (ya está en `globals.css`).
+Todo se siente fluido y premium: animaciones y transiciones **cortas, pero que se notan**, siguiendo a Emil Kowalski (skill `emil-design-eng`). La regla completa para agentes está en `AGENTS.md` (regla 9).
+
+- **Curvas** (definidas en `globals.css`): `ease-out` para entrar, salir y pulsar; `ease-in-out` para movimiento ya en pantalla; `ease-drawer` para paneles laterales e inferiores. Nunca `ease-in`.
+- **Duración siempre menor a 300 ms:** pulsado 100–160 ms, tooltips y popovers pequeños 125–200 ms, menús y selectores 150–250 ms, modales y paneles 200–300 ms. La salida es más rápida que la entrada.
+- **Pulsado:** todo elemento presionable se encoge al presionar (`transition-transform duration-150 ease-out active:scale-97`).
+- **Aparecer:** desde `scale-95` con `opacity-0` (variante `starting:`), nunca desde cero. Los popovers crecen desde su disparador y los modales desde el centro. Los grupos de elementos entran escalonados, con 30 a 80 ms entre cada uno.
+- **Solo `transform` y `opacity`** (más color en cambios de estado). Nunca `transition-all`.
+- **Caja (pantallas 16 a 18):** acciones que se repiten cientos de veces al día, así que solo hay respuesta al pulsar y cambios de estado rápidos. Sin animación de entrada en cada escaneo o compra.
+- **Reducir movimiento:** si el dispositivo lo pide, se quita el movimiento y se conservan los cambios de opacidad y color (ya está en `globals.css`).
 
 ## 11. Íconos
 

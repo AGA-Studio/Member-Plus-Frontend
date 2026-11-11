@@ -85,7 +85,10 @@
   --container-auth: 27.5rem;
   --container-cashier: 45rem;
 
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-*: initial;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @theme inline {
@@ -220,7 +223,7 @@
     ::before {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      transition-property: opacity, color, background-color, border-color, fill, stroke !important;
       scroll-behavior: auto !important;
     }
   }

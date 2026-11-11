@@ -39,6 +39,28 @@ These rules are strict. Follow them in every task, without exception. If a rule 
    - **Dark mode** is manual only: `data-theme="dark"` on `<html>`, never the system preference. Light is always the default. Use `dark:` only when a token does not already handle it.
    - **Copy (Spanish, in `messages/es.json`):** use "tú", no exclamation marks, no emojis, no "Oops". Button labels are verbs in the infinitive ("Guardar cambios", "Registrar compra"), never "Aceptar" or "OK". Never blame the user in error messages. Use the project vocabulary: negocio, cliente, tarjeta, membresía, puntos, cashback, caja, lector.
    - If the design system does not cover something, ask the user before inventing a new color, size or pattern.
+8. **Use the installed skills every time you write or change UI code.** They live in `.agents/skills/` (if missing, restore them with `npx skills experimental_install`). Read the `SKILL.md` of each one before coding:
+   - `ui-ux-pro-max`: UX, accessibility, forms and layout. Use it as a checklist: empty, error and loading states, touch targets, contrast, hierarchy.
+   - `emil-design-eng`: component polish and all motion (see rule 9).
+   - `frontend-design`: intentional visual decisions and typography, always inside our design system.
+   - `playwright-cli`: after finishing UI work, open the app in a real browser, take screenshots at mobile (390px) and desktop widths, and check the console for errors.
+   - **Rules 1–7 and `BRAND.md` always win over any skill.** Skills give judgment, not new styles. Never take from a skill: new colors, fonts, hex values, design-system files, code comments, hardcoded text or inline styles. Express every suggestion with our tokens.
+9. **Motion: everything must feel fluid and premium, following Emil Kowalski (`emil-design-eng`).** Short animations and transitions that are noticeable but never slow. Always add them.
+   - **Always:** press feedback on every pressable element (`transition-transform duration-150 ease-out active:scale-97`); smooth state changes (hover, focus, selected, disabled, error) with `transition-colors` or `transition-opacity`; enter and exit animation for anything that appears or disappears (menus, popovers, modals, drawers, toasts, validation messages, list items); a soft fade when a skeleton turns into content.
+   - **Easing:** only `ease-out` (entering, exiting, press), `ease-in-out` (movement already on screen) and `ease-drawer` (drawers and sheets). They are strong custom curves defined in `globals.css`. Never `ease-in`. `linear` only for progress bars and spinners.
+   - **Duration: always under 300ms.** Press 100–160ms, tooltips and small popovers 125–200ms, dropdowns and selects 150–250ms, modals and drawers 200–300ms (`duration-100` … `duration-300`). Exit is faster than enter.
+   - **Enter animations:** start from `scale-95` plus `opacity-0`, using the `starting:` variant (`starting:opacity-0 starting:scale-95`). Never start from `scale-0`. Popovers and dropdowns scale from their trigger (`origin-*`); modals stay centered. Groups of items stagger 30–80ms between items and never block interaction.
+   - **Performance:** animate only `transform` and `opacity` (plus color for state changes). Never `transition-all`, and never animate width, height, padding or margin. Prefer CSS transitions over keyframes for anything that can be triggered repeatedly, because transitions can be interrupted.
+   - **Frequency rule:** do not animate keyboard-initiated actions or actions repeated hundreds of times a day. In the cashier flow (screens 16–18) keep only press feedback and quick state changes: no entrance animation on every scan or purchase.
+   - **Reduced motion:** `globals.css` already removes movement and keeps opacity and color changes. Add `motion-reduce:` variants only when something needs to be different.
+   - **Libraries:** use CSS and Tailwind first. Do not add `motion` (Framer Motion) or any animation library without asking. It is only justified for springs, gestures and layout animations.
+   - **Review:** when you review motion, use the Before/After table from the skill, and check the animation in slow motion before finishing.
+10. **Figma is the visual source of truth: always compare your code with it.** File "Member+ — Diseño": https://www.figma.com/design/OWje3kJvpbLxZlCOEq1WnF (file key `OWje3kJvpbLxZlCOEq1WnF`).
+   - **Before coding** a screen or component that exists in Figma: read it with the Figma MCP (`get_design_context` and `get_screenshot`, after loading the `figma-design-to-code` skill) and build from it, adapting it to our tokens, components and i18n. Check tokens with `get_variable_defs`.
+   - **After coding:** render the UI (Playwright screenshots at mobile and desktop widths) and compare it with the Figma screenshot: layout, spacing, sizes, radius, colors, typography, states (hover, focus, disabled, error, empty, loading), copy and icons. Fix every difference and tell the user what matched and what still differs.
+   - **If it is not designed in Figma yet,** say so and ask whether to design it first or build it from `BRAND.md`. Never invent a different look.
+   - **If Figma and `BRAND.md` or `globals.css` disagree,** do not pick one. Stop, tell the user which value differs, let them decide, then fix the wrong source.
+   - Figma variables map to code tokens through the `var(--…)` code syntax stored on each variable.
 
 ## Contexto del proyecto
 
