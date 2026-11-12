@@ -4,6 +4,13 @@ export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "es";
 
+export const formattingLocales = {
+  es: "es-MX",
+  en: "en-US",
+} as const satisfies Record<Locale, string>;
+
+export type FormattingLocale = (typeof formattingLocales)[Locale];
+
 export const localeCookieName = "NEXT_LOCALE";
 
 export function isLocale(value: string | null | undefined): value is Locale {

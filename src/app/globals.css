@@ -80,6 +80,8 @@
   --shadow-md: 0 2px 4px rgb(10 16 32 / 0.05), 0 12px 28px rgb(10 16 32 / 0.09);
   --shadow-lg: 0 8px 16px rgb(10 16 32 / 0.06), 0 24px 56px rgb(10 16 32 / 0.16);
 
+  --aspect-card: 1.586;
+
   --container-page: 75rem;
   --container-form: 40rem;
   --container-auth: 27.5rem;
@@ -89,6 +91,18 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --animate-scan: scan-sweep 2.4s ease-in-out infinite;
+
+  @keyframes scan-sweep {
+    0%,
+    100% {
+      transform: translateY(-4rem);
+    }
+    50% {
+      transform: translateY(4rem);
+    }
+  }
 }
 
 @theme inline {
