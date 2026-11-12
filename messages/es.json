@@ -3,8 +3,142 @@
     "title": "Member+",
     "description": "Plataforma para administrar las membresías de tus clientes."
   },
-  "home": {
-    "title": "Member+",
-    "subtitle": "Administra las membresías de tus clientes en un solo lugar."
+  "common": {
+    "brandName": "Member+",
+    "optional": "(opcional)",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "signOut": "Cerrar sesión"
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Inicia sesión · Member+",
+      "title": "Inicia sesión",
+      "subtitle": "Entra a tu negocio en Member+.",
+      "username": "Usuario",
+      "usernamePlaceholder": "Escribe tu usuario",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Escribe tu contraseña",
+      "submit": "Iniciar sesión",
+      "submitting": "Iniciando sesión…",
+      "help": "¿Problemas para entrar? Pide ayuda al administrador de tu negocio.",
+      "errors": {
+        "usernameRequired": "Escribe tu usuario.",
+        "passwordRequired": "Escribe tu contraseña.",
+        "invalidCredentials": "Usuario o contraseña incorrectos. Revisa tus datos.",
+        "unavailable": "No pudimos iniciar tu sesión ahora. Inténtalo de nuevo en un momento."
+      },
+      "brand": {
+        "headline": "Cada cliente reconocido, cada cobro rápido.",
+        "businessName": "Café Aurora",
+        "cards": {
+          "onyx": {
+            "tier": "Onyx",
+            "member": "Diego Ríos",
+            "code": "MP-9X2QD"
+          },
+          "gold": {
+            "tier": "Oro",
+            "member": "Laura Méndez",
+            "code": "MP-4F7K2"
+          }
+        }
+      }
+    }
+  },
+  "tiers": {
+    "bronze": "Bronce",
+    "silver": "Plata",
+    "gold": "Oro",
+    "onyx": "Onyx"
+  },
+  "cashier": {
+    "header": {
+      "role": "Caja",
+      "signOut": "Cerrar sesión"
+    },
+    "scan": {
+      "metaTitle": "Escanea la tarjeta · Member+",
+      "readerConnected": "Lector conectado",
+      "title": "Escanea la tarjeta",
+      "subtitle": "Apunta el QR a la cámara o al lector. Si falla, escribe el código.",
+      "orType": "o escribe el código",
+      "codeLabel": "Código de la tarjeta",
+      "codePlaceholder": "Ej. MP-4F7K2",
+      "search": "Buscar tarjeta",
+      "searching": "Buscando…",
+      "errors": {
+        "empty": "Escribe el código de la tarjeta.",
+        "notFound": "No encontramos esa tarjeta. Revisa el código."
+      },
+      "scanner": {
+        "active": "Cámara activa",
+        "blocked": "Cámara bloqueada",
+        "aim": "Apunta el QR a la cámara",
+        "detected": "Tarjeta detectada · Buscando cliente…",
+        "deniedTitle": "Cámara bloqueada",
+        "deniedMessage": "Permite el acceso a la cámara o escribe el código de la tarjeta."
+      }
+    },
+    "purchase": {
+      "metaTitle": "Registrar compra · Member+",
+      "title": "Registrar compra",
+      "amount": "Monto",
+      "currency": "MXN",
+      "concept": "Concepto",
+      "optional": "(opcional)",
+      "conceptPlaceholder": "Ej. Café y pan dulce",
+      "useCashback": "Usar saldo de cashback",
+      "cashbackAvailable": "{amount} disponibles. Solo si el cliente lo aprueba.",
+      "cashbackUnavailable": "Este cliente no tiene saldo de cashback.",
+      "summary": {
+        "amount": "Monto",
+        "discount": "Descuento {tier} ({percent}%)",
+        "cashbackUsed": "Saldo de cashback",
+        "total": "Total a cobrar",
+        "pointsEarned": "Puntos que gana",
+        "cashbackEarned": "Cashback que gana"
+      },
+      "enterAmount": "Escribe el monto para registrar la compra.",
+      "submit": "Registrar compra",
+      "registering": "Registrando compra…",
+      "errors": {
+        "invalidAmount": "Escribe un monto mayor a cero.",
+        "memberNotFound": "No encontramos esa tarjeta. Vuelve a escanearla.",
+        "unavailable": "No pudimos registrar la compra. Inténtalo de nuevo."
+      },
+      "inactiveNotice": {
+        "expired": "Esta membresía venció. Puedes registrar la compra, pero sin beneficios.",
+        "cancelled": "Esta membresía está cancelada. Puedes registrar la compra, pero sin beneficios."
+      },
+      "member": {
+        "points": "Puntos",
+        "cashback": "Cashback",
+        "validity": "Vigencia",
+        "status": {
+          "active": "Activa",
+          "expired": "Vencida",
+          "cancelled": "Cancelada"
+        }
+      },
+      "currencySymbol": "$"
+    },
+    "receipt": {
+      "metaTitle": "Compra registrada · Member+",
+      "title": "Compra registrada",
+      "chargedTo": "Cobrado a {name}",
+      "date": "Fecha",
+      "customer": "Cliente",
+      "concept": "Concepto",
+      "noConcept": "Sin concepto",
+      "amount": "Monto",
+      "discount": "Descuento {tier} ({percent}%)",
+      "cashbackUsed": "Saldo de cashback",
+      "total": "Total cobrado",
+      "pointsUnit": "puntos",
+      "pointsBalance": "Saldo de puntos",
+      "cashbackBalance": "Saldo de cashback",
+      "another": "Registrar otra compra"
+    }
   }
 }

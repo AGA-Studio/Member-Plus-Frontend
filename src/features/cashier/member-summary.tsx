@@ -1,0 +1,70 @@
+import { CalendarCheck, Star, Wallet } from "lucide-react";
+import { getFormatter, getTranslations } from "next-intl/server";
+import { Badge } from "@/components/ui/badge";
+import { MembershipCard } from "@/components/ui/membership-card";
+import { formatMoney, formatPoints } from "@/lib/format";
+import type { Member } from "@/lib/domain";
+
+type MemberSummaryProps = {
+  member: Member;
+  businessName: string;
+};
+
+const statusTones = {
+  active: "success",
+  expired: "warning",
+  cancelled: "danger",
+} as const;
+
+export async function MemberSummary({ member, businessName }: MemberSummaryProps) {
+  const t = await getTranslations("cashier.purchase.member");
+  const tiers = await getTranslations("tiers");
+  const format = await getFormatter();
+  const validUntil = format.dateTime(new Date(member.validUntil), {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
+  const stats = [
+    { icon: Star, label: t("points"), value: formatPoints(format, member.points) },
+    { icon: Wallet, label: t("cashback"), value: formatMoney(format, member.cashbackBalanceCents) },
+    { icon: CalendarCheck, label: t("validity"), value: validUntil },
+  ];
+
+  return (
+    <div className="flex flex-col gap-4">
+      <MembershipCard
+        tier={member.tier}
+        tierLabel={tiers(member.tier)}
+        businessName={businessName}
+        memberName={member.fullName}
+        code={member.code}
+        className="hidden lg:flex"
+      />
+      <section className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-3">
+          <h2 className="text-heading text-foreground">{member.fullName}</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge tone={member.tier}>{tiers(member.tier)}</Badge>
+            <Badge tone={statusTones[member.status]}>{t(`status.${member.status}`)}</Badge>
+          </div>
+        </div>
+        <dl className="grid grid-cols-2 gap-4 border-t border-border pt-5 lg:grid-cols-3">
+          {stats.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="flex flex-col gap-1">
+              <dt className="flex items-center gap-1.5 text-sm text-muted">
+                <Icon aria-hidden strokeWidth={1.75} className="size-4" />
+                {label}
+              </dt>
+              <dd className="font-display text-lg font-semibold tabular-nums text-foreground">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    </div>
+  );
+}
