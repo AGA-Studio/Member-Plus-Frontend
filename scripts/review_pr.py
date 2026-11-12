@@ -36,12 +36,15 @@ MODEL = "deepseek-v4.1-flash"
 API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
 GITHUB_API = "https://api.github.com"
 
-MAX_DIFF_CHARS = 60_000
+MAX_DIFF_CHARS = 40_000
 MAX_FINDINGS = 5
 TIMEOUT = 180
-# El razonamiento consume `max_tokens`: se empieza bajo y se sube si no alcanza.
-TOKEN_BUDGETS = (6000, 12_000)
+# El razonamiento consume `max_tokens` y su largo crece con el diff: un PR grande
+# se queda sin presupuesto y devuelve texto vacío. Se sube en cada intento.
+TOKEN_BUDGETS = (12_000, 24_000, 40_000)
 REASONING_EFFORT = "low"
+BRIEF = "Responde ya la lista final, máximo 3 puntos y sin razonar de más."
+AGENT_RULES_MARKER = "<!-- END:nextjs-agent-rules -->"
 
 RULES = f"""\
 Eres el revisor automático del frontend de Member+, un SaaS multi-negocio de membresías.
@@ -95,7 +98,11 @@ def read_doc(relative: str) -> str:
     path = ROOT / relative
     if not path.is_file():
         raise ReviewError(f"falta {relative} en el repositorio")
-    return path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")
+    if AGENT_RULES_MARKER in text:
+        # El bloque de Next lo reinyecta `next dev` y no son reglas del equipo.
+        text = text.split(AGENT_RULES_MARKER, 1)[1]
+    return text
 
 
 def truncate(diff: str, limit: int = MAX_DIFF_CHARS) -> str:
@@ -218,11 +225,12 @@ def call_model(messages: list[dict[str, str]], *, api_key: str, model: str) -> s
     texto. Por eso se intenta dos veces antes de rendirse.
     """
     detail = "sin intentos"
-    for max_tokens in TOKEN_BUDGETS:
+    for attempt, max_tokens in enumerate(TOKEN_BUDGETS):
+        payload_messages = messages if attempt == 0 else messages + [{"role": "user", "content": BRIEF}]
         data = post_model(
             {
                 "model": model,
-                "messages": messages,
+                "messages": payload_messages,
                 "max_tokens": max_tokens,
                 # Sin esto el modelo razona de más y gasta el presupuesto.
                 "reasoning_effort": REASONING_EFFORT,

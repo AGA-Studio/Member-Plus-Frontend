@@ -28,8 +28,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # No es un check obligatorio: un revisor caído no puede frenar un merge.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
         with:
