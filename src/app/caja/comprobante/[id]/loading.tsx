@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <LoadingRegion className="mx-auto w-full max-w-form gap-0 overflow-hidden rounded-xl bg-surface shadow-md sm:max-w-xl">
+    <LoadingRegion quick className="mx-auto w-full max-w-form gap-0 overflow-hidden rounded-xl bg-surface shadow-md sm:max-w-xl">
       <div className="flex flex-col items-center gap-3 bg-surface-muted px-6 py-10">
         <Skeleton className="size-14 rounded-full bg-border" />
         <Skeleton className="h-5 w-40 bg-border" />
