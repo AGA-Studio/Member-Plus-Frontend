@@ -2,11 +2,16 @@
   "name": "memberplus",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "messages:check": "node scripts/check-messages.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.71.0",
