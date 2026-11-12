@@ -8,7 +8,24 @@
     "optional": "(opcional)",
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "close": "Cerrar",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "cancel": "Cancelar",
+    "saveChanges": "Guardar cambios",
+    "back": "Volver",
+    "all": "Todos",
+    "loading": "Cargando…",
+    "logout": {
+      "title": "Cerrar sesión",
+      "body": "Saldrás de Member+ en este dispositivo. Para volver tendrás que iniciar sesión otra vez.",
+      "cancel": "Cancelar",
+      "confirm": "Cerrar sesión",
+      "confirming": "Cerrando sesión…"
+    },
+    "dismissToast": "Cerrar aviso",
+    "toastRegion": "Avisos"
   },
   "auth": {
     "login": {
@@ -140,5 +157,262 @@
       "cashbackBalance": "Saldo de cashback",
       "another": "Registrar otra compra"
     }
+  },
+  "memberStatus": {
+    "active": "Activa",
+    "expiring": "Por vencer",
+    "expired": "Vencida",
+    "cancelled": "Cancelada"
+  },
+  "business": {
+    "nav": {
+      "label": "Navegación principal",
+      "customers": "Clientes",
+      "memberships": "Membresías",
+      "levels": "Niveles",
+      "movements": "Movimientos"
+    },
+    "signOut": "Cerrar sesión",
+    "roles": {
+      "admin": "Administrador"
+    },
+    "pagination": {
+      "range": "{from}–{to} de {total}"
+    },
+    "customers": {
+      "metaTitle": "Clientes · Member+",
+      "title": "Clientes",
+      "subtitle": "{count, plural, one {# cliente} other {# clientes}} en tu negocio",
+      "searchLabel": "Buscar clientes",
+      "searchPlaceholder": "Buscar por nombre, correo o código",
+      "newMembership": "Nueva membresía",
+      "filters": {
+        "tier": "Nivel",
+        "allTiers": "Nivel: todos",
+        "status": "Estado",
+        "allStatuses": "Estado: todos"
+      },
+      "columns": {
+        "customer": "Cliente",
+        "code": "Código",
+        "level": "Nivel",
+        "points": "Puntos",
+        "lastPurchase": "Última compra",
+        "status": "Estado"
+      },
+      "noLastPurchase": "Sin compras",
+      "openCustomer": "Abrir la ficha de {name}",
+      "empty": {
+        "title": "Aún no hay clientes",
+        "description": "Cuando registres la primera membresía, tu cliente aparecerá aquí."
+      },
+      "noResults": {
+        "title": "No encontramos clientes",
+        "description": "Revisa el nombre o el código, o prueba con otros filtros."
+      },
+      "range": "{from}–{to} de {total} clientes"
+    },
+    "customer": {
+      "metaTitle": "Ficha del cliente · Member+",
+      "back": "Clientes",
+      "actions": {
+        "edit": "Editar datos",
+        "printCard": "Imprimir tarjeta",
+        "cancel": "Cancelar membresía"
+      },
+      "metrics": {
+        "points": "Puntos",
+        "cashback": "Cashback",
+        "lastPurchase": "Última compra",
+        "toNextLevel": "Faltan {points} para {tier}",
+        "available": "Disponible en caja",
+        "noPurchases": "Sin compras",
+        "topLevel": "Nivel más alto"
+      },
+      "data": {
+        "title": "Datos",
+        "code": "Código",
+        "level": "Nivel",
+        "since": "Miembro desde",
+        "validUntil": "Vence",
+        "email": "Correo",
+        "phone": "Teléfono"
+      },
+      "purchases": {
+        "title": "Compras",
+        "date": "Fecha",
+        "concept": "Concepto",
+        "amount": "Monto",
+        "discount": "Descuento",
+        "points": "Puntos",
+        "noConcept": "Sin concepto",
+        "emptyTitle": "Aún no hay compras",
+        "emptyDescription": "Las compras de {name} aparecerán aquí cuando pague en caja.",
+        "range": "{from}–{to} de {total}"
+      },
+      "cancelledNotice": "Esta membresía está cancelada. La tarjeta ya no funciona en caja.",
+      "expiredNotice": "Esta membresía venció. La tarjeta ya no da beneficios en caja.",
+      "editDialog": {
+        "title": "Editar datos de {name}",
+        "fullName": "Nombre completo",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "optional": "(opcional)",
+        "submit": "Guardar cambios",
+        "saving": "Guardando…",
+        "errors": {
+          "fullNameRequired": "Escribe el nombre del cliente.",
+          "emailInvalid": "Revisa el correo: parece incompleto.",
+          "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
+          "unavailable": "No pudimos guardar los datos. Inténtalo de nuevo."
+        }
+      },
+      "cancelDialog": {
+        "title": "Cancelar la membresía de {name}",
+        "body": "Su tarjeta dejará de funcionar en la caja. Esta acción no se puede deshacer.",
+        "keep": "Volver",
+        "confirm": "Cancelar membresía",
+        "confirming": "Cancelando…"
+      }
+    },
+    "memberships": {
+      "metaTitle": "Membresías · Member+",
+      "title": "Membresías",
+      "subtitle": "Emite, imprime y administra las tarjetas de tus clientes",
+      "printSheet": "Imprimir hoja de tarjetas",
+      "newMembership": "Nueva membresía",
+      "tabsLabel": "Filtrar membresías",
+      "tabs": {
+        "all": "Todas · {count}",
+        "active": "Activas · {count}",
+        "expiring": "Por vencer · {count}",
+        "cancelled": "Canceladas · {count}"
+      },
+      "columns": {
+        "customer": "Cliente",
+        "code": "Código",
+        "level": "Nivel",
+        "issued": "Emitida",
+        "expires": "Vence",
+        "status": "Estado"
+      },
+      "empty": {
+        "title": "Aún no hay membresías",
+        "description": "Crea la primera para que tu cliente tenga su tarjeta."
+      },
+      "noResults": {
+        "title": "No encontramos membresías",
+        "description": "Revisa el nombre o el código, o prueba con otros filtros."
+      },
+      "range": "{from}–{to} de {total} membresías",
+      "newDialog": {
+        "title": "Nueva membresía",
+        "fullName": "Nombre completo",
+        "fullNamePlaceholder": "Nombre y apellido",
+        "email": "Correo electrónico",
+        "emailPlaceholder": "cliente@correo.com",
+        "phone": "Teléfono",
+        "phonePlaceholder": "664 000 0000",
+        "tier": "Nivel inicial",
+        "submit": "Crear membresía",
+        "creating": "Creando…",
+        "errors": {
+          "fullNameRequired": "Escribe el nombre del cliente.",
+          "emailInvalid": "Revisa el correo: parece incompleto.",
+          "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
+          "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo."
+        }
+      },
+      "searchLabel": "Buscar membresías",
+      "searchPlaceholder": "Buscar por nombre, correo o código",
+      "levelFilter": "Nivel",
+      "allLevels": "Nivel: todos"
+    },
+    "print": {
+      "metaTitle": "Hoja de tarjetas · Member+",
+      "title": "Hoja de tarjetas",
+      "subtitle": "{count, plural, one {# tarjeta} other {# tarjetas}} · Recorta por el borde de cada tarjeta",
+      "print": "Imprimir",
+      "back": "Membresías",
+      "empty": "No hay tarjetas activas para imprimir."
+    },
+    "levels": {
+      "metaTitle": "Niveles · Member+",
+      "title": "Niveles y beneficios",
+      "subtitle": "Define qué gana cada cliente según su nivel",
+      "notice": "Los cambios aplican a las compras nuevas. Las compras anteriores no se recalculan.",
+      "rows": {
+        "from": "Desde",
+        "discount": "Descuento",
+        "pointsPerTen": "Puntos por cada $10",
+        "cashback": "Cashback"
+      },
+      "pointsValue": "{count} puntos",
+      "pointsPerTenValue": "{count, plural, one {# punto} other {# puntos}}",
+      "customers": "{count, plural, one {# cliente} other {# clientes}}",
+      "edit": "Editar",
+      "editDialog": {
+        "title": "Editar nivel {tier}",
+        "minPoints": "Puntos para llegar a este nivel",
+        "discount": "Descuento en cada compra (%)",
+        "pointsPerTen": "Puntos por cada $10",
+        "cashback": "Cashback (%)",
+        "submit": "Guardar cambios",
+        "saving": "Guardando…",
+        "errors": {
+          "minPointsInvalid": "Escribe un número de puntos de 0 en adelante.",
+          "discountInvalid": "Escribe un valor entre 0 y 100.",
+          "pointsPerTenInvalid": "Escribe un número de puntos de 0 en adelante.",
+          "cashbackInvalid": "Escribe un valor entre 0 y 100.",
+          "unavailable": "No pudimos guardar el nivel. Inténtalo de nuevo."
+        }
+      }
+    },
+    "movements": {
+      "metaTitle": "Movimientos · Member+",
+      "title": "Movimientos",
+      "subtitle": "Todas las compras registradas en tus cajas",
+      "searchLabel": "Buscar movimientos",
+      "searchPlaceholder": "Buscar cliente o código",
+      "filters": {
+        "register": "Caja",
+        "allRegisters": "Caja: todas"
+      },
+      "summary": {
+        "purchases": "Compras",
+        "collected": "Cobrado",
+        "discounts": "Descuentos",
+        "cashbackUsed": "Cashback usado"
+      },
+      "columns": {
+        "date": "Fecha",
+        "customer": "Cliente",
+        "concept": "Concepto",
+        "amount": "Monto",
+        "discount": "Descuento",
+        "points": "Puntos",
+        "cashback": "Cashback"
+      },
+      "noConcept": "Sin concepto",
+      "range": "{from}–{to} de {total} movimientos",
+      "pointsLabel": "{points} puntos",
+      "empty": {
+        "title": "Aún no hay movimientos",
+        "description": "Las compras que registres en caja aparecerán aquí."
+      },
+      "noResults": {
+        "title": "No hay movimientos con estos filtros",
+        "description": "Prueba con otro nombre, otra caja o quita los filtros."
+      }
+    }
+  },
+  "toasts": {
+    "signedIn": "Sesión iniciada.",
+    "signedOut": "Sesión cerrada.",
+    "membershipCreated": "Membresía creada. Ya puedes imprimir su tarjeta.",
+    "purchaseRegistered": "Compra registrada.",
+    "customerUpdated": "Datos guardados.",
+    "membershipCancelled": "Membresía cancelada.",
+    "levelSaved": "Nivel guardado. Aplica a las compras nuevas."
   }
 }

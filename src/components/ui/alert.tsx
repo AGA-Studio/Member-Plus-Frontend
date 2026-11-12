@@ -32,6 +32,7 @@ export function Alert({ tone, children, className }: AlertProps) {
       role={tone === "danger" ? "alert" : "status"}
       className={cx(
         "flex items-start gap-3 rounded-md px-4 py-3 text-sm",
+        "transition-[opacity,translate] duration-200 ease-out starting:-translate-y-1 starting:opacity-0",
         toneClasses[tone],
         className,
       )}

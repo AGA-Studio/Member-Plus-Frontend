@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { findMemberByCode, normalizeMemberCode } from "@/lib/api/members";
 import { registerPurchase } from "@/lib/api/purchases";
 import { parseAmountToCents } from "@/lib/format";
-import { destroySession, requireSession } from "@/lib/session";
+import { requireSession } from "@/lib/session";
 
 export type LookupResult = { ok: false; reason: "empty" | "notFound" };
 
@@ -39,10 +39,5 @@ export async function registerPurchaseAction(
 
   if (!result.ok) return { error: result.reason };
 
-  redirect(`/caja/comprobante/${result.receiptId}`);
-}
-
-export async function logoutAction(): Promise<void> {
-  await destroySession();
-  redirect("/login");
+  redirect(`/caja/comprobante/${result.receiptId}?toast=purchaseRegistered`);
 }

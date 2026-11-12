@@ -1,17 +1,18 @@
-import { demoCredentials } from "./mock/demo-credentials";
+import type { UserRole } from "@/lib/domain";
+import { demoAccounts } from "./mock/demo-credentials";
+import { simulateLatency } from "./mock/latency";
 
 export type SignInResult =
-  | { ok: true; accessToken: string }
+  | { ok: true; accessToken: string; role: UserRole }
   | { ok: false; reason: "invalidCredentials" | "unavailable" };
 
 export async function signIn(username: string, password: string): Promise<SignInResult> {
-  const matches =
-    username.toLowerCase() === demoCredentials.username &&
-    password === demoCredentials.password;
+  await simulateLatency(150);
+  const account = demoAccounts.find(
+    (item) => item.username === username.toLowerCase() && item.password === password,
+  );
 
-  if (!matches) {
-    return { ok: false, reason: "invalidCredentials" };
-  }
+  if (!account) return { ok: false, reason: "invalidCredentials" };
 
-  return { ok: true, accessToken: demoCredentials.accessToken };
+  return { ok: true, accessToken: account.accessToken, role: account.role };
 }

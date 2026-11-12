@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sessionCookieName } from "@/lib/session-cookie";
 
-const protectedPrefixes = ["/caja"];
+const protectedPrefixes = ["/caja", "/clientes", "/membresias", "/niveles", "/movimientos"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,12 +13,12 @@ export function proxy(request: NextRequest) {
   }
 
   if (pathname === "/login" && hasSession) {
-    return NextResponse.redirect(new URL("/caja", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/caja/:path*"],
+  matcher: ["/login", "/caja/:path*", "/clientes/:path*", "/membresias/:path*", "/niveles/:path*", "/movimientos/:path*"],
 };

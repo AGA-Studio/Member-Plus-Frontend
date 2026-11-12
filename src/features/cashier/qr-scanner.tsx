@@ -123,6 +123,7 @@ export function QrScanner({ paused, found, onDetect, onDenied }: QrScannerProps)
             className={cx(
               "relative transition-colors duration-150 ease-out",
               found ? "text-success-soft" : "text-white",
+              status === "starting" && "animate-pulse",
             )}
           />
           {status === "scanning" && !found ? (

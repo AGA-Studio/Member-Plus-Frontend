@@ -8,7 +8,24 @@
     "optional": "(optional)",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "close": "Close",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "back": "Back",
+    "all": "All",
+    "loading": "Loading…",
+    "logout": {
+      "title": "Sign out",
+      "body": "You'll leave Member+ on this device. To come back you'll need to sign in again.",
+      "cancel": "Cancel",
+      "confirm": "Sign out",
+      "confirming": "Signing out…"
+    },
+    "dismissToast": "Dismiss notice",
+    "toastRegion": "Notices"
   },
   "auth": {
     "login": {
@@ -140,5 +157,262 @@
       "cashbackBalance": "Cashback balance",
       "another": "Register another purchase"
     }
+  },
+  "memberStatus": {
+    "active": "Active",
+    "expiring": "Expiring soon",
+    "expired": "Expired",
+    "cancelled": "Cancelled"
+  },
+  "business": {
+    "nav": {
+      "label": "Main navigation",
+      "customers": "Customers",
+      "memberships": "Memberships",
+      "levels": "Levels",
+      "movements": "Transactions"
+    },
+    "signOut": "Sign out",
+    "roles": {
+      "admin": "Administrator"
+    },
+    "pagination": {
+      "range": "{from}–{to} of {total}"
+    },
+    "customers": {
+      "metaTitle": "Customers · Member+",
+      "title": "Customers",
+      "subtitle": "{count, plural, one {# customer} other {# customers}} in your business",
+      "searchLabel": "Search customers",
+      "searchPlaceholder": "Search by name, email or code",
+      "newMembership": "New membership",
+      "filters": {
+        "tier": "Level",
+        "allTiers": "Level: all",
+        "status": "Status",
+        "allStatuses": "Status: all"
+      },
+      "columns": {
+        "customer": "Customer",
+        "code": "Code",
+        "level": "Level",
+        "points": "Points",
+        "lastPurchase": "Last purchase",
+        "status": "Status"
+      },
+      "noLastPurchase": "No purchases",
+      "openCustomer": "Open {name}'s profile",
+      "empty": {
+        "title": "No customers yet",
+        "description": "When you register the first membership, your customer will appear here."
+      },
+      "noResults": {
+        "title": "We couldn't find customers",
+        "description": "Check the name or code, or try other filters."
+      },
+      "range": "{from}–{to} of {total} customers"
+    },
+    "customer": {
+      "metaTitle": "Customer profile · Member+",
+      "back": "Customers",
+      "actions": {
+        "edit": "Edit details",
+        "printCard": "Print card",
+        "cancel": "Cancel membership"
+      },
+      "metrics": {
+        "points": "Points",
+        "cashback": "Cashback",
+        "lastPurchase": "Last purchase",
+        "toNextLevel": "{points} to {tier}",
+        "available": "Available at the register",
+        "noPurchases": "No purchases",
+        "topLevel": "Highest level"
+      },
+      "data": {
+        "title": "Details",
+        "code": "Code",
+        "level": "Level",
+        "since": "Member since",
+        "validUntil": "Valid until",
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "purchases": {
+        "title": "Purchases",
+        "date": "Date",
+        "concept": "Description",
+        "amount": "Amount",
+        "discount": "Discount",
+        "points": "Points",
+        "noConcept": "No description",
+        "emptyTitle": "No purchases yet",
+        "emptyDescription": "{name}'s purchases will appear here once they pay at the register.",
+        "range": "{from}–{to} of {total}"
+      },
+      "cancelledNotice": "This membership is cancelled. The card no longer works at the register.",
+      "expiredNotice": "This membership has expired. The card no longer gives benefits at the register.",
+      "editDialog": {
+        "title": "Edit {name}'s details",
+        "fullName": "Full name",
+        "email": "Email",
+        "phone": "Phone",
+        "optional": "(optional)",
+        "submit": "Save changes",
+        "saving": "Saving…",
+        "errors": {
+          "fullNameRequired": "Enter the customer's name.",
+          "emailInvalid": "Check the email: it looks incomplete.",
+          "emailTaken": "This email already has a membership in your business.",
+          "unavailable": "We couldn't save the details. Try again."
+        }
+      },
+      "cancelDialog": {
+        "title": "Cancel {name}'s membership",
+        "body": "Their card will stop working at the register. This cannot be undone.",
+        "keep": "Go back",
+        "confirm": "Cancel membership",
+        "confirming": "Cancelling…"
+      }
+    },
+    "memberships": {
+      "metaTitle": "Memberships · Member+",
+      "title": "Memberships",
+      "subtitle": "Issue, print and manage your customers' cards",
+      "printSheet": "Print card sheet",
+      "newMembership": "New membership",
+      "tabsLabel": "Filter memberships",
+      "tabs": {
+        "all": "All · {count}",
+        "active": "Active · {count}",
+        "expiring": "Expiring · {count}",
+        "cancelled": "Cancelled · {count}"
+      },
+      "columns": {
+        "customer": "Customer",
+        "code": "Code",
+        "level": "Level",
+        "issued": "Issued",
+        "expires": "Expires",
+        "status": "Status"
+      },
+      "empty": {
+        "title": "No memberships yet",
+        "description": "Create the first one so your customer has their card."
+      },
+      "noResults": {
+        "title": "We couldn't find memberships",
+        "description": "Check the name or code, or try other filters."
+      },
+      "range": "{from}–{to} of {total} memberships",
+      "newDialog": {
+        "title": "New membership",
+        "fullName": "Full name",
+        "fullNamePlaceholder": "First and last name",
+        "email": "Email",
+        "emailPlaceholder": "customer@email.com",
+        "phone": "Phone",
+        "phonePlaceholder": "664 000 0000",
+        "tier": "Starting level",
+        "submit": "Create membership",
+        "creating": "Creating…",
+        "errors": {
+          "fullNameRequired": "Enter the customer's name.",
+          "emailInvalid": "Check the email: it looks incomplete.",
+          "emailTaken": "This email already has a membership in your business.",
+          "unavailable": "We couldn't create the membership. Try again."
+        }
+      },
+      "searchLabel": "Search memberships",
+      "searchPlaceholder": "Search by name, email or code",
+      "levelFilter": "Level",
+      "allLevels": "Level: all"
+    },
+    "print": {
+      "metaTitle": "Card sheet · Member+",
+      "title": "Card sheet",
+      "subtitle": "{count, plural, one {# card} other {# cards}} · Cut along the edge of each card",
+      "print": "Print",
+      "back": "Memberships",
+      "empty": "There are no active cards to print."
+    },
+    "levels": {
+      "metaTitle": "Levels · Member+",
+      "title": "Levels and benefits",
+      "subtitle": "Define what each customer earns by level",
+      "notice": "Changes apply to new purchases. Past purchases are not recalculated.",
+      "rows": {
+        "from": "From",
+        "discount": "Discount",
+        "pointsPerTen": "Points per $10",
+        "cashback": "Cashback"
+      },
+      "pointsValue": "{count} points",
+      "pointsPerTenValue": "{count, plural, one {# point} other {# points}}",
+      "customers": "{count, plural, one {# customer} other {# customers}}",
+      "edit": "Edit",
+      "editDialog": {
+        "title": "Edit {tier} level",
+        "minPoints": "Points to reach this level",
+        "discount": "Discount on each purchase (%)",
+        "pointsPerTen": "Points per $10",
+        "cashback": "Cashback (%)",
+        "submit": "Save changes",
+        "saving": "Saving…",
+        "errors": {
+          "minPointsInvalid": "Enter a number of points, 0 or more.",
+          "discountInvalid": "Enter a value between 0 and 100.",
+          "pointsPerTenInvalid": "Enter a number of points, 0 or more.",
+          "cashbackInvalid": "Enter a value between 0 and 100.",
+          "unavailable": "We couldn't save the level. Try again."
+        }
+      }
+    },
+    "movements": {
+      "metaTitle": "Transactions · Member+",
+      "title": "Transactions",
+      "subtitle": "Every purchase registered at your registers",
+      "searchLabel": "Search transactions",
+      "searchPlaceholder": "Search customer or code",
+      "filters": {
+        "register": "Register",
+        "allRegisters": "Register: all"
+      },
+      "summary": {
+        "purchases": "Purchases",
+        "collected": "Collected",
+        "discounts": "Discounts",
+        "cashbackUsed": "Cashback used"
+      },
+      "columns": {
+        "date": "Date",
+        "customer": "Customer",
+        "concept": "Description",
+        "amount": "Amount",
+        "discount": "Discount",
+        "points": "Points",
+        "cashback": "Cashback"
+      },
+      "noConcept": "No description",
+      "range": "{from}–{to} of {total} transactions",
+      "pointsLabel": "{points} points",
+      "empty": {
+        "title": "No transactions yet",
+        "description": "Purchases you register at the register will appear here."
+      },
+      "noResults": {
+        "title": "No transactions match these filters",
+        "description": "Try another name, another register or clear the filters."
+      }
+    }
+  },
+  "toasts": {
+    "signedIn": "Signed in.",
+    "signedOut": "Signed out.",
+    "membershipCreated": "Membership created. You can print the card now.",
+    "purchaseRegistered": "Purchase registered.",
+    "customerUpdated": "Details saved.",
+    "membershipCancelled": "Membership cancelled.",
+    "levelSaved": "Level saved. It applies to new purchases."
   }
 }

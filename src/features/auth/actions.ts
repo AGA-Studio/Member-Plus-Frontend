@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { signIn } from "@/lib/api/auth";
-import { createSession } from "@/lib/session";
+import { createSession, destroySession, roleHomePaths } from "@/lib/session";
 
 export type LoginState = {
   username: string;
@@ -35,5 +35,10 @@ export async function loginAction(
   }
 
   await createSession(result.accessToken);
-  redirect("/caja");
+  redirect(`${roleHomePaths[result.role]}?toast=signedIn`);
+}
+
+export async function logoutAction(): Promise<void> {
+  await destroySession();
+  redirect("/login?toast=signedOut");
 }

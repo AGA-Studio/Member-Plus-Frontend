@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
+import { Suspense } from "react";
+import { FlashToast } from "@/components/ui/flash-toast";
+import { ToastProvider } from "@/components/ui/toast-provider";
 import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 
@@ -39,7 +42,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <ToastProvider>
+            {children}
+            <Suspense fallback={null}>
+              <FlashToast />
+            </Suspense>
+          </ToastProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

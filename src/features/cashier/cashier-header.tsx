@@ -1,11 +1,10 @@
-import { LogOut } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getCashierUser } from "@/lib/api/current-user";
-import { logoutAction } from "./actions";
+import { requireSession } from "@/lib/session";
+import { LogoutButton } from "@/features/auth/logout-button";
 
 export async function CashierHeader() {
   const t = await getTranslations("cashier.header");
-  const user = await getCashierUser();
+  const user = await requireSession();
 
   return (
     <header className="border-b border-border bg-surface">
@@ -26,15 +25,7 @@ export async function CashierHeader() {
             <span className="text-sm font-medium text-foreground">{user.fullName}</span>
             <span className="text-xs text-muted">{t("role")}</span>
           </div>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              aria-label={t("signOut")}
-              className="flex size-11 items-center justify-center rounded-md text-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97"
-            >
-              <LogOut aria-hidden strokeWidth={1.75} className="size-5" />
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </div>
     </header>
