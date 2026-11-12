@@ -1,22 +1,29 @@
 <p align="center">
-  <img src="src/assets/brand/logo-on-light.png" alt="Member+" width="220">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/assets/brand/logo-on-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="src/assets/brand/logo-on-light.png">
+    <img src="src/assets/brand/logo-on-light.png" alt="Member+" width="240">
+  </picture>
 </p>
 
-<h3 align="center">Frontend de Member+ · SaaS multi-negocio de membresías</h3>
+<h3 align="center">Member+ · Frontend</h3>
 
 <p align="center">
-  <em>Cada cliente reconocido, cada cobro rápido.</em>
+  <em>Cada cliente reconocido, cada cobro rápido.</em><br>
+  SaaS multi-negocio de membresías · Universidad Tecnológica de Tijuana · grupo 9C
 </p>
 
 <p align="center">
-  <a href="https://github.com/AGA-Studio/Member-Plus-Frontend/actions/workflows/ci.yml"><img src="https://github.com/AGA-Studio/Member-Plus-Frontend/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/AGA-Studio/Member-Plus-Frontend/actions/workflows/ci.yml"><img src="https://github.com/AGA-Studio/Member-Plus-Frontend/actions/workflows/ci.yml/badge.svg?branch=main" alt="Estado del CI"></a>
+  <a href="docs/DEPLOY.md"><img src="https://img.shields.io/badge/imagen-ghcr.io-2496ED?logo=docker&logoColor=white" alt="Imagen en GHCR"></a>
+  <a href="docs/CI.md"><img src="https://img.shields.io/badge/checks-4%20obligatorios-0062f2" alt="Cuatro checks obligatorios"></a>
+  <img src="https://img.shields.io/badge/i18n-es%20%7C%20en-5a6881" alt="Idiomas: español e inglés">
+  <br>
   <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.4.6-000000?logo=nextdotjs&logoColor=white" alt="Next.js 16.4.6"></a>
   <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19.3-61DAFB?logo=react&logoColor=white" alt="React 19.3"></a>
   <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript 5"></a>
   <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-4.3-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4.3"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node-22-5FA04E?logo=nodedotjs&logoColor=white" alt="Node 22"></a>
-  <img src="https://img.shields.io/badge/i18n-es%20%7C%20en-0062f2" alt="Idiomas: español e inglés">
-  <a href="docs/DEPLOY.md"><img src="https://img.shields.io/badge/imagen-ghcr.io-2496ED?logo=docker&logoColor=white" alt="Imagen en GHCR"></a>
 </p>
 
 ---
