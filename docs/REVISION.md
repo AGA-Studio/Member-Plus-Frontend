@@ -61,6 +61,7 @@ Las pantallas del MVP son: **1** login, **7** clientes, **8** ficha del cliente,
 | Contraste de texto | AA |
 | Duración de una animación | < 300 ms |
 | Texto en campos de formulario | ≥ 16 px (el iPhone no debe ampliar) |
+| Botón primario por pantalla | **1** (dos `bg-primary` rellenos es un hallazgo) |
 | Ancho de referencia | desde 360 px, mobile-first |
 
 ## 5. Lo que ya bloquea el CI — no lo reportes
