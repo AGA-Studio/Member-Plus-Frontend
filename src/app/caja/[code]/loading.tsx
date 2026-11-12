@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <LoadingRegion className="mx-auto w-full max-w-page">
+    <LoadingRegion quick className="mx-auto w-full max-w-page">
       <div className="grid items-start gap-6 lg:grid-cols-2 lg:gap-8">
         <div className="flex flex-col gap-4">
           <Skeleton className="hidden aspect-card rounded-card lg:block" />
