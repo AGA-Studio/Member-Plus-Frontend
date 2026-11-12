@@ -75,7 +75,7 @@ Estas reglas se verifican solas en cada PR; repetirlas en un comentario es ruido
 - Claves de traducción que faltan en algún locale (`messages:check`).
 - Errores de tipos (`next typegen && tsc --noEmit`) y fallos de build.
 
-`check:tokens` solo mira `src/`: un hex en Markdown, en un badge de shields.io o en `globals.css` no es hallazgo. Y estas reglas son de la **app**: el README, los badges y la documentación no son interfaz, así que pueden usar `<picture>` y `prefers-color-scheme` para verse bien en los dos temas de GitHub.
+`check:tokens` solo mira `src/`: un hex en Markdown, en un badge de shields.io o en `globals.css` no es hallazgo.
 
 Tampoco son tema de este revisor: estilo, formato, nombres de variables, rendimiento, ni gusto personal.
 
