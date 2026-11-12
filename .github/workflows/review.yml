@@ -1,0 +1,44 @@
+name: review
+
+# Revisor automático de PRs contra docs/REVISION.md y AGENTS.md.
+# Comenta lo que contradice la documentación o el diseño; no aprueba, no bloquea
+# y no cambia código. Si falla (sin cupo, sin red), el PR sigue su curso.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Número del PR a revisar
+        required: true
+
+concurrency:
+  group: review-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: review
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Sin OPENCODE_API_KEY (PRs desde forks) el script no hace nada y sale 0.
+      - name: Revisar contra docs/REVISION.md
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          python3 -m scripts.review_pr
+          --repo "${{ github.repository }}"
+          --pr "${{ inputs.pr || github.event.pull_request.number }}"
