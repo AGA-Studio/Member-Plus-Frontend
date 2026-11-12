@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
 import { ScanCard } from "@/features/cashier/scan-card";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,14 +14,12 @@ export default async function ScanPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-cashier flex-col gap-8">
-      <Reveal className="flex flex-col items-center gap-3 text-center">
+      <div className="flex flex-col items-center gap-3 text-center">
         <Badge tone="success">{t("readerConnected")}</Badge>
         <h1 className="text-title text-foreground">{t("title")}</h1>
         <p className="max-w-md text-base text-muted">{t("subtitle")}</p>
-      </Reveal>
-      <Reveal index={1}>
-        <ScanCard />
-      </Reveal>
+      </div>
+      <ScanCard />
     </div>
   );
 }
