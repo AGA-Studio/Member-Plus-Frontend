@@ -6,5 +6,11 @@
   "home": {
     "title": "Member+",
     "subtitle": "Administra las membresías de tus clientes en un solo lugar."
+  },
+  "businessDetail": {
+    "title": "Detalle del negocio",
+    "usage": "Clientes, tarjetas y dispositivos usados este mes.",
+    "suspend": "Suspender negocio",
+    "delete": "Eliminar negocio"
   }
 }
