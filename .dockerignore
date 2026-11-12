@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+.next
+out
+coverage
+.agents
+.vercel
+*.md
+.env*
+!.env.example
