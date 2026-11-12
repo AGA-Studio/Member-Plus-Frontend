@@ -36,12 +36,14 @@ MODEL = "deepseek-v4.1-flash"
 API_URL = "https://opencode.ai/zen/go/v1/chat/completions"
 GITHUB_API = "https://api.github.com"
 
-MAX_DIFF_CHARS = 40_000
+MAX_DIFF_CHARS = 20_000
 MAX_FINDINGS = 5
-TIMEOUT = 180
+TIMEOUT = 60
 # El razonamiento consume `max_tokens` y su largo crece con el diff: un PR grande
-# se queda sin presupuesto y devuelve texto vacío. Se sube en cada intento.
-TOKEN_BUDGETS = (12_000, 24_000, 40_000)
+# se queda sin presupuesto (devuelve vacío) o tarda más que el timeout. Por eso
+# se recorta el diff y se reintenta con más margen.
+MODEL_TIMEOUT = 300
+TOKEN_BUDGETS = (16_000, 24_000)
 REASONING_EFFORT = "low"
 BRIEF = "Responde ya la lista final, máximo 3 puntos y sin razonar de más."
 AGENT_RULES_MARKER = "<!-- END:nextjs-agent-rules -->"
@@ -208,13 +210,14 @@ def post_model(payload: dict[str, Any], api_key: str) -> dict[str, Any]:
     request.add_header("User-Agent", "memberplus-review/1.0")
     request.add_header("x-opencode-session", f"review-{os.getpid()}")
     try:
-        with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+        with urllib.request.urlopen(request, timeout=MODEL_TIMEOUT) as response:
             return json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
         detail = error.read().decode("utf-8", "replace")[:500]
         raise ReviewError(f"modelo {payload.get('model')} -> {error.code}: {detail}") from error
-    except urllib.error.URLError as error:
-        raise ReviewError(f"no se pudo conectar al modelo: {error.reason}") from error
+    except (urllib.error.URLError, TimeoutError, OSError) as error:
+        reason = getattr(error, "reason", error)
+        raise ReviewError(f"no se pudo conectar al modelo: {reason}") from error
 
 
 def call_model(messages: list[dict[str, str]], *, api_key: str, model: str) -> str:
