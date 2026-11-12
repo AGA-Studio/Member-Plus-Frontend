@@ -17,7 +17,7 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Texto visible | Nunca escrito en el componente | `t("caja.escanearTarjeta")`, nunca `<p>Escanea la tarjeta</p>` |
 | Diseño | Solo tokens de `src/app/globals.css` | `bg-surface`, `text-muted`; prohibido `#0062f2` y `bg-blue-500` |
 | Íconos | Solo Lucide | `lucide-react`; nada de `react-icons`, `@heroicons` ni similares |
-| Tema (en la app) | Claro por defecto; oscuro solo si el usuario lo activa | `data-theme="dark"` manual; **nunca** `prefers-color-scheme` en la interfaz |
+| Tema | Claro por defecto; oscuro solo si el usuario lo activa | `data-theme="dark"` manual; **nunca** `prefers-color-scheme` |
 | Acción principal | Un solo botón primario por pantalla | Un `bg-primary` relleno; el resto secundario, contorno o fantasma |
 | Movimiento | Transiciones de menos de 300 ms | `ease-out`, `ease-in-out`, `ease-drawer`; nunca `ease-in` |
 | Caja (pantallas 16-18) | Sin animación de entrada | Solo respuesta al pulsar y cambios de estado |
