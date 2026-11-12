@@ -72,7 +72,8 @@ Cuentas de demo: dueño de plataforma, admin A, admin B y empleado A.
 - Hecho: i18n con `next-intl`, tokens de diseño en `src/app/globals.css`, fuentes, logos e íconos, favicon, `lucide-react`.
 - `src/app/page.tsx` es solo un placeholder con traducciones. Quedan en `public/` los SVG de ejemplo de la plantilla.
 - Remote: `https://github.com/AGA-Studio/Member-Plus-Frontend.git` (rama `main`).
-- Flujo de git del equipo: ramas `main` / `develop` / `feature/*`, **todo por PR**, sin commits directos a `main` ni `develop`. (Los agentes no hacen commit ni push sin que el usuario lo pida: `AGENTS.md` regla 4.)
+- CI propio desde el 12 nov 2026: `lint` (+`check:tokens`), `typecheck`, `messages` y `build` en cada PR, más una imagen `standalone` en GHCR con `image.yml`. Detalle en `docs/CI.md` y `docs/DEPLOY.md`.
+- Flujo de git del equipo: **`main` es la única rama** (ya no existe `develop`). Ramas `feature/*`, `fix/*` o `docs/*` efímeras, **todo por PR**, sin commits directos a `main`. (Los agentes no hacen commit ni push sin que el usuario lo pida: `AGENTS.md` regla 4.)
 
 ## 4. Stack de ESTE repo
 
@@ -86,7 +87,7 @@ Cuentas de demo: dueño de plataforma, admin A, admin B y empleado A.
 | Fuentes | Montserrat (titulares), Geist (texto), Geist Mono (códigos), con `next/font/google` |
 | Lint | ESLint 9 + `eslint-config-next` |
 | Config especial | `next.config.ts`: `cacheComponents: true`, `partialPrefetching: true`. El layout raíz exporta `instant = false` porque el idioma sale de cookie y encabezados |
-| Scripts | `npm run dev` · `build` · `start` · `lint` (no hay tests aún) |
+| Scripts | `npm run dev` · `build` · `start` · `lint` · `typecheck` · `messages:check` · `check:tokens` (no hay tests aún) |
 
 **⚠️ Este Next.js NO es el que conoces** (ver `AGENTS.md`): APIs y convenciones pueden diferir. **Antes de escribir código de Next, lee la guía relevante en `node_modules/next/dist/docs/`** (`01-app/` es el App Router). Con `cacheComponents` activo, leer cookies o encabezados fuera de `<Suspense>` rompe el prerender.
 
@@ -113,11 +114,11 @@ FastAPI (repo backend: AGA-Studio/Member-Web)  ──►  PostgreSQL 18
 ESP32-S3 + cámara (solo lee el QR) o webcam del navegador
 ```
 
-- Backend: FastAPI (Python 3.13), router → servicio → repositorio; SQLAlchemy sync. Rama `develop`.
+- Backend: FastAPI (Python 3.14), router → servicio → repositorio; SQLAlchemy sync. Rama `main` con tags de versión.
 - **Next es cliente puro**: toda la lógica va en FastAPI. **No crear rutas API ni lógica de negocio en Next.**
 - Sin Supabase: JWT propio y Postgres 18 en Compose.
 - Docker Compose levanta API y BD; el frontend corre aparte en desarrollo.
-- Hosting: Coolify en servidor propio (`memberplus.neyzt.org`, subdominio aún no creado) con Cloudflare para HTTPS. **Localhost con Docker de respaldo obligatorio** para la demo.
+- Hosting: Coolify en servidor propio con Cloudflare. **App en `memberplus.neyzt.org`** (aún sin crear) y **API en `api-memberplus.neyzt.org`** (ya sirviendo; guion y no punto, porque el certificado de Cloudflare cubre un solo nivel). El navegador llama `/api/*` y Next lo reescribe al API. **Localhost con Docker de respaldo obligatorio** para la demo.
 - **El contrato de la API aún no existe** y el esquema de BD tampoco. Sin eso el frontend trabajaría a ciegas: pedir a backend rutas, payloads y errores por módulo antes de integrar.
 
 ## 7. Multi-tenant (regla más importante de la UI)

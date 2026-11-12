@@ -75,6 +75,8 @@ Estas reglas se verifican solas en cada PR; repetirlas en un comentario es ruido
 - Claves de traducción que faltan en algún locale (`messages:check`).
 - Errores de tipos (`next typegen && tsc --noEmit`) y fallos de build.
 
+`check:tokens` solo mira `src/`: un hex en Markdown, en un badge de shields.io o en `globals.css` no es hallazgo.
+
 Tampoco son tema de este revisor: estilo, formato, nombres de variables, rendimiento, ni gusto personal.
 
 ## 6. Archivos compartidos
