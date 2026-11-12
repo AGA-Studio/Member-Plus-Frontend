@@ -35,9 +35,9 @@ These rules are strict. Follow them in every task, without exception. If a rule 
    - **Spacing:** multiples of 4 only. Mobile-first. Page widths with `max-w-page`, `max-w-form`, `max-w-auth`, `max-w-cashier`.
    - **Buttons:** variants are primary, secondary, outline, ghost and danger. One primary button per screen. Danger actions always ask for confirmation. No gradient buttons. Heights: 36, 44 (default), 52 and 64 px (cashier). Minimum touch target is 44px.
    - **Forms:** visible label above the field. Mark optional fields with "(opcional)" in the label, never mark required ones with an asterisk.
-   - **Scope:** these design rules apply to the app interface. The README, its badges and the rest of the documentation are not UI, so they may use `<picture>` and `prefers-color-scheme` to look right in both GitHub themes.
    - **Gradients and metallic finishes:** `bg-brand` only in brand moments (login, receipt, customer card). `bg-tier-*` only on membership cards and tier badges.
    - **Dark mode** is manual only: `data-theme="dark"` on `<html>`, never the system preference. Light is always the default. Use `dark:` only when a token does not already handle it.
+   - **Scope:** these design rules apply to the app interface. The README, its badges and the rest of the documentation are not UI, so they may use `<picture>` and `prefers-color-scheme` to look right in both GitHub themes.
    - **Copy (Spanish, in `messages/es.json`):** use "tú", no exclamation marks, no emojis, no "Oops". Button labels are verbs in the infinitive ("Guardar cambios", "Registrar compra"), never "Aceptar" or "OK". Never blame the user in error messages. Use the project vocabulary: negocio, cliente, tarjeta, membresía, puntos, cashback, caja, lector.
    - If the design system does not cover something, ask the user before inventing a new color, size or pattern.
 8. **Use the installed skills every time you write or change UI code.** They live in `.agents/skills/` (if missing, restore them with `npx skills experimental_install`). Read the `SKILL.md` of each one before coding:
