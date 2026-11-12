@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import Link from "next/link";
 import { Check, Star, Wallet } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
+import { cx } from "@/lib/cx";
 import { findReceipt } from "@/lib/api/purchases";
+import { revealClasses } from "@/lib/motion";
 import {
   formatDiscount,
   formatMoney,
@@ -23,6 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ReceiptPage({ params }: PageProps<"/caja/comprobante/[id]">) {
+  await connection();
   const { id } = await params;
   const receipt = await findReceipt(id);
 
@@ -81,9 +85,9 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
   ];
 
   return (
-    <article className="mx-auto flex w-full max-w-form flex-col overflow-hidden rounded-xl bg-surface shadow-md sm:max-w-xl">
+    <article className={cx(revealClasses(0), "mx-auto flex w-full max-w-form flex-col overflow-hidden rounded-xl bg-surface shadow-md sm:max-w-xl")}>
       <header className="flex flex-col items-center gap-2 bg-brand px-6 py-10 text-center text-white">
-        <span className="flex size-14 items-center justify-center rounded-full border border-white">
+        <span className="flex size-14 items-center justify-center rounded-full border border-white transition-[opacity,scale] delay-100 duration-300 ease-out starting:scale-95 starting:opacity-0">
           <Check aria-hidden strokeWidth={1.75} className="size-7" />
         </span>
         <h1 className="font-display text-subheading font-semibold">{t("title")}</h1>
@@ -94,7 +98,7 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
       </header>
 
       <div className="flex flex-col gap-6 p-6 sm:p-8">
-        <dl className="flex flex-col gap-3">
+        <dl className={cx(revealClasses(2), "flex flex-col gap-3")}>
           {rows.map((row) => (
             <div key={row.label} className="flex items-baseline justify-between gap-4">
               <dt className="text-base text-muted">{row.label}</dt>
@@ -117,7 +121,7 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
           </div>
         </dl>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className={cx(revealClasses(3), "grid grid-cols-2 gap-3")}>
           {balances.map(({ icon: Icon, gained, label, value }) => (
             <section key={label} className="flex flex-col gap-2 rounded-lg bg-surface-muted p-4">
               <Badge tone="success" className="self-start">
@@ -134,7 +138,7 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
           ))}
         </div>
 
-        <Link href="/caja" className={buttonStyles({ size: "xl", fullWidth: true })}>
+        <Link href="/caja" className={buttonStyles({ size: "xl", fullWidth: true, className: revealClasses(4) })}>
           {t("another")}
         </Link>
       </div>

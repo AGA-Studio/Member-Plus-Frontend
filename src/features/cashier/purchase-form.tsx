@@ -1,10 +1,11 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { useActionState, useId, useState } from "react";
+import { useActionState, useEffect, useId, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/toast-provider";
 import { cx } from "@/lib/cx";
 import type { Member, TierBenefits } from "@/lib/domain";
 import {
@@ -37,12 +38,17 @@ function sanitizeAmount(raw: string): string {
 export function PurchaseForm({ member }: PurchaseFormProps) {
   const t = useTranslations("cashier.purchase");
   const format = useFormatter();
+  const { show } = useToast();
   const [state, formAction, pending] = useActionState(registerPurchaseAction, initialState);
   const [amount, setAmount] = useState("");
   const [useCashback, setUseCashback] = useState(false);
   const switchLabelId = useId();
   const switchHintId = useId();
   const submitHintId = useId();
+
+  useEffect(() => {
+    if (state.error) show("danger", t(`errors.${state.error}`));
+  }, [state, show, t]);
 
   const isActive = member.status === "active";
   const benefits = isActive ? member.benefits : noBenefits;

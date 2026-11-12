@@ -1,5 +1,7 @@
 export type Tier = "bronze" | "silver" | "gold" | "onyx";
 
+export const tiers: readonly Tier[] = ["bronze", "silver", "gold", "onyx"];
+
 export type MemberStatus = "active" | "expired" | "cancelled";
 
 export type TierBenefits = {
@@ -8,11 +10,21 @@ export type TierBenefits = {
   cashbackPercent: number;
 };
 
+export type Level = {
+  tier: Tier;
+  minPoints: number;
+  benefits: TierBenefits;
+};
+
 export type Member = {
   code: string;
   fullName: string;
+  email: string;
+  phone: string;
   tier: Tier;
   status: MemberStatus;
+  expiringSoon: boolean;
+  issuedAt: string;
   validUntil: string;
   points: number;
   cashbackBalanceCents: number;
@@ -28,21 +40,38 @@ export type PurchaseBreakdown = {
   cashbackEarnedCents: number;
 };
 
-export type Receipt = {
+export type Purchase = {
   id: string;
   memberCode: string;
   memberName: string;
   tier: Tier;
   concept: string;
   createdAt: string;
+  registerName: string;
   breakdown: PurchaseBreakdown;
   discountPercent: number;
+  pointsAfter?: number;
+  cashbackBalanceAfterCents?: number;
+};
+
+export type Receipt = Purchase & {
   pointsAfter: number;
   cashbackBalanceAfterCents: number;
 };
 
-export type CashierUser = {
+export type UserRole = "cashier" | "admin";
+
+export type SessionUser = {
+  role: UserRole;
   fullName: string;
   businessName: string;
   businessInitials: string;
+};
+
+export type Page<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  pageCount: number;
+  pageSize: number;
 };

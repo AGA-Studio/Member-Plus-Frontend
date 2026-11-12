@@ -241,7 +241,9 @@ Todo se siente fluido y premium: animaciones y transiciones **cortas, pero que s
 - **Pulsado:** todo elemento presionable se encoge al presionar (`transition-transform duration-150 ease-out active:scale-97`).
 - **Aparecer:** desde `scale-95` con `opacity-0` (variante `starting:`), nunca desde cero. Los popovers crecen desde su disparador y los modales desde el centro. Los grupos de elementos entran escalonados, con 30 a 80 ms entre cada uno.
 - **Solo `transform` y `opacity`** (más color en cambios de estado). Nunca `transition-all`.
-- **Caja (pantallas 16 a 18):** acciones que se repiten cientos de veces al día, así que solo hay respuesta al pulsar y cambios de estado rápidos. Sin animación de entrada en cada escaneo o compra.
+- **Pantallas del panel:** cada bloque entra con `Reveal` o `revealClasses(índice)` (`src/lib/motion.ts`): opacidad y subida de 8 px, 250 ms, escalonado de 40 ms. Se reproduce al navegar y no al filtrar o paginar. Alertas y estados vacíos entran con opacidad y 4 px de bajada.
+- **Caja (pantallas 16 a 18):** también entra con `Reveal` (250 ms como máximo, escalonado). Nunca retrasa escribir ni escanear, y los importes cambian al instante, sin conteo animado.
+- **Cargando:** cada pantalla con datos tiene su `loading.tsx` con esqueletos (`Skeleton`, pulso suave) que respetan la forma del contenido; al llegar los datos, el contenido entra con `Reveal`.
 - **Reducir movimiento:** si el dispositivo lo pide, se quita el movimiento y se conservan los cambios de opacidad y color (ya está en `globals.css`).
 
 ## 11. Íconos

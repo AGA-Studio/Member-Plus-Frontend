@@ -1,3 +1,4 @@
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { CashierHeader } from "@/features/cashier/cashier-header";
 import { requireSession } from "@/lib/session";
 
@@ -5,9 +6,11 @@ export default async function CashierLayout({ children }: LayoutProps<"/caja">) 
   await requireSession();
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div className="flex h-dvh flex-col overflow-hidden bg-background">
       <CashierHeader />
-      <main className="flex flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+      <ScrollArea>
+        <div className="flex min-h-full flex-col px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+      </ScrollArea>
     </div>
   );
 }

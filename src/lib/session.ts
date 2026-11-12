@@ -1,9 +1,15 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
+import { getUserByToken } from "@/lib/api/current-user";
+import type { SessionUser, UserRole } from "@/lib/domain";
 import { sessionCookieName } from "./session-cookie";
 
 const eightHoursInSeconds = 60 * 60 * 8;
+
+export const roleHomePaths: Record<UserRole, string> = {
+  cashier: "/caja",
+  admin: "/clientes",
+};
 
 export async function createSession(accessToken: string): Promise<void> {
   const cookieStore = await cookies();
@@ -22,11 +28,21 @@ export async function destroySession(): Promise<void> {
   cookieStore.delete(sessionCookieName);
 }
 
-export async function requireSession(): Promise<string> {
+export async function getSessionUser(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get(sessionCookieName)?.value;
 
-  if (!token) redirect("/login");
+  return getUserByToken(cookieStore.get(sessionCookieName)?.value);
+}
 
-  return token;
+export async function requireUser(allowedRoles?: UserRole[]): Promise<SessionUser> {
+  const user = await getSessionUser();
+
+  if (!user) redirect("/login");
+  if (allowedRoles && !allowedRoles.includes(user.role)) redirect(roleHomePaths[user.role]);
+
+  return user;
+}
+
+export async function requireSession(): Promise<SessionUser> {
+  return requireUser();
 }

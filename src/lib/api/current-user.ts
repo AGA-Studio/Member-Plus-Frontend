@@ -1,9 +1,8 @@
-import type { CashierUser } from "@/lib/domain";
+import type { SessionUser } from "@/lib/domain";
+import { demoAccounts } from "./mock/demo-credentials";
 
-export async function getCashierUser(): Promise<CashierUser> {
-  return {
-    fullName: "Ana Torres",
-    businessName: "Café Aurora",
-    businessInitials: "CA",
-  };
+export async function getUserByToken(accessToken: string | undefined): Promise<SessionUser | null> {
+  const account = demoAccounts.find((item) => item.accessToken === accessToken);
+
+  return account?.user ?? null;
 }

@@ -68,7 +68,7 @@ Cuentas de demo: dueño de plataforma, admin A, admin B y empleado A.
 
 ## 3. Estado actual del repo
 
-- Código de la rebanada de caja **en marcha** (sin commit; todo en el árbol de trabajo). `npm run lint`, `tsc` y `npm run build` pasan. Probado en Chrome con Playwright (script de flujo completo, sin errores de consola).
+- Código de la rebanada de caja **en marcha** (PR #10 abierto). `npm run lint`, `tsc` y `npm run build` pasan. Probado en Chrome con Playwright (script de flujo completo, sin errores de consola).
 - Hecho y verificado contra Figma:
   - Base: `src/components/ui/` (Button, TextField con ojo de contraseña, Alert, Badge, Switch, Spinner, Logo, MembershipCard con QR real), `src/lib/cx.ts`, token `--aspect-card` y animación `--animate-scan` en `globals.css`, `formattingLocales` (es → es-MX, en → en-US) para que los montos salgan como `$1,250.00`.
   - Pantalla 1 Login: `src/app/login`, `src/features/auth/` (acción de servidor, estados error y cargando, panel de marca).
@@ -83,6 +83,20 @@ Cuentas de demo: dueño de plataforma, admin A, admin B y empleado A.
   2. Falta diseñar y luego codear "Vincular esta caja" (caja nueva escribe el código de Dispositivos) y las pantallas de error (sin permisos, sesión expirada).
   3. Pendientes de código: insignia "Lector conectado" es fija (no hay estado de lector), lector ESP32 sin integrar, `Cancelar` de Registrar compra no existe en el código aún (Figma lo muestra arriba a la derecha), tarjeta compacta móvil sin iniciales.
   4. Después: panel del negocio (pantallas 6 a 15) y plataforma (2 a 5), fuera de la rebanada del MVP.
+- **Panel del administrador (rama `feature/business-panel`, sin commit, apilada sobre la del PR #10):**
+  - Roles: el token simulado decide el rol (`cajero` → `/caja`, `admin` → `/clientes`, ambos con contraseña `member123`). `src/lib/session.ts` tiene `requireUser(roles)`; `/` redirige según el rol; `src/proxy.ts` protege también `/clientes`, `/membresias`, `/niveles` y `/movimientos`. Un cajero que entra al panel vuelve a `/caja`.
+  - Estructura: `src/app/(business)/` con barra lateral en escritorio y navegación inferior en móvil (`src/features/business/`).
+  - Pantalla 7 Clientes: búsqueda con espera, filtros por nivel y estado, paginación, tabla en escritorio y lista en móvil.
+  - Pantalla 8 Ficha: tarjeta, datos, cifras, compras, editar datos, cancelar membresía con confirmación e imprimir tarjeta. Solo existe la sección Compras; las pestañas Puntos y cashback y Datos no se hicieron.
+  - Pantalla 9 Membresías: pestañas con conteo, búsqueda, filtro de nivel, "Nueva membresía" (formulario con errores) y hoja imprimible en `/membresias/imprimir` (acepta `?code=`).
+  - Pantalla 10 Niveles: cuatro niveles con panel lateral (hoja desde abajo en móvil) para editar; los cambios afectan las compras nuevas en caja.
+  - Pantalla 15 Movimientos: resumen, búsqueda, filtro por caja, tabla y lista agrupada. Sin filtro de periodo (los datos de prueba son relativos a hoy).
+  - Datos simulados en memoria (`src/lib/api/mock/store.ts`, perezoso por `Date.now()`): se reinician al reiniciar el servidor. Páginas dinámicas llaman a `await connection()`.
+  - Falta: Panel (6) y el resto de pantallas del administrador quedan fuera del MVP; pestañas de la ficha; menú de fila (⋯); periodo en Movimientos; botón Cancelar de Registrar compra; la cookie JWT real.
+  - Movimiento: `src/lib/motion.ts` (`revealClasses`) y `src/components/ui/reveal.tsx` dan la entrada escalonada (40 ms, 250 ms) a cada bloque del panel; Alert y EmptyState entran con opacidad. La caja (16 a 18) también entra con `Reveal` (decisión del usuario, 12 nov 2026); `docs/REVISION.md` de `main` todavía dice "sin animación de entrada" en caja y hay que sincronizarlo con el equipo. `AGENTS.md` regla 9 y `BRAND.md` sección 10 lo exigen en todo lo nuevo.
+  - Esqueletos de carga: `loading.tsx` en cada ruta con datos (`clientes`, `clientes/[code]`, `membresias`, `niveles`, `movimientos`, `caja/[code]`, `caja/comprobante/[id]`) con `Skeleton` y `LoadingRegion`. Los datos simulados tardan 450 ms por consulta (`src/lib/api/mock/latency.ts`); `MOCK_LATENCY_MS=0` lo apaga. Al conectar el backend real, quitar `simulateLatency`.
+  - Estructura fija tipo SPA: `h-dvh overflow-hidden` con `ScrollArea` (el `main` hace scroll por dentro y vuelve arriba al cambiar de ruta); barra lateral, cabecera y navegación inferior no se mueven. Los esqueletos entran con fundido (`LoadingRegion`). Cerrar sesión pide confirmación (`LogoutButton`, en `src/features/auth/`). Toasts: `ToastProvider` en el layout raíz, `useToast()` y `?toast=<clave>` tras redirecciones (`FlashToast`, claves en `src/lib/toast-keys.ts`).
+  - Probado con Playwright (flujo completo de crear, editar, cancelar, editar nivel, imprimir, roles y la caja); `lint`, `check:tokens`, `messages:check`, `typecheck` y `build` pasan.
 - **Adaptar al `main` del 12 nov 2026** (CI, Docker y `docs/REVISION.md` llegaron de otro compañero; ya fusionado en local y pasan `lint`, `check:tokens`, `messages:check`, `typecheck` y `build`):
   1. Auth: la cookie httpOnly con el JWT la emite FastAPI, no Next. Hoy `src/lib/session.ts` la crea en Next con un token falso; al conectar el API, el login debe llamar a `/api/...` (Next lo reescribe a `API_INTERNAL_URL`) y Next solo leer la cookie. Sin rutas API propias en Next.
   2. Alcance del MVP según `docs/REVISION.md`: pantallas 1, 7, 8, 9, 10, 15, 16, 17, 18 y 3 (solo lectura). Las 2, 4, 5, 11, 12, 13 y 14 están diseñadas en Figma pero fuera de lo que se construye ahora. Siguiente a codear tras la caja: 7, 8, 9, 10 y 15.
