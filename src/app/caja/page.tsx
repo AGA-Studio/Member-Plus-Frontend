@@ -15,11 +15,11 @@ export default async function ScanPage() {
   const t = await getTranslations("cashier.scan");
 
   return (
-    <div className="mx-auto flex w-full max-w-cashier flex-col gap-8">
+    <div className="mx-auto my-auto flex w-full max-w-cashier flex-col gap-8">
       <div className="flex flex-col items-center gap-3 text-center">
         <Badge tone="success">{t("readerConnected")}</Badge>
         <h1 className="text-title text-foreground">{t("title")}</h1>
-        <p className="max-w-md text-base text-muted">{t("subtitle")}</p>
+        <p className="max-w-xl text-base text-muted">{t("subtitle")}</p>
       </div>
       <ScanCard />
     </div>

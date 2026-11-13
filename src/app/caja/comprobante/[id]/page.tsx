@@ -43,8 +43,12 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
     minute: "2-digit",
   });
 
+  const isToday =
+    format.dateTime(new Date(receipt.createdAt), { year: "numeric", month: "numeric", day: "numeric" }) ===
+    format.dateTime(new Date(), { year: "numeric", month: "numeric", day: "numeric" });
+
   const rows = [
-    { label: t("date"), value: createdAt },
+    { label: t("date"), value: isToday ? t("todayDate", { date: createdAt }) : createdAt },
     { label: t("customer"), value: receipt.memberName },
     { label: t("concept"), value: receipt.concept || t("noConcept") },
     { label: t("amount"), value: formatMoney(format, breakdown.amountCents) },
@@ -119,6 +123,8 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
           </div>
         </dl>
 
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-muted">{t("newBalance")}</p>
         <div className="grid grid-cols-2 gap-3">
           {balances.map(({ icon: Icon, gained, label, value }) => (
             <section key={label} className="flex flex-col gap-2 rounded-lg bg-surface-muted p-4">
@@ -134,6 +140,7 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
               </p>
             </section>
           ))}
+        </div>
         </div>
 
         <Link href="/caja" className={buttonStyles({ size: "xl", fullWidth: true })}>

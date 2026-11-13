@@ -48,7 +48,7 @@
         "platformUnavailable": "Platform access is not available here yet."
       },
       "brand": {
-        "headline": "Every customer recognized, every sale fast.",
+        "headline": "Every customer\nrecognized,\nevery sale fast.",
         "businessName": "Café Aurora",
         "cards": {
           "onyx": {
@@ -140,9 +140,11 @@
           "active": "Active",
           "expired": "Expired",
           "cancelled": "Cancelled"
-        }
+        },
+        "validUntil": "Valid until {date}"
       },
-      "currencySymbol": "$"
+      "currencySymbol": "$",
+      "cancel": "Cancel"
     },
     "receipt": {
       "metaTitle": "Purchase registered · Member+",
@@ -157,9 +159,11 @@
       "cashbackUsed": "Cashback balance",
       "total": "Total charged",
       "pointsUnit": "points",
-      "pointsBalance": "Points balance",
-      "cashbackBalance": "Cashback balance",
-      "another": "Register another purchase"
+      "pointsBalance": "Points",
+      "cashbackBalance": "Cashback",
+      "another": "Register another purchase",
+      "newBalance": "New balance",
+      "todayDate": "Today, {date}"
     }
   },
   "memberStatus": {
@@ -174,7 +178,8 @@
       "customers": "Customers",
       "memberships": "Memberships",
       "levels": "Levels",
-      "movements": "Transactions"
+      "movements": "Transactions",
+      "section": "Operations"
     },
     "signOut": "Sign out",
     "roles": {
@@ -186,15 +191,15 @@
     "customers": {
       "metaTitle": "Customers · Member+",
       "title": "Customers",
-      "subtitle": "{count, plural, one {# customer} other {# customers}} in your business",
+      "subtitle": "{count, plural, one {# customer with a membership} other {# customers with a membership}} in your business",
       "searchLabel": "Search customers",
-      "searchPlaceholder": "Search by name, email or code",
+      "searchPlaceholder": "Search by name or code",
       "newMembership": "New membership",
       "filters": {
         "tier": "Level",
-        "allTiers": "Level: all",
+        "allTiers": "Level: All",
         "status": "Status",
-        "allStatuses": "Status: all"
+        "allStatuses": "Status: All"
       },
       "columns": {
         "customer": "Customer",
@@ -277,6 +282,20 @@
         "keep": "Go back",
         "confirm": "Cancel membership",
         "confirming": "Cancelling…"
+      },
+      "tabsLabel": "Profile sections",
+      "tabs": {
+        "purchases": "Purchases",
+        "points": "Points and cashback",
+        "data": "Details"
+      },
+      "points": {
+        "date": "Date",
+        "concept": "Description",
+        "earned": "Points",
+        "cashback": "Cashback",
+        "emptyTitle": "No activity yet",
+        "emptyDescription": "{name}'s points and cashback will appear here."
       }
     },
     "memberships": {
@@ -328,9 +347,9 @@
         }
       },
       "searchLabel": "Search memberships",
-      "searchPlaceholder": "Search by name, email or code",
+      "searchPlaceholder": "Search by name or code",
       "levelFilter": "Level",
-      "allLevels": "Level: all"
+      "allLevels": "Level: All"
     },
     "print": {
       "metaTitle": "Card sheet · Member+",
@@ -380,7 +399,8 @@
       "searchPlaceholder": "Search customer or code",
       "filters": {
         "register": "Register",
-        "allRegisters": "Register: all"
+        "allRegisters": "Register: All",
+        "period": "Period"
       },
       "summary": {
         "purchases": "Purchases",
@@ -407,6 +427,32 @@
       "noResults": {
         "title": "No transactions match these filters",
         "description": "Try another name, another register or clear the filters."
+      },
+      "periods": {
+        "7d": "Last 7 days",
+        "30d": "Last 30 days",
+        "90d": "Last 90 days",
+        "all": "All time"
+      },
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "export": {
+        "label": "Download CSV",
+        "preparing": "Preparing…",
+        "fileName": "transactions.csv",
+        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}.",
+        "headers": {
+          "date": "Date",
+          "register": "Register",
+          "customer": "Customer",
+          "code": "Code",
+          "concept": "Description",
+          "amount": "Amount",
+          "discount": "Discount",
+          "points": "Points",
+          "cashbackEarned": "Cashback earned",
+          "cashbackUsed": "Cashback used"
+        }
       }
     }
   },

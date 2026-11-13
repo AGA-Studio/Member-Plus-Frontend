@@ -10,7 +10,8 @@ type FilterOption = { value: string; label: string };
 type FilterDefinition = {
   name: string;
   label: string;
-  allLabel: string;
+  allLabel?: string;
+  defaultValue?: string;
   options: FilterOption[];
 };
 
@@ -72,14 +73,14 @@ export function FilterBar({ searchLabel, searchPlaceholder, filters = [] }: Filt
             <label key={filter.name} className="relative flex-1 sm:flex-none">
               <span className="sr-only">{filter.label}</span>
               <select
-                value={searchParams.get(filter.name) ?? ""}
+                value={searchParams.get(filter.name) ?? filter.defaultValue ?? ""}
                 onChange={(event) => updateParam(filter.name, event.target.value)}
                 className={cx(
                   "h-11 w-full appearance-none rounded-md border border-border-strong bg-surface pl-3 pr-10 text-base text-foreground",
                   "transition-[border-color] duration-150 ease-out focus:border-primary",
                 )}
               >
-                <option value="">{filter.allLabel}</option>
+                {filter.allLabel ? <option value="">{filter.allLabel}</option> : null}
                 {filter.options.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}

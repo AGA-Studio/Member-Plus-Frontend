@@ -48,7 +48,7 @@
         "platformUnavailable": "El acceso de plataforma todavía no está disponible aquí."
       },
       "brand": {
-        "headline": "Cada cliente reconocido, cada cobro rápido.",
+        "headline": "Cada cliente\nreconocido,\ncada cobro rápido.",
         "businessName": "Café Aurora",
         "cards": {
           "onyx": {
@@ -140,9 +140,11 @@
           "active": "Activa",
           "expired": "Vencida",
           "cancelled": "Cancelada"
-        }
+        },
+        "validUntil": "Vigente hasta el {date}"
       },
-      "currencySymbol": "$"
+      "currencySymbol": "$",
+      "cancel": "Cancelar"
     },
     "receipt": {
       "metaTitle": "Compra registrada · Member+",
@@ -157,9 +159,11 @@
       "cashbackUsed": "Saldo de cashback",
       "total": "Total cobrado",
       "pointsUnit": "puntos",
-      "pointsBalance": "Saldo de puntos",
-      "cashbackBalance": "Saldo de cashback",
-      "another": "Registrar otra compra"
+      "pointsBalance": "Puntos",
+      "cashbackBalance": "Cashback",
+      "another": "Registrar otra compra",
+      "newBalance": "Nuevo saldo",
+      "todayDate": "Hoy, {date}"
     }
   },
   "memberStatus": {
@@ -174,7 +178,8 @@
       "customers": "Clientes",
       "memberships": "Membresías",
       "levels": "Niveles",
-      "movements": "Movimientos"
+      "movements": "Movimientos",
+      "section": "Operación"
     },
     "signOut": "Cerrar sesión",
     "roles": {
@@ -186,15 +191,15 @@
     "customers": {
       "metaTitle": "Clientes · Member+",
       "title": "Clientes",
-      "subtitle": "{count, plural, one {# cliente} other {# clientes}} en tu negocio",
+      "subtitle": "{count, plural, one {# cliente con membresía} other {# clientes con membresía}} en tu negocio",
       "searchLabel": "Buscar clientes",
-      "searchPlaceholder": "Buscar por nombre, correo o código",
+      "searchPlaceholder": "Buscar por nombre o código",
       "newMembership": "Nueva membresía",
       "filters": {
         "tier": "Nivel",
-        "allTiers": "Nivel: todos",
+        "allTiers": "Nivel: Todos",
         "status": "Estado",
-        "allStatuses": "Estado: todos"
+        "allStatuses": "Estado: Todos"
       },
       "columns": {
         "customer": "Cliente",
@@ -277,6 +282,20 @@
         "keep": "Volver",
         "confirm": "Cancelar membresía",
         "confirming": "Cancelando…"
+      },
+      "tabsLabel": "Secciones de la ficha",
+      "tabs": {
+        "purchases": "Compras",
+        "points": "Puntos y cashback",
+        "data": "Datos"
+      },
+      "points": {
+        "date": "Fecha",
+        "concept": "Concepto",
+        "earned": "Puntos",
+        "cashback": "Cashback",
+        "emptyTitle": "Aún no hay movimientos",
+        "emptyDescription": "Los puntos y el cashback de {name} aparecerán aquí."
       }
     },
     "memberships": {
@@ -328,9 +347,9 @@
         }
       },
       "searchLabel": "Buscar membresías",
-      "searchPlaceholder": "Buscar por nombre, correo o código",
+      "searchPlaceholder": "Buscar por nombre o código",
       "levelFilter": "Nivel",
-      "allLevels": "Nivel: todos"
+      "allLevels": "Nivel: Todos"
     },
     "print": {
       "metaTitle": "Hoja de tarjetas · Member+",
@@ -380,7 +399,8 @@
       "searchPlaceholder": "Buscar cliente o código",
       "filters": {
         "register": "Caja",
-        "allRegisters": "Caja: todas"
+        "allRegisters": "Caja: Todas",
+        "period": "Periodo"
       },
       "summary": {
         "purchases": "Compras",
@@ -407,6 +427,32 @@
       "noResults": {
         "title": "No hay movimientos con estos filtros",
         "description": "Prueba con otro nombre, otra caja o quita los filtros."
+      },
+      "periods": {
+        "7d": "Últimos 7 días",
+        "30d": "Últimos 30 días",
+        "90d": "Últimos 90 días",
+        "all": "Todo el historial"
+      },
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "export": {
+        "label": "Descargar CSV",
+        "preparing": "Preparando…",
+        "fileName": "movimientos.csv",
+        "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}.",
+        "headers": {
+          "date": "Fecha",
+          "register": "Caja",
+          "customer": "Cliente",
+          "code": "Código",
+          "concept": "Concepto",
+          "amount": "Monto",
+          "discount": "Descuento",
+          "points": "Puntos",
+          "cashbackEarned": "Cashback ganado",
+          "cashbackUsed": "Cashback usado"
+        }
       }
     }
   },

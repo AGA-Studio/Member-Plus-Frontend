@@ -32,8 +32,11 @@ export default async function PurchasePage({ params }: PageProps<"/caja/[code]">
       {member.status !== "active" ? (
         <Alert tone="warning">{t(`inactiveNotice.${member.status}`)}</Alert>
       ) : null}
-      <div className="grid items-start gap-6 lg:grid-cols-2 lg:gap-8">
-        <MemberSummary member={member} businessName={user.businessName} />
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-center lg:gap-8">
+        <div className="lg:w-105 lg:shrink-0">
+          <MemberSummary member={member} businessName={user.businessName} />
+        </div>
+        <div className="lg:w-140">
         <PurchaseForm
           member={{
             code: member.code,
@@ -43,6 +46,7 @@ export default async function PurchasePage({ params }: PageProps<"/caja/[code]">
             tierLabel: tiers(member.tier),
           }}
         />
+        </div>
       </div>
     </div>
   );
