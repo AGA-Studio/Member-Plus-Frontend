@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
-import { cx } from "@/lib/cx";
+import { Select } from "@/components/ui/select";
 
 type FilterOption = { value: string; label: string };
 
@@ -70,29 +70,17 @@ export function FilterBar({ searchLabel, searchPlaceholder, filters = [] }: Filt
       {filters.length > 0 ? (
         <div className="flex gap-3">
           {filters.map((filter) => (
-            <label key={filter.name} className="relative flex-1 sm:flex-none">
-              <span className="sr-only">{filter.label}</span>
-              <select
-                value={searchParams.get(filter.name) ?? filter.defaultValue ?? ""}
-                onChange={(event) => updateParam(filter.name, event.target.value)}
-                className={cx(
-                  "h-11 w-full appearance-none rounded-md border border-border-strong bg-surface pl-3 pr-10 text-base text-foreground",
-                  "transition-[border-color] duration-150 ease-out focus:border-primary",
-                )}
-              >
-                {filter.allLabel ? <option value="">{filter.allLabel}</option> : null}
-                {filter.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                aria-hidden
-                strokeWidth={1.75}
-                className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-muted"
-              />
-            </label>
+            <Select
+              key={filter.name}
+              ariaLabel={filter.label}
+              value={searchParams.get(filter.name) ?? filter.defaultValue ?? ""}
+              onValueChange={(value) => updateParam(filter.name, value)}
+              options={[
+                ...(filter.allLabel ? [{ value: "", label: filter.allLabel }] : []),
+                ...filter.options,
+              ]}
+              className="flex-1 sm:w-48 sm:flex-none"
+            />
           ))}
         </div>
       ) : null}
