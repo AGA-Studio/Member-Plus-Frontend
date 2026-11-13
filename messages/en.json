@@ -236,7 +236,8 @@
       "actions": {
         "edit": "Edit details",
         "printCard": "Print card",
-        "cancel": "Cancel membership"
+        "cancel": "Cancel membership",
+        "deliver": "Deliver card"
       },
       "metrics": {
         "points": "Points",
@@ -305,6 +306,14 @@
         "cashback": "Cashback",
         "emptyTitle": "No activity yet",
         "emptyDescription": "{name}'s points and cashback will appear here."
+      },
+      "deliver": {
+        "title": "Deliver card",
+        "description": "Send {email} a link to save their card to Google Wallet or download it as an image or PDF.",
+        "sendEmail": "Send by email",
+        "sending": "Sending…",
+        "copyLink": "Copy link",
+        "copying": "Copying…"
       }
     },
     "memberships": {
@@ -353,7 +362,9 @@
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
           "unavailable": "We couldn't create the membership. Try again."
-        }
+        },
+        "sendCard": "Email the card",
+        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it."
       },
       "searchLabel": "Search memberships",
       "searchPlaceholder": "Search by name or code",
@@ -474,7 +485,13 @@
     "membershipCancelled": "Membership cancelled.",
     "levelSaved": "Level saved. It applies to new purchases.",
     "sessionExpired": "Your session expired. Sign in again.",
-    "noAccess": "You don't have access to that screen."
+    "noAccess": "You don't have access to that screen.",
+    "cardEmailSent": "Email sent.",
+    "cardEmailFailed": "We couldn't send the email. Try again.",
+    "cardLinkCopied": "Link copied.",
+    "cardLinkFailed": "We couldn't copy the link. Try again.",
+    "membershipCreatedSent": "Membership created. We emailed the card.",
+    "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile."
   },
   "system": {
     "notFound": {
@@ -493,6 +510,31 @@
       "title": "We couldn't reach Member+",
       "description": "Check your internet connection and try again. What you typed is kept.",
       "retry": "Try again"
+    }
+  },
+  "card": {
+    "metaTitle": "Your card · Member+",
+    "heading": "Your {business} card",
+    "subtitle": "Save it on your phone to always have it at hand.",
+    "validUntil": "Valid until {date}",
+    "addToGoogleWallet": "Add to Google Wallet",
+    "openingWallet": "Opening Google Wallet…",
+    "downloadImage": "Download image",
+    "downloadPdf": "Download PDF",
+    "scanHint": "Show the QR code at the register to earn points and cashback.",
+    "notices": {
+      "expired": "This card has expired. You can save it, but it no longer gives benefits.",
+      "cancelled": "This card was cancelled. Talk to your business if you think this is a mistake."
+    },
+    "toasts": {
+      "imageSaved": "Image downloaded.",
+      "pdfSaved": "PDF downloaded.",
+      "downloadFailed": "We couldn't prepare the download. Try again.",
+      "walletFailed": "We couldn't open Google Wallet. Try again."
+    },
+    "invalid": {
+      "title": "This link doesn't work",
+      "description": "It may have expired or a new one may have been created. Ask your business to send you the card again."
     }
   }
 }

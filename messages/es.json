@@ -236,7 +236,8 @@
       "actions": {
         "edit": "Editar datos",
         "printCard": "Imprimir tarjeta",
-        "cancel": "Cancelar membresía"
+        "cancel": "Cancelar membresía",
+        "deliver": "Entregar tarjeta"
       },
       "metrics": {
         "points": "Puntos",
@@ -305,6 +306,14 @@
         "cashback": "Cashback",
         "emptyTitle": "Aún no hay movimientos",
         "emptyDescription": "Los puntos y el cashback de {name} aparecerán aquí."
+      },
+      "deliver": {
+        "title": "Entregar tarjeta",
+        "description": "Envía a {email} un enlace para guardar su tarjeta en Google Wallet o descargarla como imagen o PDF.",
+        "sendEmail": "Enviar por correo",
+        "sending": "Enviando…",
+        "copyLink": "Copiar enlace",
+        "copying": "Copiando…"
       }
     },
     "memberships": {
@@ -353,7 +362,9 @@
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
           "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo."
-        }
+        },
+        "sendCard": "Enviar tarjeta por correo",
+        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla."
       },
       "searchLabel": "Buscar membresías",
       "searchPlaceholder": "Buscar por nombre o código",
@@ -474,7 +485,13 @@
     "membershipCancelled": "Membresía cancelada.",
     "levelSaved": "Nivel guardado. Aplica a las compras nuevas.",
     "sessionExpired": "Tu sesión venció. Inicia sesión otra vez.",
-    "noAccess": "No tienes acceso a esa pantalla."
+    "noAccess": "No tienes acceso a esa pantalla.",
+    "cardEmailSent": "Correo enviado.",
+    "cardEmailFailed": "No pudimos enviar el correo. Inténtalo de nuevo.",
+    "cardLinkCopied": "Enlace copiado.",
+    "cardLinkFailed": "No pudimos copiar el enlace. Inténtalo de nuevo.",
+    "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
+    "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha."
   },
   "system": {
     "notFound": {
@@ -493,6 +510,31 @@
       "title": "No pudimos conectar con Member+",
       "description": "Revisa tu conexión a internet e inténtalo de nuevo. Lo que escribiste se conserva.",
       "retry": "Reintentar"
+    }
+  },
+  "card": {
+    "metaTitle": "Tu tarjeta · Member+",
+    "heading": "Tu tarjeta de {business}",
+    "subtitle": "Guárdala en tu teléfono para tenerla siempre a la mano.",
+    "validUntil": "Vigente hasta el {date}",
+    "addToGoogleWallet": "Agregar a Google Wallet",
+    "openingWallet": "Abriendo Google Wallet…",
+    "downloadImage": "Descargar imagen",
+    "downloadPdf": "Descargar PDF",
+    "scanHint": "Muestra el código QR en caja para acumular puntos y cashback.",
+    "notices": {
+      "expired": "Esta tarjeta venció. Puedes guardarla, pero ya no da beneficios.",
+      "cancelled": "Esta tarjeta fue cancelada. Habla con tu negocio si crees que es un error."
+    },
+    "toasts": {
+      "imageSaved": "Imagen descargada.",
+      "pdfSaved": "PDF descargado.",
+      "downloadFailed": "No pudimos preparar la descarga. Inténtalo de nuevo.",
+      "walletFailed": "No pudimos abrir Google Wallet. Inténtalo de nuevo."
+    },
+    "invalid": {
+      "title": "Este enlace no funciona",
+      "description": "Puede que haya vencido o que se haya generado uno nuevo. Pide a tu negocio que te envíe la tarjeta otra vez."
     }
   }
 }
