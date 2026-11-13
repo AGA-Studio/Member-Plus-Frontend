@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import Link from "next/link";
-import { Users } from "lucide-react";
+import { ChevronRight, Users } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -91,7 +92,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
       />
       </Reveal>
       <Reveal index={2}>
-      <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+      <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0 max-sm:shadow-none">
         {result.items.length === 0 ? (
           <EmptyState
             icon={Users}
@@ -109,6 +110,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                   <th scope="col" className="px-4 py-3 text-right font-medium">{t("columns.points")}</th>
                   <th scope="col" className="px-4 py-3 font-medium">{t("columns.lastPurchase")}</th>
                   <th scope="col" className="px-6 py-3 font-medium">{t("columns.status")}</th>
+                  <th aria-hidden className="w-12 pr-6" />
                 </tr>
               </thead>
               <tbody>
@@ -122,10 +124,13 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                         <Link
                           href={`/clientes/${encodeURIComponent(member.code)}`}
                           aria-label={t("openCustomer", { name: member.fullName })}
-                          className="flex flex-col rounded-sm"
+                          className="flex items-center gap-3 rounded-sm"
                         >
-                          <span className="text-base font-medium text-foreground">{member.fullName}</span>
-                          <span className="text-sm text-muted">{member.email}</span>
+                          <Avatar name={member.fullName} />
+                          <span className="flex flex-col">
+                            <span className="text-base font-medium text-foreground">{member.fullName}</span>
+                            <span className="text-sm text-muted">{member.email}</span>
+                          </span>
                         </Link>
                       </td>
                       <td className="px-4 py-3 font-mono text-sm tabular-nums text-foreground">{member.code}</td>
@@ -133,6 +138,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                       <td className="px-4 py-3 text-right text-base tabular-nums text-foreground">{formatPoints(format, member.points)}</td>
                       <td className="px-4 py-3 text-base text-foreground">{lastPurchase ? formatDate(lastPurchase) : t("noLastPurchase")}</td>
                       <td className="px-6 py-3"><Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge></td>
+                      <td aria-hidden className="pr-6 text-muted"><ChevronRight strokeWidth={1.75} className="size-5" /></td>
                     </tr>
                   );
                 })}
@@ -148,7 +154,8 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                       href={`/clientes/${encodeURIComponent(member.code)}`}
                       className="flex items-center justify-between gap-3 px-4 py-3 transition-colors duration-150 ease-out hover:bg-surface-muted"
                     >
-                      <span className="flex min-w-0 flex-col">
+                      <Avatar name={member.fullName} />
+                      <span className="flex min-w-0 flex-1 flex-col">
                         <span className="truncate text-base font-medium text-foreground">{member.fullName}</span>
                         <span className="flex items-center gap-2 text-sm text-muted">
                           <span className="font-mono tabular-nums">{member.code}</span>
@@ -157,6 +164,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                         </span>
                       </span>
                       <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
+                      <ChevronRight aria-hidden strokeWidth={1.75} className="size-5 shrink-0 text-muted" />
                     </Link>
                   </li>
                 );

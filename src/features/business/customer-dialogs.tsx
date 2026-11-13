@@ -1,10 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { useActionState, useEffect, useState, useTransition } from "react";
+import {
+  createContext,
+  useActionState,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+  type ReactNode,
+} from "react";
 import { Alert } from "@/components/ui/alert";
-import { Button, buttonStyles } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
@@ -14,15 +22,34 @@ import {
   type EditCustomerState,
 } from "./actions";
 
-type CustomerActionsProps = {
+type CustomerDialogsContextValue = {
+  openEdit: () => void;
+  openCancel: () => void;
+};
+
+const CustomerDialogsContext = createContext<CustomerDialogsContextValue | null>(null);
+
+function useCustomerDialogs(): CustomerDialogsContextValue {
+  const context = useContext(CustomerDialogsContext);
+  if (!context) throw new Error("Customer dialog buttons need CustomerDialogsProvider");
+  return context;
+}
+
+type CustomerDialogsProviderProps = {
   code: string;
   fullName: string;
   email: string;
   phone: string;
-  cancelled: boolean;
+  children: ReactNode;
 };
 
-export function CustomerActions({ code, fullName, email, phone, cancelled }: CustomerActionsProps) {
+export function CustomerDialogsProvider({
+  code,
+  fullName,
+  email,
+  phone,
+  children,
+}: CustomerDialogsProviderProps) {
   const t = useTranslations("business.customer");
   const common = useTranslations("common");
   const toasts = useTranslations("toasts");
@@ -48,10 +75,16 @@ export function CustomerActions({ code, fullName, email, phone, cancelled }: Cus
   const [acknowledgedState, setAcknowledgedState] = useState(state);
   const editVisible = editOpen && !(state.status === "saved" && state !== acknowledgedState);
 
-  function openEdit() {
-    setAcknowledgedState(state);
-    setEditOpen(true);
-  }
+  const value = useMemo(
+    () => ({
+      openEdit: () => {
+        setAcknowledgedState(state);
+        setEditOpen(true);
+      },
+      openCancel: () => setCancelOpen(true),
+    }),
+    [state],
+  );
 
   function confirmCancel() {
     startCancelling(async () => {
@@ -62,19 +95,8 @@ export function CustomerActions({ code, fullName, email, phone, cancelled }: Cus
   }
 
   return (
-    <>
-      {cancelled ? null : (
-        <Button variant="ghost" className="order-last sm:order-first" onClick={() => setCancelOpen(true)}>
-          {t("actions.cancel")}
-        </Button>
-      )}
-      <Link
-        href={`/membresias/imprimir?code=${encodeURIComponent(code)}`}
-        className={buttonStyles({ variant: "outline" })}
-      >
-        {t("actions.printCard")}
-      </Link>
-      <Button onClick={openEdit}>{t("actions.edit")}</Button>
+    <CustomerDialogsContext.Provider value={value}>
+      {children}
 
       <Dialog
         open={editVisible}
@@ -82,7 +104,9 @@ export function CustomerActions({ code, fullName, email, phone, cancelled }: Cus
         title={t("editDialog.title", { name: fullName })}
       >
         <form action={formAction} noValidate className="flex flex-col gap-5">
-          {state.errors.form ? <Alert tone="danger">{t(`editDialog.errors.${state.errors.form}`)}</Alert> : null}
+          {state.errors.form ? (
+            <Alert tone="danger">{t(`editDialog.errors.${state.errors.form}`)}</Alert>
+          ) : null}
           <TextField
             name="fullName"
             label={t("editDialog.fullName")}
@@ -132,6 +156,32 @@ export function CustomerActions({ code, fullName, email, phone, cancelled }: Cus
           </Button>
         </div>
       </Dialog>
-    </>
+    </CustomerDialogsContext.Provider>
+  );
+}
+
+type TriggerProps = {
+  className?: string;
+};
+
+export function EditCustomerButton({ className }: TriggerProps) {
+  const t = useTranslations("business.customer");
+  const { openEdit } = useCustomerDialogs();
+
+  return (
+    <Button className={className} onClick={openEdit}>
+      {t("actions.edit")}
+    </Button>
+  );
+}
+
+export function CancelMembershipButton({ className }: TriggerProps) {
+  const t = useTranslations("business.customer");
+  const { openCancel } = useCustomerDialogs();
+
+  return (
+    <Button variant="ghost" className={className} onClick={openCancel}>
+      {t("actions.cancel")}
+    </Button>
   );
 }

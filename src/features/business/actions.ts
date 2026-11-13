@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { updateLevel } from "@/lib/api/levels";
 import { cancelMember, createMember, updateMember } from "@/lib/api/members";
+import { listAllMovements, type MovementPeriod } from "@/lib/api/purchases";
 import { tiers, type Tier } from "@/lib/domain";
 import { requireUser } from "@/lib/session";
 
@@ -159,4 +160,40 @@ export async function updateLevelAction(
 
   revalidatePath("/", "layout");
   return { status: "saved", values, errors: {} };
+}
+
+export type MovementExportRow = {
+  createdAt: string;
+  registerName: string;
+  memberName: string;
+  memberCode: string;
+  concept: string;
+  amount: number;
+  discount: number;
+  points: number;
+  cashbackEarned: number;
+  cashbackUsed: number;
+};
+
+export async function exportMovementsAction(filters: {
+  query?: string;
+  register?: string;
+  period: MovementPeriod;
+}): Promise<MovementExportRow[]> {
+  await requireUser(["admin"]);
+
+  const purchases = await listAllMovements(filters);
+
+  return purchases.map((purchase) => ({
+    createdAt: purchase.createdAt,
+    registerName: purchase.registerName,
+    memberName: purchase.memberName,
+    memberCode: purchase.memberCode,
+    concept: purchase.concept,
+    amount: purchase.breakdown.amountCents / 100,
+    discount: purchase.breakdown.discountCents / 100,
+    points: purchase.breakdown.pointsEarned,
+    cashbackEarned: purchase.breakdown.cashbackEarnedCents / 100,
+    cashbackUsed: purchase.breakdown.cashbackAppliedCents / 100,
+  }));
 }

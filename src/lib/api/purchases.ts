@@ -100,9 +100,23 @@ export async function listPurchasesByMember(memberCode: string, page: number): P
   return paginate(purchases, page, 6);
 }
 
+export type MovementPeriod = "7d" | "30d" | "90d" | "all";
+
+export const movementPeriods: readonly MovementPeriod[] = ["7d", "30d", "90d", "all"];
+export const defaultMovementPeriod: MovementPeriod = "30d";
+
+const periodDays: Record<Exclude<MovementPeriod, "all">, number> = { "7d": 7, "30d": 30, "90d": 90 };
+const dayInMilliseconds = 24 * 60 * 60 * 1000;
+
+function isInPeriod(createdAt: string, period: MovementPeriod): boolean {
+  if (period === "all") return true;
+  return Date.now() - new Date(createdAt).getTime() <= periodDays[period] * dayInMilliseconds;
+}
+
 export type MovementFilters = {
   query?: string;
   register?: string;
+  period?: MovementPeriod;
   page: number;
 };
 
@@ -113,7 +127,7 @@ export type MovementSummary = {
   cashbackUsedCents: number;
 };
 
-export async function listMovements({ query, register, page }: MovementFilters): Promise<{
+export async function listMovements({ query, register, period = defaultMovementPeriod, page }: MovementFilters): Promise<{
   page: Page<Purchase>;
   summary: MovementSummary;
 }> {
@@ -121,6 +135,7 @@ export async function listMovements({ query, register, page }: MovementFilters):
   const filtered = mockStore().purchases
     .filter((purchase) => matchesQuery(query, purchase.memberName, purchase.memberCode))
     .filter((purchase) => !register || purchase.registerName === register)
+    .filter((purchase) => isInPeriod(purchase.createdAt, period))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const summary = filtered.reduce<MovementSummary>(
@@ -147,4 +162,14 @@ export async function getLastPurchaseDates(): Promise<Record<string, string>> {
     if (!current || purchase.createdAt > current) latest[purchase.memberCode] = purchase.createdAt;
   }
   return latest;
+}
+
+export async function listAllMovements({ query, register, period = defaultMovementPeriod }: Omit<MovementFilters, "page">): Promise<Purchase[]> {
+  await simulateLatency();
+
+  return mockStore()
+    .purchases.filter((purchase) => matchesQuery(query, purchase.memberName, purchase.memberCode))
+    .filter((purchase) => !register || purchase.registerName === register)
+    .filter((purchase) => isInPeriod(purchase.createdAt, period))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }

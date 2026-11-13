@@ -27,7 +27,7 @@ export default async function LoginPage() {
       <aside className="h-80 shrink-0 lg:h-auto">
         <LoginBrandPanel />
       </aside>
-      <section className="relative -mt-6 flex flex-1 flex-col items-center justify-center rounded-t-xl bg-surface px-6 py-10 lg:mt-0 lg:rounded-none">
+      <section className="relative -mt-10 flex flex-1 flex-col items-center justify-center rounded-t-xl bg-surface px-6 py-10 lg:mt-0 lg:rounded-none">
         <div className="flex w-full max-w-auth flex-col gap-10">
           <Logo className="h-10 w-auto self-start lg:h-12" />
           <div className="flex flex-col gap-1.5 transition-[opacity,translate] duration-250 ease-out starting:translate-y-2 starting:opacity-0">

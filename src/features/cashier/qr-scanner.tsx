@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, CameraOff, Scan } from "lucide-react";
+import { CameraOff, Scan } from "lucide-react";
 import jsQR from "jsqr";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -94,7 +94,7 @@ export function QrScanner({ paused, found, onDetect, onDenied }: QrScannerProps)
   const denied = status === "denied";
 
   return (
-    <div className="relative flex h-80 items-center justify-center overflow-hidden rounded-xl bg-ink-950 sm:h-95">
+    <div className="relative flex h-90 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-ink-800 to-ink-950 sm:h-95">
       <video
         ref={videoRef}
         muted
@@ -134,18 +134,18 @@ export function QrScanner({ paused, found, onDetect, onDenied }: QrScannerProps)
           ) : null}
           <p
             aria-live="polite"
-            className="absolute inset-x-0 bottom-4 mx-auto w-fit rounded-full bg-ink-950/70 px-4 py-2 text-sm font-medium text-white"
+            className="absolute inset-x-0 bottom-4 mx-auto w-fit rounded-full bg-white/15 px-4 py-2 text-sm font-medium text-white"
           >
             {found ? t("detected") : t("aim")}
           </p>
         </>
       )}
 
-      <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-ink-950/70 px-3 py-2 text-sm font-medium text-white">
+      <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-white/15 px-3 py-2 text-sm font-medium text-white">
         {denied ? (
           <CameraOff aria-hidden strokeWidth={1.75} className="size-4" />
         ) : (
-          <Camera aria-hidden strokeWidth={1.75} className="size-4" />
+          <span aria-hidden className="size-2 rounded-full bg-success-soft" />
         )}
         {denied ? t("blocked") : t("active")}
       </div>

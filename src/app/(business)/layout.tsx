@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BottomNav } from "@/features/business/bottom-nav";
-import { MobileHeader } from "@/features/business/mobile-header";
 import { Sidebar } from "@/features/business/sidebar";
 import { requireUser } from "@/lib/session";
 
@@ -21,7 +20,6 @@ export default async function BusinessLayout({ children }: LayoutProps<"/">) {
           .slice(0, 2)}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <MobileHeader businessName={user.businessName} businessInitials={user.businessInitials} />
         <ScrollArea>
           <div className="flex flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</div>
         </ScrollArea>

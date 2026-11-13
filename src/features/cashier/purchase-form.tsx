@@ -3,7 +3,8 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useActionState, useEffect, useId, useState } from "react";
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Button, buttonStyles } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast-provider";
 import { cx } from "@/lib/cx";
@@ -79,7 +80,12 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
       <input type="hidden" name="memberCode" value={member.code} />
       <input type="hidden" name="useCashback" value={useCashback && canUseCashback ? "on" : ""} />
 
-      <h1 className="text-heading text-foreground">{t("title")}</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-heading text-foreground">{t("title")}</h1>
+        <Link href="/caja" className={buttonStyles({ variant: "ghost", size: "sm" })}>
+          {t("cancel")}
+        </Link>
+      </div>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="amount" className="text-sm font-medium text-foreground">

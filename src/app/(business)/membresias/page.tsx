@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { CreditCard } from "lucide-react";
+import { ChevronRight, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -107,7 +108,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
       />
       </Reveal>
       <Reveal index={3}>
-      <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+      <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0 max-sm:shadow-none">
         {result.items.length === 0 ? (
           <EmptyState
             icon={CreditCard}
@@ -134,7 +135,8 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                   return (
                     <tr key={member.code} className="border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted">
                       <td className="px-6 py-3">
-                        <Link href={`/clientes/${encodeURIComponent(member.code)}`} className="rounded-sm text-base font-medium text-foreground">
+                        <Link href={`/clientes/${encodeURIComponent(member.code)}`} className="flex items-center gap-3 rounded-sm text-base font-medium text-foreground">
+                          <Avatar name={member.fullName} />
                           {member.fullName}
                         </Link>
                       </td>
@@ -158,7 +160,8 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                       href={`/clientes/${encodeURIComponent(member.code)}`}
                       className="flex items-center justify-between gap-3 px-4 py-3 transition-colors duration-150 ease-out hover:bg-surface-muted"
                     >
-                      <span className="flex min-w-0 flex-col">
+                      <Avatar name={member.fullName} />
+                      <span className="flex min-w-0 flex-1 flex-col">
                         <span className="truncate text-base font-medium text-foreground">{member.fullName}</span>
                         <span className="flex items-center gap-2 text-sm text-muted">
                           <span className="font-mono tabular-nums">{member.code}</span>
@@ -167,6 +170,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                         </span>
                       </span>
                       <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
+                      <ChevronRight aria-hidden strokeWidth={1.75} className="size-5 shrink-0 text-muted" />
                     </Link>
                   </li>
                 );

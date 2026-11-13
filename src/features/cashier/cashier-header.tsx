@@ -8,7 +8,7 @@ export async function CashierHeader() {
 
   return (
     <header className="border-b border-border bg-surface">
-      <div className="flex h-18 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:h-18 lg:px-8">
         <div className="flex items-center gap-3">
           <span
             aria-hidden
@@ -25,7 +25,7 @@ export async function CashierHeader() {
             <span className="text-sm font-medium text-foreground">{user.fullName}</span>
             <span className="text-xs text-muted">{t("role")}</span>
           </div>
-          <LogoutButton />
+          <LogoutButton tone="strong" />
         </div>
       </div>
     </header>

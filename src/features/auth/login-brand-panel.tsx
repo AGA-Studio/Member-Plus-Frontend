@@ -31,7 +31,7 @@ export function LoginBrandPanel() {
           />
         </div>
       </div>
-      <h2 className="relative hidden max-w-xl p-16 text-display text-white lg:block">
+      <h2 className="relative hidden whitespace-pre-line p-16 text-display text-white lg:block">
         {t("headline")}
       </h2>
     </div>
