@@ -6,7 +6,7 @@ import { registerPurchase } from "@/lib/api/purchases";
 import { parseAmountToCents } from "@/lib/format";
 import { requireSession } from "@/lib/session";
 
-export type LookupResult = { ok: false; reason: "empty" | "notFound" };
+export type LookupResult = { ok: true; code: string } | { ok: false; reason: "empty" | "notFound" };
 
 export async function lookupCardAction(rawCode: string): Promise<LookupResult> {
   await requireSession();
@@ -17,7 +17,7 @@ export async function lookupCardAction(rawCode: string): Promise<LookupResult> {
   const member = await findMemberByCode(code);
   if (!member) return { ok: false, reason: "notFound" };
 
-  redirect(`/caja/${encodeURIComponent(member.code)}`);
+  return { ok: true, code: member.code };
 }
 
 export type PurchaseState = {

@@ -19,7 +19,7 @@
     "loading": "Cargando…",
     "logout": {
       "title": "Cerrar sesión",
-      "body": "Saldrás de Member+ en este dispositivo. Para volver tendrás que iniciar sesión otra vez.",
+      "body": "¿Seguro que quieres cerrar sesión?",
       "cancel": "Cancelar",
       "confirm": "Cerrar sesión",
       "confirming": "Cerrando sesión…"
@@ -76,10 +76,10 @@
   "cashier": {
     "header": {
       "role": "Caja",
+      "workspace": "Punto de cobro",
       "signOut": "Cerrar sesión"
     },
     "scan": {
-      "metaTitle": "Escanea la tarjeta · Member+",
       "readerConnected": "Lector conectado",
       "title": "Escanea la tarjeta",
       "subtitle": "Apunta el QR a la cámara o al lector. Si falla, escribe el código.",
@@ -99,7 +99,9 @@
         "detected": "Tarjeta detectada · Buscando cliente…",
         "deniedTitle": "Cámara bloqueada",
         "deniedMessage": "Permite el acceso a la cámara o escribe el código de la tarjeta."
-      }
+      },
+      "open": "Escanear tarjeta",
+      "openAnother": "Escanear otra tarjeta"
     },
     "purchase": {
       "metaTitle": "Registrar compra · Member+",
@@ -118,7 +120,8 @@
         "cashbackUsed": "Saldo de cashback",
         "total": "Total a cobrar",
         "pointsEarned": "Puntos que gana",
-        "cashbackEarned": "Cashback que gana"
+        "cashbackEarned": "Cashback que gana",
+        "discountEmpty": "Descuento"
       },
       "enterAmount": "Escribe el monto para registrar la compra.",
       "submit": "Registrar compra",
@@ -141,10 +144,16 @@
           "expired": "Vencida",
           "cancelled": "Cancelada"
         },
-        "validUntil": "Vigente hasta el {date}"
+        "validUntil": "Vigente hasta el {date}",
+        "emptyCard": "Sin tarjeta",
+        "emptyTitle": "Sin cliente",
+        "emptyDescription": "Escanea una tarjeta para ver sus datos."
       },
       "currencySymbol": "$",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "selectMember": "Escanea una tarjeta para registrar la compra.",
+      "notFoundNotice": "No encontramos esa tarjeta. Escanéala de nuevo.",
+      "cashbackNoMember": "Disponible al escanear una tarjeta."
     },
     "receipt": {
       "metaTitle": "Compra registrada · Member+",

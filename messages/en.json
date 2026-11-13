@@ -19,7 +19,7 @@
     "loading": "Loading…",
     "logout": {
       "title": "Sign out",
-      "body": "You'll leave Member+ on this device. To come back you'll need to sign in again.",
+      "body": "Are you sure you want to sign out?",
       "cancel": "Cancel",
       "confirm": "Sign out",
       "confirming": "Signing out…"
@@ -76,10 +76,10 @@
   "cashier": {
     "header": {
       "role": "Register",
+      "workspace": "Point of sale",
       "signOut": "Sign out"
     },
     "scan": {
-      "metaTitle": "Scan the card · Member+",
       "readerConnected": "Reader connected",
       "title": "Scan the card",
       "subtitle": "Point the QR at the camera or the reader. If it fails, type the code.",
@@ -99,7 +99,9 @@
         "detected": "Card detected · Finding customer…",
         "deniedTitle": "Camera blocked",
         "deniedMessage": "Allow camera access or type the card code."
-      }
+      },
+      "open": "Scan card",
+      "openAnother": "Scan another card"
     },
     "purchase": {
       "metaTitle": "Register purchase · Member+",
@@ -118,7 +120,8 @@
         "cashbackUsed": "Cashback balance",
         "total": "Total to charge",
         "pointsEarned": "Points earned",
-        "cashbackEarned": "Cashback earned"
+        "cashbackEarned": "Cashback earned",
+        "discountEmpty": "Discount"
       },
       "enterAmount": "Enter the amount to register the purchase.",
       "submit": "Register purchase",
@@ -141,10 +144,16 @@
           "expired": "Expired",
           "cancelled": "Cancelled"
         },
-        "validUntil": "Valid until {date}"
+        "validUntil": "Valid until {date}",
+        "emptyCard": "No card",
+        "emptyTitle": "No customer",
+        "emptyDescription": "Scan a card to see their details."
       },
       "currencySymbol": "$",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "selectMember": "Scan a card to register the purchase.",
+      "notFoundNotice": "We couldn't find that card. Scan it again.",
+      "cashbackNoMember": "Available once you scan a card."
     },
     "receipt": {
       "metaTitle": "Purchase registered · Member+",
