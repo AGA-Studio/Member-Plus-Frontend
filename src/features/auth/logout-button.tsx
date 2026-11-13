@@ -22,6 +22,7 @@ export function LogoutDialog({ open, onClose }: LogoutDialogProps) {
   function confirmLogout() {
     startTransition(async () => {
       await logoutFromBackend();
+      onClose();
       router.replace("/login?toast=signedOut");
       router.refresh();
     });
@@ -43,7 +44,7 @@ export function LogoutDialog({ open, onClose }: LogoutDialogProps) {
 }
 
 type LogoutButtonProps = {
-  tone?: "muted" | "strong";
+  tone?: "muted" | "strong" | "inverse";
 };
 
 export function LogoutButton({ tone = "muted" }: LogoutButtonProps) {
@@ -57,8 +58,10 @@ export function LogoutButton({ tone = "muted" }: LogoutButtonProps) {
         onClick={() => setOpen(true)}
         aria-label={t("title")}
         className={cx(
-          "flex size-11 items-center justify-center rounded-md transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97",
-          tone === "strong" ? "text-foreground" : "text-muted",
+          "flex size-11 items-center justify-center transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
+          tone === "inverse"
+            ? "rounded-full text-ink-300 hover:bg-white/10 hover:text-white"
+            : cx("rounded-md hover:bg-surface-muted hover:text-foreground", tone === "strong" ? "text-foreground" : "text-muted"),
         )}
       >
         <LogOut aria-hidden strokeWidth={1.75} className="size-5" />

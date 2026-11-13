@@ -31,6 +31,10 @@ export function Dialog({ open, onClose, title, children, variant = "modal" }: Di
 
     if (open && !dialog.open) dialog.showModal();
     if (!open && dialog.open) dialog.close();
+
+    return () => {
+      if (dialog.open) dialog.close();
+    };
   }, [open]);
 
   return (
@@ -44,7 +48,8 @@ export function Dialog({ open, onClose, title, children, variant = "modal" }: Di
       className={cx(
         "bg-surface p-0 text-foreground shadow-lg opacity-0 open:opacity-100 starting:open:opacity-0",
         "transition-[opacity,scale,translate,display,overlay] duration-200 ease-out transition-discrete",
-        "backdrop:bg-foreground/50 backdrop:transition-opacity backdrop:duration-200 backdrop:ease-out",
+        "backdrop:bg-foreground/40 backdrop:opacity-0 backdrop:backdrop-blur-md open:backdrop:opacity-100 starting:open:backdrop:opacity-0",
+        "backdrop:transition-[opacity,display,overlay] backdrop:duration-200 backdrop:ease-out backdrop:transition-discrete",
         variantClasses[variant],
       )}
     >

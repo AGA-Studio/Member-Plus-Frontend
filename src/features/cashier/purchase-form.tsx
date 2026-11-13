@@ -20,10 +20,10 @@ import { calculatePurchase } from "@/lib/pricing";
 import { registerPurchaseAction, type PurchaseState } from "./actions";
 
 type PurchaseFormProps = {
-  member: Pick<Member, "code" | "cashbackBalanceCents" | "status"> & {
+  member: (Pick<Member, "code" | "cashbackBalanceCents" | "status"> & {
     benefits: TierBenefits;
     tierLabel: string;
-  };
+  }) | null;
 };
 
 const initialState: PurchaseState = {};
@@ -51,15 +51,17 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
     if (state.error) show("danger", t(`errors.${state.error}`));
   }, [state, show, t]);
 
-  const isActive = member.status === "active";
-  const benefits = isActive ? member.benefits : noBenefits;
-  const canUseCashback = isActive && member.cashbackBalanceCents > 0;
+  const hasMember = member !== null;
+  const cashbackBalanceCents = member?.cashbackBalanceCents ?? 0;
+  const isActive = member?.status === "active";
+  const benefits = member && isActive ? member.benefits : noBenefits;
+  const canUseCashback = isActive && cashbackBalanceCents > 0;
   const amountCents = parseAmountToCents(amount);
   const breakdown = calculatePurchase({
     amountCents,
     benefits,
     useCashback: useCashback && canUseCashback,
-    cashbackBalanceCents: member.cashbackBalanceCents,
+    cashbackBalanceCents,
   });
   const hasAmount = amountCents > 0;
   const empty = "—";
@@ -77,27 +79,30 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
       noValidate
       className="flex flex-col gap-6 rounded-lg border border-border bg-surface p-5 pb-28 shadow-sm sm:p-6 lg:pb-6"
     >
-      <input type="hidden" name="memberCode" value={member.code} />
+      <input type="hidden" name="memberCode" value={member?.code ?? ""} />
       <input type="hidden" name="useCashback" value={useCashback && canUseCashback ? "on" : ""} />
 
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-heading text-foreground">{t("title")}</h1>
-        <Link href="/caja" className={buttonStyles({ variant: "ghost", size: "sm" })}>
-          {t("cancel")}
-        </Link>
+        {hasMember ? (
+          <Link href="/caja" className={buttonStyles({ variant: "ghost", size: "sm" })}>
+            {t("cancel")}
+          </Link>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="amount" className="text-sm font-medium text-foreground">
           {t("amount")}
         </label>
-        <div className="flex h-16 items-center gap-2 rounded-md border border-border-strong bg-surface px-4 transition-colors duration-150 ease-out focus-within:border-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring">
+        <div className="flex h-16 items-center gap-2 rounded-md border border-border-strong bg-surface px-4 transition-colors duration-150 ease-out focus-within:border-primary focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring has-disabled:bg-surface-muted">
           <span aria-hidden className="font-display text-title font-semibold text-muted">
             {t("currencySymbol")}
           </span>
           <input
             id="amount"
             name="amount"
+            disabled={!hasMember}
             value={amount}
             onChange={(event) => setAmount(sanitizeAmount(event.target.value))}
             onFocus={() => setAmount((current) => current.replace(/,/g, ""))}
@@ -105,7 +110,7 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
             inputMode="decimal"
             autoComplete="off"
             placeholder="0.00"
-            className="min-w-0 flex-1 bg-transparent font-display text-title font-semibold tabular-nums text-foreground outline-none placeholder:text-border-strong"
+            className="min-w-0 flex-1 bg-transparent font-display text-title font-semibold tabular-nums text-foreground outline-none placeholder:text-border-strong disabled:cursor-not-allowed"
           />
           <span className="text-sm font-medium text-muted">{t("currency")}</span>
         </div>
@@ -118,9 +123,10 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
         <input
           id="concept"
           name="concept"
+          disabled={!hasMember}
           autoComplete="off"
           placeholder={t("conceptPlaceholder")}
-          className="h-11 w-full rounded-md border border-border-strong bg-surface px-3 text-base text-foreground transition-[border-color] duration-150 ease-out placeholder:text-muted focus:border-primary"
+          className="h-11 w-full rounded-md border border-border-strong bg-surface px-3 text-base text-foreground transition-[border-color] duration-150 ease-out placeholder:text-muted focus:border-primary disabled:cursor-not-allowed disabled:bg-surface-muted"
         />
       </div>
 
@@ -130,9 +136,11 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
             {t("useCashback")}
           </span>
           <span id={switchHintId} className="text-sm text-muted">
-            {canUseCashback
-              ? t("cashbackAvailable", { amount: formatMoney(format, member.cashbackBalanceCents) })
-              : t("cashbackUnavailable")}
+            {!hasMember
+              ? t("cashbackNoMember")
+              : canUseCashback
+                ? t("cashbackAvailable", { amount: formatMoney(format, cashbackBalanceCents) })
+                : t("cashbackUnavailable")}
           </span>
         </div>
         <Switch
@@ -150,10 +158,11 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
           value={hasAmount ? formatMoney(format, breakdown.amountCents) : empty}
         />
         <SummaryRow
-          label={t("summary.discount", {
-            tier: member.tierLabel,
-            percent: benefits.discountPercent,
-          })}
+          label={
+            member
+              ? t("summary.discount", { tier: member.tierLabel, percent: benefits.discountPercent })
+              : t("summary.discountEmpty")
+          }
           value={hasAmount ? formatDiscount(format, breakdown.discountCents) : empty}
           tone="positive"
         />
@@ -190,7 +199,7 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
         ) : null}
         {!hasAmount ? (
           <span id={submitHintId} className="sr-only">
-            {t("enterAmount")}
+            {hasMember ? t("enterAmount") : t("selectMember")}
           </span>
         ) : null}
         <Button
@@ -198,8 +207,8 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
           size="xl"
           fullWidth
           loading={pending}
-          disabled={!hasAmount}
-          aria-describedby={!hasAmount ? submitHintId : undefined}
+          disabled={!hasMember || !hasAmount}
+          aria-describedby={!hasMember || !hasAmount ? submitHintId : undefined}
         >
           {pending ? t("registering") : t("submit")}
         </Button>

@@ -1,53 +1,7 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { connection } from "next/server";
-import { getTranslations } from "next-intl/server";
-import { Alert } from "@/components/ui/alert";
-import { MemberSummary } from "@/features/cashier/member-summary";
-import { PurchaseForm } from "@/features/cashier/purchase-form";
-import { requireSession } from "@/lib/session";
-import { findMemberByCode } from "@/lib/api/members";
+import { redirect } from "next/navigation";
 
-export const instant = false;
-
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("cashier.purchase");
-
-  return { title: t("metaTitle") };
-}
-
-export default async function PurchasePage({ params }: PageProps<"/caja/[code]">) {
-  await connection();
+export default async function LegacyPurchasePage({ params }: PageProps<"/caja/[code]">) {
   const { code } = await params;
-  const member = await findMemberByCode(decodeURIComponent(code));
 
-  if (!member) notFound();
-
-  const t = await getTranslations("cashier.purchase");
-  const tiers = await getTranslations("tiers");
-  const user = await requireSession();
-
-  return (
-    <div className="mx-auto flex w-full max-w-page flex-col gap-6">
-      {member.status !== "active" ? (
-        <Alert tone="warning">{t(`inactiveNotice.${member.status}`)}</Alert>
-      ) : null}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-center lg:gap-8">
-        <div className="lg:w-105 lg:shrink-0">
-          <MemberSummary member={member} businessName={user.businessName} />
-        </div>
-        <div className="lg:w-140">
-        <PurchaseForm
-          member={{
-            code: member.code,
-            status: member.status,
-            cashbackBalanceCents: member.cashbackBalanceCents,
-            benefits: member.benefits,
-            tierLabel: tiers(member.tier),
-          }}
-        />
-        </div>
-      </div>
-    </div>
-  );
+  redirect(`/caja?code=${code}`);
 }

@@ -1,27 +1,64 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
-import { ScanCard } from "@/features/cashier/scan-card";
+import { Alert } from "@/components/ui/alert";
+import { MemberSummary, MemberSummaryPlaceholder } from "@/features/cashier/member-summary";
+import { PurchaseForm } from "@/features/cashier/purchase-form";
+import { ScanDialog } from "@/features/cashier/scan-dialog";
+import { readParam } from "@/features/business/member-status";
+import { findMemberByCode } from "@/lib/api/members";
+import { requireSession } from "@/lib/session";
 
 export const instant = false;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("cashier.scan");
+  const t = await getTranslations("cashier.purchase");
 
   return { title: t("metaTitle") };
 }
 
-export default async function ScanPage() {
-  const t = await getTranslations("cashier.scan");
+export default async function CashierPage({ searchParams }: PageProps<"/caja">) {
+  await connection();
+  const { code } = await searchParams;
+  const requestedCode = readParam(code);
+  const member = requestedCode ? await findMemberByCode(requestedCode) : null;
+
+  const t = await getTranslations("cashier.purchase");
+  const tiers = await getTranslations("tiers");
+  const user = await requireSession();
 
   return (
-    <div className="mx-auto my-auto flex w-full max-w-cashier flex-col gap-8">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <Badge tone="success">{t("readerConnected")}</Badge>
-        <h1 className="text-title text-foreground">{t("title")}</h1>
-        <p className="max-w-xl text-base text-muted">{t("subtitle")}</p>
+    <div className="mx-auto flex w-full max-w-page flex-col gap-6">
+      {requestedCode && !member ? <Alert tone="warning">{t("notFoundNotice")}</Alert> : null}
+      {member && member.status !== "active" ? (
+        <Alert tone="warning">{t(`inactiveNotice.${member.status}`)}</Alert>
+      ) : null}
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-center lg:gap-8">
+        <div className="flex flex-col gap-4 lg:w-105 lg:shrink-0">
+          <ScanDialog hasMember={member !== null} />
+          {member ? (
+            <MemberSummary member={member} businessName={user.businessName} />
+          ) : (
+            <MemberSummaryPlaceholder />
+          )}
+        </div>
+        <div className="lg:w-140">
+          <PurchaseForm
+            key={member?.code ?? "empty"}
+            member={
+              member
+                ? {
+                    code: member.code,
+                    status: member.status,
+                    cashbackBalanceCents: member.cashbackBalanceCents,
+                    benefits: member.benefits,
+                    tierLabel: tiers(member.tier),
+                  }
+                : null
+            }
+          />
+        </div>
       </div>
-      <ScanCard />
     </div>
   );
 }

@@ -1,14 +1,20 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { lookupCardAction } from "./actions";
 import { QrScanner } from "./qr-scanner";
 
-export function ScanCard() {
+type ScanCardProps = {
+  onFound: () => void;
+};
+
+export function ScanCard({ onFound }: ScanCardProps) {
   const t = useTranslations("cashier.scan");
+  const router = useRouter();
   const [code, setCode] = useState("");
   const [errorKey, setErrorKey] = useState<"empty" | "notFound" | null>(null);
   const [detected, setDetected] = useState(false);
@@ -33,6 +39,13 @@ export function ScanCard() {
       const result = await lookupCardAction(rawCode);
       lookingUpRef.current = false;
       setDetected(false);
+
+      if (result.ok) {
+        router.replace(`/caja?code=${encodeURIComponent(result.code)}`);
+        onFound();
+        return;
+      }
+
       setErrorKey(result.reason);
       if (!fromScanner) inputRef.current?.focus();
     });
