@@ -77,3 +77,13 @@ export type Page<T> = {
   pageCount: number;
   pageSize: number;
 };
+
+export type PublicCard = {
+  businessName: string;
+  fullName: string;
+  code: string;
+  tier: Tier;
+  status: MemberStatus;
+  validUntil: string;
+  googleWalletEnabled: boolean;
+};

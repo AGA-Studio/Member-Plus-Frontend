@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
 import { updateLevel } from "@/lib/api/levels";
 import { cancelMember, createMember, updateMember } from "@/lib/api/members";
 import { listAllMovements, type MovementPeriod } from "@/lib/api/purchases";
@@ -57,7 +58,34 @@ export async function createMembershipAction(
   if (!result.ok) return { values, errors: { email: result.reason } };
 
   revalidatePath("/", "layout");
-  redirect(`/clientes/${encodeURIComponent(result.code)}?toast=membershipCreated`);
+  const customerPath = `/clientes/${encodeURIComponent(result.code)}`;
+
+  if (formData.get("sendCardEmail") !== "on") redirect(`${customerPath}?toast=membershipCreated`);
+
+  const delivery = await sendCardEmail(result.code);
+  redirect(
+    `${customerPath}?toast=${delivery.ok ? "membershipCreatedSent" : "membershipCreatedEmailFailed"}`,
+  );
+}
+
+export type SendCardEmailState = { ok: boolean };
+
+export async function sendCardEmailAction(code: string): Promise<SendCardEmailState> {
+  await requireUser(["admin"]);
+
+  const result = await sendCardEmail(code);
+
+  return { ok: result.ok };
+}
+
+export type CardLinkState = { ok: true; url: string } | { ok: false };
+
+export async function createCardLinkAction(code: string): Promise<CardLinkState> {
+  await requireUser(["admin"]);
+
+  const result = await createCardLink(code);
+
+  return result.ok ? { ok: true, url: result.url } : { ok: false };
 }
 
 export type EditCustomerState = {
