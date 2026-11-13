@@ -1,15 +1,17 @@
-export const toastKeys = [
-  "signedIn",
-  "signedOut",
-  "membershipCreated",
-  "purchaseRegistered",
-  "customerUpdated",
-  "membershipCancelled",
-  "levelSaved",
-] as const;
+export const toastTones = {
+  signedIn: "success",
+  signedOut: "success",
+  membershipCreated: "success",
+  purchaseRegistered: "success",
+  customerUpdated: "success",
+  membershipCancelled: "success",
+  levelSaved: "success",
+  sessionExpired: "info",
+  noAccess: "info",
+} as const;
 
-export type ToastKey = (typeof toastKeys)[number];
+export type ToastKey = keyof typeof toastTones;
 
 export function isToastKey(value: string | null): value is ToastKey {
-  return toastKeys.some((key) => key === value);
+  return value !== null && Object.hasOwn(toastTones, value);
 }
