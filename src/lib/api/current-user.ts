@@ -30,7 +30,12 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export async function fetchSessionUser(accessToken: string): Promise<SessionUser | null> {
+export type SessionLookup =
+  | { status: "ok"; user: SessionUser }
+  | { status: "unauthorized" }
+  | { status: "unavailable" };
+
+export async function fetchSessionUser(accessToken: string): Promise<SessionLookup> {
   let response: Response;
 
   try {
@@ -39,10 +44,11 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionUser
       cache: "no-store",
     });
   } catch {
-    return null;
+    return { status: "unavailable" };
   }
 
-  if (!response.ok) return null;
+  if (response.status === 401 || response.status === 403) return { status: "unauthorized" };
+  if (!response.ok) return { status: "unavailable" };
 
   const user = (await response.json()) as BackendUser;
   const businessName =
@@ -51,11 +57,14 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionUser
       : (mockBusinessNames[user.business_id] ?? fallbackBusinessName);
 
   return {
-    role: roleMap[user.role],
-    fullName: user.name,
-    email: user.email,
-    businessId: user.business_id,
-    businessName,
-    businessInitials: getInitials(businessName),
+    status: "ok",
+    user: {
+      role: roleMap[user.role],
+      fullName: user.name,
+      email: user.email,
+      businessId: user.business_id,
+      businessName,
+      businessInitials: getInitials(businessName),
+    },
   };
 }

@@ -463,6 +463,27 @@
     "purchaseRegistered": "Compra registrada.",
     "customerUpdated": "Datos guardados.",
     "membershipCancelled": "Membresía cancelada.",
-    "levelSaved": "Nivel guardado. Aplica a las compras nuevas."
+    "levelSaved": "Nivel guardado. Aplica a las compras nuevas.",
+    "sessionExpired": "Tu sesión venció. Inicia sesión otra vez.",
+    "noAccess": "No tienes acceso a esa pantalla."
+  },
+  "system": {
+    "notFound": {
+      "title": "No encontramos esta página",
+      "description": "Puede que el enlace haya cambiado o que la página ya no exista.",
+      "home": "Volver al inicio"
+    },
+    "error": {
+      "title": "Algo salió mal",
+      "description": "No pudimos cargar esta pantalla. Inténtalo de nuevo; si sigue igual, avisa al administrador de tu negocio.",
+      "retry": "Reintentar",
+      "home": "Volver al inicio"
+    },
+    "offline": {
+      "metaTitle": "Sin conexión · Member+",
+      "title": "No pudimos conectar con Member+",
+      "description": "Revisa tu conexión a internet e inténtalo de nuevo. Lo que escribiste se conserva.",
+      "retry": "Reintentar"
+    }
   }
 }
