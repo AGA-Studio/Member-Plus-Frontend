@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Logo } from "@/components/ui/logo";
 import { LoginBrandPanel } from "@/features/auth/login-brand-panel";
+import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { LoginForm } from "@/features/auth/login-form";
+import { getSessionUser, roleHomePaths } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("auth.login");
@@ -10,7 +13,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle") };
 }
 
+export const instant = false;
+
 export default async function LoginPage() {
+  await connection();
+  const user = await getSessionUser();
+  if (user && user.role !== "platform") redirect(roleHomePaths[user.role]);
+
   const t = await getTranslations("auth.login");
 
   return (

@@ -59,11 +59,13 @@ export type Receipt = Purchase & {
   cashbackBalanceAfterCents: number;
 };
 
-export type UserRole = "cashier" | "admin";
+export type UserRole = "cashier" | "admin" | "platform";
 
 export type SessionUser = {
   role: UserRole;
   fullName: string;
+  email: string;
+  businessId: number | null;
   businessName: string;
   businessInitials: string;
 };

@@ -2,15 +2,25 @@
 
 import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { SubmitButton } from "@/components/ui/submit-button";
-import { logoutAction } from "./actions";
+import { logoutFromBackend } from "./auth-client";
 
 export function LogoutButton() {
   const t = useTranslations("common.logout");
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [pending, startTransition] = useTransition();
+
+  function confirmLogout() {
+    startTransition(async () => {
+      await logoutFromBackend();
+      router.replace("/login?toast=signedOut");
+      router.refresh();
+    });
+  }
 
   return (
     <>
@@ -24,12 +34,14 @@ export function LogoutButton() {
       </button>
       <Dialog open={open} onClose={() => setOpen(false)} title={t("title")}>
         <p className="text-base text-muted">{t("body")}</p>
-        <form action={logoutAction} className="flex justify-end gap-3">
+        <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={() => setOpen(false)}>
             {t("cancel")}
           </Button>
-          <SubmitButton label={t("confirm")} pendingLabel={t("confirming")} />
-        </form>
+          <Button loading={pending} onClick={confirmLogout}>
+            {pending ? t("confirming") : t("confirm")}
+          </Button>
+        </div>
       </Dialog>
     </>
   );

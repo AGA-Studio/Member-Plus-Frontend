@@ -1,38 +1,24 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getUserByToken } from "@/lib/api/current-user";
+import { cache } from "react";
+import { fetchSessionUser } from "@/lib/api/current-user";
 import type { SessionUser, UserRole } from "@/lib/domain";
 import { sessionCookieName } from "./session-cookie";
-
-const eightHoursInSeconds = 60 * 60 * 8;
 
 export const roleHomePaths: Record<UserRole, string> = {
   cashier: "/caja",
   admin: "/clientes",
+  platform: "/login",
 };
 
-export async function createSession(accessToken: string): Promise<void> {
+export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const cookieStore = await cookies();
+  const accessToken = cookieStore.get(sessionCookieName)?.value;
 
-  cookieStore.set(sessionCookieName, accessToken, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: eightHoursInSeconds,
-  });
-}
+  if (!accessToken) return null;
 
-export async function destroySession(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(sessionCookieName);
-}
-
-export async function getSessionUser(): Promise<SessionUser | null> {
-  const cookieStore = await cookies();
-
-  return getUserByToken(cookieStore.get(sessionCookieName)?.value);
-}
+  return fetchSessionUser(accessToken);
+});
 
 export async function requireUser(allowedRoles?: UserRole[]): Promise<SessionUser> {
   const user = await getSessionUser();
