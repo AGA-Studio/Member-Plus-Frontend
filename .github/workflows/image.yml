@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       stack:
-        description: "Publicar también la imagen :stack (API interna http://api:8000)"
+        description: "Publicar también la imagen sha-<7>-stack (API interna http://api:8000)"
         type: boolean
         default: false
 
@@ -82,8 +82,9 @@ jobs:
   # Imagen para el stack local de respaldo (perfil `stack` del compose del
   # backend). El rewrite de /api/* se hornea en el build, así que esta copia
   # apunta al servicio `api` de la red de Compose y no al dominio público:
-  # NO se despliega en Coolify. Se publica a mano desde Actions → Image →
-  # Run workflow, marcando la casilla `stack`.
+  # NO se despliega en Coolify. El tag es inmutable (`sha-<7>-stack`, ligado
+  # al commit), como el resto de las imágenes del proyecto. Se publica a mano
+  # desde Actions → Image → Run workflow, marcando la casilla `stack`.
   stack:
     name: stack
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.stack == 'true'
@@ -107,7 +108,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=stack
+            type=sha,format=short,prefix=sha-,suffix=-stack
 
       - name: Construir y publicar
         uses: docker/build-push-action@v7
@@ -121,3 +122,14 @@ jobs:
             API_INTERNAL_URL=http://api:8000
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Resumen
+        run: |
+          {
+            echo "### Imagen de respaldo publicada"
+            echo '```'
+            echo "${{ steps.meta.outputs.tags }}"
+            echo '```'
+            echo "Tag inmutable, solo para el perfil \`stack\` del compose del backend (no se despliega en Coolify)."
+            echo "En el compose: \`WEB_IMAGE_TAG=<tag>\` (ver docs/DEPLOY.md sección 9)."
+          } >> "$GITHUB_STEP_SUMMARY"
