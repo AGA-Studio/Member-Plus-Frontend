@@ -39,7 +39,7 @@
       "help": "¿Problemas para entrar? Pide ayuda al administrador de tu negocio.",
       "errors": {
         "passwordRequired": "Escribe tu contraseña.",
-        "invalidCredentials": "Usuario o contraseña incorrectos. Revisa tus datos.",
+        "invalidCredentials": "Correo o contraseña incorrectos. Revisa tus datos.",
         "unavailable": "No pudimos iniciar tu sesión ahora. Inténtalo de nuevo en un momento.",
         "emailRequired": "Escribe tu correo.",
         "suspended": "Este negocio está suspendido. Pide ayuda al equipo de Member+.",

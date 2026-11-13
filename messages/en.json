@@ -39,7 +39,7 @@
       "help": "Trouble signing in? Ask your business administrator for help.",
       "errors": {
         "passwordRequired": "Enter your password.",
-        "invalidCredentials": "Incorrect username or password. Check your details.",
+        "invalidCredentials": "Incorrect email or password. Check your details.",
         "unavailable": "We couldn't sign you in right now. Try again in a moment.",
         "emailRequired": "Enter your email.",
         "suspended": "This business is suspended. Ask the Member+ team for help.",
