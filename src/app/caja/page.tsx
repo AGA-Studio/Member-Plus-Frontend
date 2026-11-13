@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { ScanCard } from "@/features/cashier/scan-card";
 
+export const instant = false;
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("cashier.scan");
 

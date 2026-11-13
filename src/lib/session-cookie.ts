@@ -1,1 +1,1 @@
-export const sessionCookieName = "mp_session";
+export const sessionCookieName = "access_token";

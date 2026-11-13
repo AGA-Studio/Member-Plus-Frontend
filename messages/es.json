@@ -32,18 +32,20 @@
       "metaTitle": "Inicia sesión · Member+",
       "title": "Inicia sesión",
       "subtitle": "Entra a tu negocio en Member+.",
-      "username": "Usuario",
-      "usernamePlaceholder": "Escribe tu usuario",
       "password": "Contraseña",
       "passwordPlaceholder": "Escribe tu contraseña",
       "submit": "Iniciar sesión",
       "submitting": "Iniciando sesión…",
       "help": "¿Problemas para entrar? Pide ayuda al administrador de tu negocio.",
       "errors": {
-        "usernameRequired": "Escribe tu usuario.",
         "passwordRequired": "Escribe tu contraseña.",
-        "invalidCredentials": "Usuario o contraseña incorrectos. Revisa tus datos.",
-        "unavailable": "No pudimos iniciar tu sesión ahora. Inténtalo de nuevo en un momento."
+        "invalidCredentials": "Correo o contraseña incorrectos. Revisa tus datos.",
+        "unavailable": "No pudimos iniciar tu sesión ahora. Inténtalo de nuevo en un momento.",
+        "emailRequired": "Escribe tu correo.",
+        "suspended": "Este negocio está suspendido. Pide ayuda al equipo de Member+.",
+        "inactive": "Tu usuario está desactivado. Pide ayuda al administrador de tu negocio.",
+        "locked": "Demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
+        "platformUnavailable": "El acceso de plataforma todavía no está disponible aquí."
       },
       "brand": {
         "headline": "Cada cliente reconocido, cada cobro rápido.",
@@ -60,7 +62,9 @@
             "code": "MP-4F7K2"
           }
         }
-      }
+      },
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Escribe tu correo"
     }
   },
   "tiers": {

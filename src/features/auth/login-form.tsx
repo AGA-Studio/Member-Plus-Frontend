@@ -1,41 +1,74 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
-import { loginAction, type LoginState } from "./actions";
-
-const initialState: LoginState = { username: "", fieldErrors: {} };
+import { loginWithBackend, type LoginFailure, type LoginRole } from "./auth-client";
 
 const enterClasses =
   "transition-[opacity,translate] duration-250 ease-out starting:translate-y-2 starting:opacity-0";
 
+const roleHomePaths: Record<LoginRole, string> = {
+  cashier: "/caja",
+  admin: "/clientes",
+};
+
 export function LoginForm() {
   const t = useTranslations("auth.login");
-  const [state, formAction, pending] = useActionState(loginAction, initialState);
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<"emailRequired" | null>(null);
+  const [passwordError, setPasswordError] = useState<"passwordRequired" | null>(null);
+  const [failure, setFailure] = useState<LoginFailure | null>(null);
 
-  const passwordError = state.formError
-    ? t(`errors.${state.formError}`)
-    : state.fieldErrors.password
-      ? t(`errors.${state.fieldErrors.password}`)
-      : undefined;
-  const usernameError = state.fieldErrors.username
-    ? t(`errors.${state.fieldErrors.username}`)
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const password = String(form.get("password") ?? "");
+    const trimmedEmail = email.trim();
+
+    setFailure(null);
+    setEmailError(trimmedEmail ? null : "emailRequired");
+    setPasswordError(password ? null : "passwordRequired");
+    if (!trimmedEmail || !password) return;
+
+    startTransition(async () => {
+      const outcome = await loginWithBackend(trimmedEmail, password);
+
+      if (outcome.ok) {
+        router.replace(`${roleHomePaths[outcome.role]}?toast=signedIn`);
+        router.refresh();
+        return;
+      }
+
+      setFailure(outcome);
+    });
+  }
+
+  const failureMessage = failure
+    ? failure.kind === "locked"
+      ? t("errors.locked", { minutes: failure.minutes })
+      : t(`errors.${failure.kind}`)
     : undefined;
+  const passwordMessage = failureMessage ?? (passwordError ? t(`errors.${passwordError}`) : undefined);
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-8">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
       <div className={`flex flex-col gap-5 delay-50 ${enterClasses}`}>
         <TextField
-          name="username"
-          label={t("username")}
-          placeholder={t("usernamePlaceholder")}
+          name="email"
+          type="email"
+          label={t("email")}
+          placeholder={t("emailPlaceholder")}
           autoComplete="username"
           autoCapitalize="none"
           spellCheck={false}
-          defaultValue={state.username}
-          error={usernameError}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          error={emailError ? t(`errors.${emailError}`) : undefined}
         />
         <TextField
           name="password"
@@ -43,7 +76,7 @@ export function LoginForm() {
           label={t("password")}
           placeholder={t("passwordPlaceholder")}
           autoComplete="current-password"
-          error={passwordError}
+          error={passwordMessage}
         />
       </div>
       <div className={`flex flex-col gap-4 delay-100 ${enterClasses}`}>
