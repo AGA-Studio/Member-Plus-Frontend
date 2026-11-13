@@ -4,7 +4,7 @@ Lo que un cambio no puede romper, en una página.
 
 Este archivo lo lee `scripts/review_pr.py`, que comenta los PRs automáticamente. **No es la fuente de verdad**: manda el wiki (`wiki.neyzt.org`, colección `9no`) y, para diseño, `BRAND.md`. Si aquí dice una cosa y ellos otra, ganan ellos y esto se corrige.
 
-> Última sincronización: **12 de noviembre de 2026**.
+> Última sincronización: **13 de noviembre de 2026**.
 > Fuentes: *Decisiones por validar*, *MVP*, *Pantallas*, `BRAND.md` y `AGENTS.md` de este repositorio.
 
 ## 1. Decisiones cerradas
@@ -27,7 +27,7 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Negocio | Sale del usuario autenticado | Sin selector de negocio ni subdominios; el cliente nunca manda `business_id` |
 | Identidad | **Sin reconocimiento facial ni fotos** | El lector y la webcam solo leen el QR |
 | Hostnames | App en `memberplus.neyzt.org`, API en `api-memberplus.neyzt.org` | `/api/*` reescrito en Next; **guion y no punto** (el SSL de Cloudflare cubre un nivel) |
-| Despliegue | Imagen standalone en GHCR, tag de versión fijo | `output: "standalone"`; Coolify no construye |
+| Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (webhook al tag `latest`) | `output: "standalone"`; Coolify no construye |
 
 ## 2. Decisiones abiertas
 

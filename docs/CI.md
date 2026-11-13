@@ -107,8 +107,9 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 | Tests de componentes | Cuando existan los de la fase A de `BRAND.md` (Vitest + Testing Library) |
 | Cobertura | Con los primeros tests; no tiene sentido medir cero |
 | Pruebas de extremo a extremo | Después de la demo, con Playwright |
-| Despliegue automático | No: el deploy es deliberado por tag (ver [DEPLOY.md](DEPLOY.md)) |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
+
+El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al webhook de Coolify en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
 
 ## 9. Problemas comunes
 

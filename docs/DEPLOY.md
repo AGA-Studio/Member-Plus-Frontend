@@ -21,7 +21,7 @@ La imagen que corre en producción es la misma que pasó el CI. Coolify no const
 
 - El build no consume CPU del servidor de Coolify.
 - La imagen desplegada es la que validaron `lint`, `typecheck`, `messages` y `build`, no una construida en otro sitio.
-- **El despliegue es deliberado**: la app apunta a un tag de versión fijo (`0.1.0`, `sha-abc1234`). Mergear a `main` publica imagen pero **no** cambia producción; para publicar se cambia el tag y se redespliega.
+- **Mergear a `main` despliega**: la app apunta al tag móvil `latest` y el workflow llama al deploy webhook de Coolify. Los releases (`0.1.0`) marcan el hito; ya no son la vía de despliegue.
 
 ## 2. Piezas
 
@@ -38,15 +38,15 @@ Tamaño medido: **~321 MB**, de los cuales unos 250 MB son la base `node:22-alpi
 
 ## 3. Qué publica cada evento
 
-| Evento | Tags en GHCR |
-|---|---|
-| push a `main` | `sha-<7>`, `main`, `latest` |
-| release `v0.1.0` | `sha-<7>`, `0.1.0`, `0.1` |
-| `workflow_dispatch` | `sha-<7>` de la rama elegida |
+| Evento | Tags en GHCR | ¿Despliega? |
+|---|---|---|
+| push a `main` | `sha-<7>`, `main`, `latest` | **Sí**: el paso *Pedir deploy a Coolify* llama al webhook |
+| release `v0.1.0` | `sha-<7>`, `0.1.0`, `0.1` | No: marca el hito, no toca producción |
+| `workflow_dispatch` | `sha-<7>` de la rama elegida | Solo si se lanzó desde `main` |
 
 **El tag de la imagen no lleva la `v`**: `v0.1.0` publica `0.1.0` y `0.1`. Es el comportamiento de `docker/metadata-action` con `pattern={{version}}`.
 
-`latest` se mueve en cada push a `main`; **para producción se pinea el tag de versión, nunca `latest`**. `sha-<7>` es inmutable y sirve para rollback.
+`latest` (y su gemelo `main`) se mueven en cada push a `main` — **nunca** con un tag `v*` — y es el tag que sirve Coolify: móvil a propósito, es el mecanismo del despliegue automático. `sha-<7>` es inmutable y sirve para rollback.
 
 El paquete es **público**: `docker pull ghcr.io/aga-studio/member-plus-frontend:0.1.0` funciona sin credenciales.
 
@@ -54,16 +54,21 @@ El paquete es **público**: `docker pull ghcr.io/aga-studio/member-plus-frontend
 
 Una sola vez, en el proyecto `Member+`:
 
-1. **Recurso → Docker Image** con `ghcr.io/aga-studio/member-plus-frontend:0.1.0`.
+1. **Recurso → Docker Image** con `ghcr.io/aga-studio/member-plus-frontend:latest`. El tag es móvil a propósito: cada push a `main` lo mueve y el webhook lo despliega.
 2. **Puerto**: `3000`.
 3. **Healthcheck**: `GET /healthz.txt`, código 200.
 4. **Dominio**: `memberplus.neyzt.org`, con TLS de Cloudflare.
 5. **Variables**: las de la sección 5.
-6. **Deploy**: manual. Cambiar el tag y redesplegar.
+6. **Deploy webhook (obligatorio: es el despliegue automático).** En Coolify → *Keys & Tokens* → *API Tokens*, un token con permiso **`deploy`**; en la app → *Webhooks* → copiar **Deploy Webhook (auth required)**. Después, en este repo:
 
-No hay webhook: con un tag fijo, avisar de una imagen nueva solo redespliega lo mismo.
+   ```bash
+   gh secret set COOLIFY_WEBHOOK --body '<url-del-deploy-webhook>'
+   gh secret set COOLIFY_TOKEN   --body '<token-con-permiso-deploy>'
+   ```
 
-El dominio de la app **todavía no está creado**; el del API (`api-memberplus.neyzt.org`) sí está en uso.
+   Sin `COOLIFY_WEBHOOK` el paso solo imprime un aviso y el deploy sigue siendo manual; guardar la imagen anterior como `sha-<7>` es el rollback. **`COOLIFY_TOKEN` es opcional**: solo si la URL es la de *auth required*; si ya trae `?api_token=...`, el paso no manda cabecera.
+
+El dominio de la app está en uso desde el 13 nov 2026; el del API (`api-memberplus.neyzt.org`) desde el 12.
 
 ## 5. Variables de entorno
 
@@ -88,10 +93,10 @@ La cookie de sesión la emite FastAPI en `api-memberplus.neyzt.org` y el navegad
 
 ## 7. Rollback
 
-1. En Coolify, cambiar el tag de la app al `sha-<7>` o a la versión anterior.
-2. Redesplegar.
+1. En Coolify → *Deployments*, o fijando el tag: poner el `sha-<7>` anterior y redesplegar.
+2. Cuando el fix esté en `main`, volver el tag a `latest` y redesplegar.
 
-No hace falta reconstruir ni volver a mergear: la imagen anterior sigue en GHCR.
+No hace falta reconstruir ni volver a mergear: la imagen anterior sigue en GHCR. Si la app queda pinneada en el `sha-<7>`, los pushes a `main` siguen publicando imágenes pero el webhook solo redespliega la que ya tiene.
 
 ## 8. Probar la imagen en local
 
