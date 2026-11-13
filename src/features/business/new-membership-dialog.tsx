@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState, useState } from "react";
+import { useActionState, useId, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { SelectField } from "@/components/ui/select-field";
+import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/ui/text-field";
 import { tiers } from "@/lib/domain";
 import { createMembershipAction, type NewMembershipState } from "./actions";
@@ -25,6 +26,9 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName }: NewMembe
   const tierLabels = useTranslations("tiers");
   const common = useTranslations("common");
   const [open, setOpen] = useState(false);
+  const [sendCard, setSendCard] = useState(true);
+  const sendCardLabelId = useId();
+  const sendCardHintId = useId();
   const [state, formAction, pending] = useActionState(createMembershipAction, initialState);
 
   return (
@@ -67,6 +71,23 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName }: NewMembe
             defaultValue={state.values.tier}
             options={tiers.map((tier) => ({ value: tier, label: tierLabels(tier) }))}
           />
+          <input type="hidden" name="sendCardEmail" value={sendCard ? "on" : ""} />
+          <div className="flex items-center justify-between gap-4 rounded-md border border-border p-4">
+            <div className="flex flex-col gap-0.5">
+              <span id={sendCardLabelId} className="text-base font-medium text-foreground">
+                {t("sendCard")}
+              </span>
+              <span id={sendCardHintId} className="text-sm text-muted">
+                {t("sendCardHint")}
+              </span>
+            </div>
+            <Switch
+              checked={sendCard}
+              onCheckedChange={setSendCard}
+              aria-labelledby={sendCardLabelId}
+              aria-describedby={sendCardHintId}
+            />
+          </div>
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={() => setOpen(false)}>
               {common("cancel")}

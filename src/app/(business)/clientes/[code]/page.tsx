@@ -17,6 +17,7 @@ import {
   CustomerDialogsProvider,
   EditCustomerButton,
 } from "@/features/business/customer-dialogs";
+import { DeliverCardButton } from "@/features/business/deliver-card";
 import { getStatusKey, readParam, statusTones } from "@/features/business/member-status";
 import { listLevels } from "@/lib/api/levels";
 import { findMemberByCode } from "@/lib/api/members";
@@ -177,6 +178,7 @@ export default async function CustomerPage({
         <div className="hidden items-center gap-3 sm:flex">
           {isCancelled ? null : <CancelMembershipButton />}
           {printLink("")}
+          {isCancelled ? null : <DeliverCardButton code={member.code} email={member.email} />}
           <EditCustomerButton />
         </div>
       </Reveal>
@@ -197,6 +199,7 @@ export default async function CustomerPage({
           <div className="grid grid-cols-2 gap-3 sm:hidden">
             <EditCustomerButton />
             {printLink("")}
+            {isCancelled ? null : <DeliverCardButton code={member.code} email={member.email} className="col-span-2" />}
           </div>
           <div className="hidden lg:block">{dataList}</div>
         </div>
