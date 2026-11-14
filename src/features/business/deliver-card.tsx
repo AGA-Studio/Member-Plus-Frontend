@@ -44,9 +44,13 @@ export function DeliverCardButton({ id, email, className }: DeliverCardButtonPro
   async function copyLink() {
     setBusy("link");
     const result = await attempt(() => createCardLinkAction(id), toasts("cardLinkFailed"));
+    if (!result) {
+      setBusy(null);
+      return;
+    }
 
     try {
-      if (!result?.ok) throw new Error("Card link could not be created");
+      if (!result.ok) throw new Error("Card link could not be created");
       await navigator.clipboard.writeText(result.url);
       setOpen(false);
       show("success", toasts("cardLinkCopied"));

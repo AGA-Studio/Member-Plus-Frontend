@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleCheck, Info, X } from "lucide-react";
+import { Check, Info, TriangleAlert, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   createContext,
@@ -34,15 +34,15 @@ const dangerVisibleMilliseconds = 6000;
 const leaveMilliseconds = 160;
 
 const toneIcons = {
-  success: CircleCheck,
-  danger: CircleAlert,
+  success: Check,
+  danger: TriangleAlert,
   info: Info,
 } satisfies Record<ToastTone, typeof Info>;
 
 const toneClasses: Record<ToastTone, string> = {
-  success: "text-success-text",
-  danger: "text-danger-text",
-  info: "text-primary-text",
+  success: "bg-success text-success-foreground",
+  danger: "bg-danger text-danger-foreground",
+  info: "bg-primary text-primary-foreground",
 };
 
 export function useToast(): ToastContextValue {
@@ -122,18 +122,20 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               className={cx(
-                "pointer-events-auto flex w-full max-w-sm items-center gap-3 rounded-lg border border-border bg-surface py-3 pl-4 pr-2 shadow-lg",
+                "pointer-events-auto flex w-fit min-w-72 max-w-full items-center gap-3 rounded-lg bg-ink-900 py-1 pl-3 pr-1 text-white shadow-lg ring-1 ring-white/10 sm:max-w-xl",
                 "transition-[opacity,translate] ease-out starting:-translate-y-2 starting:opacity-0",
                 toast.leaving ? "-translate-y-2 opacity-0 duration-150" : "translate-y-0 opacity-100 duration-200",
               )}
             >
-              <Icon aria-hidden strokeWidth={1.75} className={cx("size-5 shrink-0", toneClasses[toast.tone])} />
-              <p className="flex-1 text-sm font-medium text-foreground">{toast.message}</p>
+              <span className={cx("flex size-6 shrink-0 items-center justify-center rounded-full", toneClasses[toast.tone])}>
+                <Icon aria-hidden strokeWidth={2.5} className="size-3.5" />
+              </span>
+              <p className="flex-1 text-sm font-medium">{toast.message}</p>
               <button
                 type="button"
                 onClick={() => dismiss(toast.id)}
                 aria-label={t("dismissToast")}
-                className="flex size-11 shrink-0 items-center justify-center rounded-md text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97"
+                className="flex size-11 shrink-0 items-center justify-center rounded-md text-ink-300 transition-[background-color,color,transform] duration-150 ease-out hover:bg-white/10 hover:text-white active:scale-97"
               >
                 <X aria-hidden strokeWidth={1.75} className="size-4" />
               </button>
