@@ -52,11 +52,12 @@
         "emailRequired": "Enter your email.",
         "suspended": "This business is suspended. Ask the Member+ team for help.",
         "inactive": "Your user is deactivated. Ask your business administrator for help.",
-        "locked": "Too many attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}."
+        "locked": "Too many attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+        "turnstileFailed": "We couldn't verify that you are a person. Try again."
       },
       "brand": {
         "headline": "Every customer\nrecognized,\nevery sale fast.",
-        "businessName": "Café Aurora",
+        "businessName": "Member+",
         "cards": {
           "onyx": {
             "tier": "Onyx",
@@ -71,7 +72,11 @@
         }
       },
       "email": "Email",
-      "emailPlaceholder": "Enter your email"
+      "emailPlaceholder": "Enter your email",
+      "turnstile": {
+        "label": "Security check",
+        "unavailable": "We couldn't load the security check. You can still try to sign in."
+      }
     }
   },
   "cashier": {

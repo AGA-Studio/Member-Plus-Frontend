@@ -19,7 +19,7 @@ export const instant = false;
 export default async function LoginPage() {
   await connection();
   const user = await getSessionUser();
-  if (user && user.role !== "platform") redirect(roleHomePaths[user.role]);
+  if (user) redirect(roleHomePaths[user.role]);
 
   const t = await getTranslations("auth.login");
 
@@ -38,7 +38,7 @@ export default async function LoginPage() {
             <h1 className="text-title text-foreground">{t("title")}</h1>
             <p className="text-base text-muted">{t("subtitle")}</p>
           </div>
-          <LoginForm />
+          <LoginForm turnstileSiteKey={process.env.TURNSTILE_SITEKEY ?? ""} />
         </div>
       </section>
     </main>
