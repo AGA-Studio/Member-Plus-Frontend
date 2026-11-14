@@ -5,6 +5,7 @@ export type LoginFailure =
   | { kind: "suspended" }
   | { kind: "inactive" }
   | { kind: "locked"; minutes: number }
+  | { kind: "turnstileFailed" }
   | { kind: "unavailable" };
 
 export type LoginOutcome = { ok: true; role: LoginRole } | ({ ok: false } & LoginFailure);
@@ -13,18 +14,30 @@ type BackendMe = { role: "platform" | "admin" | "employee" };
 
 const lockedFallbackMinutes = 15;
 
-export async function loginWithBackend(email: string, password: string): Promise<LoginOutcome> {
+export async function loginWithBackend(
+  email: string,
+  password: string,
+  turnstileToken?: string | null,
+): Promise<LoginOutcome> {
   let response: Response;
 
   try {
     response = await fetch("/api/v1/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        ...(turnstileToken ? { "X-Turnstile-Token": turnstileToken } : {}),
+      },
       body: new URLSearchParams({ username: email, password }),
       credentials: "same-origin",
     });
   } catch {
     return { ok: false, kind: "unavailable" };
+  }
+
+  if (response.status === 400) {
+    const body = (await response.json().catch(() => ({}))) as { code?: string };
+    return { ok: false, kind: body.code === "turnstile_failed" ? "turnstileFailed" : "unavailable" };
   }
 
   if (response.status === 401) return { ok: false, kind: "invalidCredentials" };
