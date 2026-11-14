@@ -111,3 +111,15 @@ export type MembershipPayment = {
   periodEnd: string;
   recordedByName: string;
 };
+
+export type BusinessStatus = "trial" | "active" | "suspended";
+
+export const businessStatuses: readonly BusinessStatus[] = ["trial", "active", "suspended"];
+
+export type PlatformBusiness = {
+  id: number;
+  name: string;
+  status: BusinessStatus;
+  customersCount: number;
+  createdAt: string;
+};

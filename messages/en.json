@@ -45,8 +45,7 @@
         "emailRequired": "Enter your email.",
         "suspended": "This business is suspended. Ask the Member+ team for help.",
         "inactive": "Your user is deactivated. Ask your business administrator for help.",
-        "locked": "Too many attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
-        "platformUnavailable": "Platform access is not available here yet."
+        "locked": "Too many attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}."
       },
       "brand": {
         "headline": "Every customer\nrecognized,\nevery sale fast.",
@@ -582,5 +581,41 @@
     "cash": "Cash",
     "card": "Card",
     "transfer": "Transfer"
+  },
+  "platform": {
+    "metaTitle": "Businesses · Member+",
+    "title": "Businesses",
+    "subtitle": "{count, plural, one {# business} other {# businesses}} on the platform",
+    "searchLabel": "Search businesses",
+    "searchPlaceholder": "Search by name",
+    "filters": {
+      "status": "Status",
+      "allStatuses": "Status: All"
+    },
+    "columns": {
+      "business": "Business",
+      "status": "Status",
+      "customers": "Customers",
+      "createdAt": "Joined"
+    },
+    "status": {
+      "trial": "Trial",
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "customersCount": "{count, plural, one {# customer} other {# customers}}",
+    "range": "{from}–{to} of {total} businesses",
+    "empty": {
+      "title": "No businesses yet",
+      "description": "Businesses that sign up will show up here."
+    },
+    "noResults": {
+      "title": "No businesses match these filters",
+      "description": "Try another name or remove the filters."
+    },
+    "header": {
+      "label": "Platform",
+      "role": "Platform owner"
+    }
   }
 }

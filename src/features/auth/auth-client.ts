@@ -1,11 +1,10 @@
-export type LoginRole = "cashier" | "admin";
+export type LoginRole = "cashier" | "admin" | "platform";
 
 export type LoginFailure =
   | { kind: "invalidCredentials" }
   | { kind: "suspended" }
   | { kind: "inactive" }
   | { kind: "locked"; minutes: number }
-  | { kind: "platformUnavailable" }
   | { kind: "unavailable" };
 
 export type LoginOutcome = { ok: true; role: LoginRole } | ({ ok: false } & LoginFailure);
@@ -48,12 +47,9 @@ export async function loginWithBackend(email: string, password: string): Promise
 
   const me = (await meResponse.json()) as BackendMe;
 
-  if (me.role === "platform") {
-    await logoutFromBackend();
-    return { ok: false, kind: "platformUnavailable" };
-  }
+  const roleByBackendRole = { platform: "platform", admin: "admin", employee: "cashier" } as const;
 
-  return { ok: true, role: me.role === "admin" ? "admin" : "cashier" };
+  return { ok: true, role: roleByBackendRole[me.role] };
 }
 
 export async function logoutFromBackend(): Promise<void> {
