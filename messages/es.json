@@ -44,8 +44,7 @@
         "emailRequired": "Escribe tu correo.",
         "suspended": "Este negocio está suspendido. Pide ayuda al equipo de Member+.",
         "inactive": "Tu usuario está desactivado. Pide ayuda al administrador de tu negocio.",
-        "locked": "Demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
-        "platformUnavailable": "El acceso de plataforma todavía no está disponible aquí."
+        "locked": "Demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}."
       },
       "brand": {
         "headline": "Cada cliente\nreconocido,\ncada cobro rápido.",
@@ -558,5 +557,41 @@
     "cash": "Efectivo",
     "card": "Tarjeta",
     "transfer": "Transferencia"
+  },
+  "platform": {
+    "metaTitle": "Negocios · Member+",
+    "title": "Negocios",
+    "subtitle": "{count, plural, one {# negocio} other {# negocios}} en la plataforma",
+    "searchLabel": "Buscar negocios",
+    "searchPlaceholder": "Buscar por nombre",
+    "filters": {
+      "status": "Estado",
+      "allStatuses": "Estado: Todos"
+    },
+    "columns": {
+      "business": "Negocio",
+      "status": "Estado",
+      "customers": "Clientes",
+      "createdAt": "Alta"
+    },
+    "status": {
+      "trial": "En prueba",
+      "active": "Activo",
+      "suspended": "Suspendido"
+    },
+    "customersCount": "{count, plural, one {# cliente} other {# clientes}}",
+    "range": "{from}–{to} de {total} negocios",
+    "empty": {
+      "title": "Aún no hay negocios",
+      "description": "Los negocios que se den de alta aparecerán aquí."
+    },
+    "noResults": {
+      "title": "No hay negocios con estos filtros",
+      "description": "Prueba con otro nombre o quita los filtros."
+    },
+    "header": {
+      "label": "Plataforma",
+      "role": "Dueño de la plataforma"
+    }
   }
 }

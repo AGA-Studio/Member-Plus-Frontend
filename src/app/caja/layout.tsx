@@ -1,9 +1,9 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CashierHeader } from "@/features/cashier/cashier-header";
-import { requireSession } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 
 export default async function CashierLayout({ children }: LayoutProps<"/caja">) {
-  await requireSession();
+  await requireUser(["cashier", "admin"]);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">

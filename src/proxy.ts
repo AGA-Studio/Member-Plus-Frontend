@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sessionCookieName } from "@/lib/session-cookie";
 
-const protectedPrefixes = ["/caja", "/clientes", "/membresias", "/niveles", "/movimientos"];
+const protectedPrefixes = ["/caja", "/clientes", "/membresias", "/niveles", "/movimientos", "/plataforma"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,5 +16,12 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/caja/:path*", "/clientes/:path*", "/membresias/:path*", "/niveles/:path*", "/movimientos/:path*"],
+  matcher: [
+    "/caja/:path*",
+    "/clientes/:path*",
+    "/membresias/:path*",
+    "/niveles/:path*",
+    "/movimientos/:path*",
+    "/plataforma/:path*",
+  ],
 };
