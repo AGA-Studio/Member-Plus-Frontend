@@ -99,9 +99,9 @@ scripts/              chequeos de convenciones y revisor de PRs
 
 ## Flujo de trabajo
 
-`main` es la única rama: trabajo en `feature/<nombre>`, PR a `main` y merge del equipo. El despliegue es
-deliberado — mergear publica una imagen en GHCR, pero producción solo cambia cuando se mueve el tag en
-Coolify.
+`main` es la única rama: trabajo en `feature/<nombre>`, PR a `main` y merge del equipo. **Mergear a `main`
+despliega**: la imagen se publica en GHCR y el workflow llama al deploy webhook de Coolify, que apunta al
+tag móvil `latest`.
 
 El código va en inglés; todo el texto que ve el usuario pasa por `messages/`. Las reglas para agentes e
 integrantes están en [AGENTS.md](AGENTS.md).
