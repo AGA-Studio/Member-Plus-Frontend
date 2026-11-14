@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { UserAvatarButton } from "@/features/auth/logout-button";
+import { LanguageButton } from "@/features/i18n/language-button";
 import { requireSession } from "@/lib/session";
 import { getInitials } from "./avatar";
 
@@ -19,7 +20,8 @@ export async function PageHeader({ title, subtitle, actions }: PageHeaderProps) 
           <h1 className="text-title text-foreground">{title}</h1>
           {subtitle ? <p className="text-base text-muted">{subtitle}</p> : null}
         </div>
-        <div className="lg:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
+          <LanguageButton />
           <UserAvatarButton initials={getInitials(user.fullName)} />
         </div>
       </div>

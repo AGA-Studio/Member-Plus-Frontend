@@ -9,6 +9,7 @@ import { Logo } from "@/components/ui/logo";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { LogoutButton } from "@/features/auth/logout-button";
+import { LanguageButton } from "@/features/i18n/language-button";
 import { LogoDialog } from "./logo-dialog";
 import { businessNavItems } from "./nav-items";
 
@@ -29,6 +30,7 @@ const labelEnter =
 export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName }: SidebarProps) {
   const t = useTranslations("business");
   const logout = useTranslations("common.logout");
+  const language = useTranslations("common.language");
   const pathname = usePathname();
   const panelId = useId();
   const panelRef = useRef<HTMLElement>(null);
@@ -181,11 +183,19 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
             compact={!expanded}
           />
           {expanded ? (
-            <LogoutButton />
-          ) : (
-            <Tooltip label={logout("title")}>
+            <>
+              <LanguageButton />
               <LogoutButton />
-            </Tooltip>
+            </>
+          ) : (
+            <>
+              <Tooltip label={language("title")}>
+                <LanguageButton />
+              </Tooltip>
+              <Tooltip label={logout("title")}>
+                <LogoutButton />
+              </Tooltip>
+            </>
           )}
         </div>
       </aside>

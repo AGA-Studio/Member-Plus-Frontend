@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { getInitials } from "@/components/ui/avatar";
 import { BusinessLogo } from "@/components/ui/business-logo";
 import { LogoutButton } from "@/features/auth/logout-button";
+import { LanguageButton } from "@/features/i18n/language-button";
 import { requireSession } from "@/lib/session";
 
 export async function CashierHeader() {
@@ -35,6 +36,7 @@ export async function CashierHeader() {
             <span className="text-sm font-medium leading-tight">{user.fullName}</span>
             <span className="text-xs leading-tight text-ink-300">{t("role")}</span>
           </div>
+          <LanguageButton tone="inverse" />
           <LogoutButton tone="inverse" />
         </div>
       </div>

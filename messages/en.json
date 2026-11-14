@@ -24,6 +24,13 @@
       "confirm": "Sign out",
       "confirming": "Signing out…"
     },
+    "language": {
+      "title": "Language",
+      "options": {
+        "es": "Español",
+        "en": "English"
+      }
+    },
     "dismissToast": "Dismiss notice",
     "toastRegion": "Notices",
     "offline": "No connection. Check your internet and try again."

@@ -13,6 +13,10 @@ export type FormattingLocale = (typeof formattingLocales)[Locale];
 
 export const localeCookieName = "NEXT_LOCALE";
 
+export function fromFormattingLocale(formattingLocale: string): Locale {
+  return locales.find((locale) => formattingLocales[locale] === formattingLocale) ?? defaultLocale;
+}
+
 export function isLocale(value: string | null | undefined): value is Locale {
   return locales.some((locale) => locale === value);
 }
