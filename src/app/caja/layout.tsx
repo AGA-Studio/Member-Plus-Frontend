@@ -3,7 +3,7 @@ import { CashierHeader } from "@/features/cashier/cashier-header";
 import { requireUser } from "@/lib/session";
 
 export default async function CashierLayout({ children }: LayoutProps<"/caja">) {
-  await requireUser(["cashier", "admin"]);
+  await requireUser(["cashier"]);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
