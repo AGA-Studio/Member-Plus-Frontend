@@ -19,6 +19,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
 import { paymentMethods } from "@/lib/domain";
+import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
 import { formatPlainPesos } from "@/lib/format";
 import {
   cancelMembershipAction,
@@ -78,10 +79,9 @@ export function CustomerDialogsProvider({
     values: { fullName, email, phone, levelId: String(levelId) },
     errors: {},
   };
-  const [state, formAction, saving] = useActionState(
-    updateCustomerAction.bind(null, id),
-    initialState,
-  );
+  const attempt = useAttempt();
+  const guardedUpdate = useGuardedAction(updateCustomerAction.bind(null, id), t("editDialog.errors.unavailable"));
+  const [state, formAction, saving] = useActionState(guardedUpdate, initialState);
 
   useEffect(() => {
     if (state.status === "saved") show("success", toasts("customerUpdated"));
@@ -92,10 +92,8 @@ export function CustomerDialogsProvider({
     values: { levelId: String(levelId), paymentMethod: "cash", amount: renewAmount },
     errors: {},
   };
-  const [renewState, renewAction, renewing] = useActionState(
-    renewMembershipAction.bind(null, id),
-    initialRenewState,
-  );
+  const guardedRenew = useGuardedAction(renewMembershipAction.bind(null, id), t("renewDialog.errors.unavailable"));
+  const [renewState, renewAction, renewing] = useActionState(guardedRenew, initialRenewState);
 
   useEffect(() => {
     if (renewState.status === "renewed") show("success", toasts("membershipRenewed"));
@@ -124,9 +122,13 @@ export function CustomerDialogsProvider({
 
   function confirmCancel() {
     startCancelling(async () => {
-      await cancelMembershipAction(id);
-      setCancelOpen(false);
-      show("success", toasts("membershipCancelled"));
+      const cancelled = await attempt(() => cancelMembershipAction(id), t("cancelDialog.failed"));
+      if (cancelled) {
+        setCancelOpen(false);
+        show("success", toasts("membershipCancelled"));
+      } else if (cancelled === false) {
+        show("danger", t("cancelDialog.failed"));
+      }
     });
   }
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
+import { useAttempt } from "@/lib/use-action-guard";
 import { lookupCardAction } from "./actions";
 import { QrScanner } from "./qr-scanner";
 
@@ -18,6 +19,7 @@ export function ScanCard({ onFound }: ScanCardProps) {
   const [code, setCode] = useState("");
   const [errorKey, setErrorKey] = useState<"empty" | "notFound" | null>(null);
   const [detected, setDetected] = useState(false);
+  const attempt = useAttempt();
   const [pending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
   const lookingUpRef = useRef(false);
@@ -36,9 +38,14 @@ export function ScanCard({ onFound }: ScanCardProps) {
     }
 
     startTransition(async () => {
-      const result = await lookupCardAction(rawCode);
+      const result = await attempt(() => lookupCardAction(rawCode), t("errors.unavailable"));
       lookingUpRef.current = false;
       setDetected(false);
+
+      if (!result) {
+        if (!fromScanner) inputRef.current?.focus();
+        return;
+      }
 
       if (result.ok) {
         router.replace(`/caja?code=${encodeURIComponent(result.code)}`);

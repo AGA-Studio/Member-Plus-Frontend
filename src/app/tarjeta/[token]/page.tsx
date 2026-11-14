@@ -3,7 +3,9 @@ import { CalendarCheck } from "lucide-react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { BusinessLogo } from "@/components/ui/business-logo";
 import { Logo } from "@/components/ui/logo";
+import { getInitials } from "@/components/ui/avatar";
 import { MembershipCard } from "@/components/ui/membership-card";
 import { CardDownloads } from "@/features/card/card-downloads";
 import { getPublicCard } from "@/lib/api/card-delivery";
@@ -44,6 +46,14 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
     <main className="flex min-h-dvh flex-col bg-brand">
       <div className="mx-auto flex w-full max-w-form flex-col items-center gap-6 px-6 pb-6 pt-8 text-center text-white">
         <Logo surface="dark" className={cx(revealClasses(0), "h-8 w-auto")} />
+        {card.businessLogoUrl ? (
+          <BusinessLogo
+            name={card.businessName}
+            initials={getInitials(card.businessName)}
+            logoUrl={card.businessLogoUrl}
+            className={cx(revealClasses(1), "size-16 shadow-md")}
+          />
+        ) : null}
         <div className={cx(revealClasses(1), "flex flex-col gap-2")}>
           <h1 className="text-title">{t("heading", { business: card.businessName })}</h1>
           <p className="text-base text-white/80">{t("subtitle")}</p>

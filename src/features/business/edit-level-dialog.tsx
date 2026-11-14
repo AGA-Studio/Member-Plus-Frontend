@@ -8,6 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
 import type { Level } from "@/lib/domain";
+import { useGuardedAction } from "@/lib/use-action-guard";
 import { updateLevelAction, type EditLevelState } from "./actions";
 
 type EditLevelDialogProps = {
@@ -32,10 +33,8 @@ export function EditLevelDialog({ level, tierLabel }: EditLevelDialogProps) {
     },
     errors: {},
   };
-  const [state, formAction, saving] = useActionState(
-    updateLevelAction.bind(null, level.id),
-    initialState,
-  );
+  const guardedUpdate = useGuardedAction(updateLevelAction.bind(null, level.id), t("editDialog.errors.unavailable"));
+  const [state, formAction, saving] = useActionState(guardedUpdate, initialState);
   useEffect(() => {
     if (state.status === "saved") show("success", toasts("levelSaved"));
   }, [state, show, toasts]);

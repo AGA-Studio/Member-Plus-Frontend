@@ -25,7 +25,8 @@
       "confirming": "Cerrando sesión…"
     },
     "dismissToast": "Cerrar aviso",
-    "toastRegion": "Avisos"
+    "toastRegion": "Avisos",
+    "offline": "Sin conexión. Revisa tu internet e inténtalo de nuevo."
   },
   "auth": {
     "login": {
@@ -83,7 +84,8 @@
       "searching": "Buscando…",
       "errors": {
         "empty": "Escribe el código de la tarjeta.",
-        "notFound": "No encontramos esa tarjeta. Revisa el código."
+        "notFound": "No encontramos esa tarjeta. Revisa el código.",
+        "unavailable": "No pudimos buscar la tarjeta. Inténtalo de nuevo."
       },
       "scanner": {
         "active": "Cámara activa",
@@ -286,7 +288,8 @@
         "body": "Su tarjeta dejará de funcionar en la caja. Esta acción no se puede deshacer.",
         "keep": "Volver",
         "confirm": "Cancelar membresía",
-        "confirming": "Cancelando…"
+        "confirming": "Cancelando…",
+        "failed": "No pudimos cancelar la membresía. Inténtalo de nuevo."
       },
       "tabsLabel": "Secciones de la ficha",
       "tabs": {
@@ -489,7 +492,26 @@
         "label": "Descargar CSV",
         "preparing": "Preparando…",
         "fileName": "movimientos.csv",
-        "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}."
+        "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}.",
+        "failed": "No pudimos preparar el archivo. Inténtalo de nuevo."
+      }
+    },
+    "logo": {
+      "edit": "Cambiar el logo del negocio",
+      "title": "Logo del negocio",
+      "description": "Aparece en tu panel, en la caja y en la tarjeta digital de tus clientes.",
+      "choose": "Elegir imagen",
+      "formats": "JPEG, PNG o WebP, hasta 2 MB",
+      "save": "Guardar logo",
+      "saving": "Guardando…",
+      "remove": "Quitar logo",
+      "removing": "Quitando…",
+      "errors": {
+        "noFile": "Elige una imagen para continuar.",
+        "tooLarge": "La imagen pesa más de 2 MB. Elige una más ligera.",
+        "invalid": "No pudimos leer esa imagen. Usa un archivo JPEG, PNG o WebP.",
+        "storageUnavailable": "El almacenamiento de imágenes no está disponible por ahora. Inténtalo más tarde.",
+        "unavailable": "No pudimos guardar el logo. Inténtalo de nuevo."
       }
     }
   },
@@ -511,7 +533,9 @@
     "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
     "membershipRenewed": "Membresía renovada.",
     "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
-    "cardEmailRateLimited": "Espera un momento antes de enviar otro correo."
+    "cardEmailRateLimited": "Espera un momento antes de enviar otro correo.",
+    "logoSaved": "Logo guardado.",
+    "logoRemoved": "Logo quitado."
   },
   "system": {
     "notFound": {

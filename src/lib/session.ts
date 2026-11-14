@@ -32,12 +32,17 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   return state.status === "ok" ? state.user : null;
 }
 
-export async function requireUser(allowedRoles?: UserRole[]): Promise<SessionUser> {
+type GuardMode = "page" | "action";
+
+export async function requireUser(allowedRoles?: UserRole[], mode: GuardMode = "page"): Promise<SessionUser> {
   const state = await getSessionState();
 
   if (state.status === "none") redirect("/login");
   if (state.status === "unauthorized") redirect("/login?toast=sessionExpired");
-  if (state.status === "unavailable") redirect("/sin-conexion");
+  if (state.status === "unavailable") {
+    if (mode === "action") throw new Error("The service is not available");
+    redirect("/sin-conexion");
+  }
 
   const { user } = state;
   if (allowedRoles && !allowedRoles.includes(user.role)) {
@@ -49,4 +54,8 @@ export async function requireUser(allowedRoles?: UserRole[]): Promise<SessionUse
 
 export async function requireSession(): Promise<SessionUser> {
   return requireUser();
+}
+
+export async function requireActionUser(allowedRoles?: UserRole[]): Promise<SessionUser> {
+  return requireUser(allowedRoles, "action");
 }

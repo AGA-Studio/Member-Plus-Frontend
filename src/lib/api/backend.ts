@@ -51,10 +51,10 @@ export async function backendCall<T>(
       cache: "no-store",
       headers: {
         ...(accessToken ? { Cookie: `${sessionCookieName}=${accessToken}` } : {}),
-        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...(body !== undefined && !(body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
         ...headers,
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
     });
   } catch {
     return { ok: false, status: 0, code: null, detail: null };

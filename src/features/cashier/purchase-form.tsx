@@ -17,6 +17,7 @@ import {
   parseAmountToCents,
 } from "@/lib/format";
 import { calculatePurchase } from "@/lib/pricing";
+import { useGuardedAction } from "@/lib/use-action-guard";
 import { registerPurchaseAction, type PurchaseState } from "./actions";
 
 type PurchaseFormProps = {
@@ -40,7 +41,8 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
   const t = useTranslations("cashier.purchase");
   const format = useFormatter();
   const { show } = useToast();
-  const [state, formAction, pending] = useActionState(registerPurchaseAction, initialState);
+  const guardedRegister = useGuardedAction(registerPurchaseAction, t("errors.unavailable"));
+  const [state, formAction, pending] = useActionState(guardedRegister, initialState);
   const [amount, setAmount] = useState("");
   const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
   const [useCashback, setUseCashback] = useState(false);

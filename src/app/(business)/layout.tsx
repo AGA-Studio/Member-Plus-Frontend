@@ -11,6 +11,9 @@ export default async function BusinessLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
       <Sidebar
+        businessName={user.businessName}
+        businessInitials={user.businessInitials}
+        businessLogoUrl={user.businessLogoUrl}
         userName={user.fullName}
         userRole={t("roles.admin")}
         initials={user.fullName

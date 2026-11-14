@@ -4,11 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
 import { updateLevel } from "@/lib/api/levels";
+import { removeLogo, uploadLogo } from "@/lib/api/logo";
 import { cancelMember, createMember, renewMember, updateMember, type CustomerWriteFailure } from "@/lib/api/members";
 import { exportMovementsCsv, type MovementPeriod } from "@/lib/api/purchases";
 import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
-import { requireUser } from "@/lib/session";
+import { requireActionUser } from "@/lib/session";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -68,7 +69,7 @@ export async function createMembershipAction(
   _previousState: NewMembershipState,
   formData: FormData,
 ): Promise<NewMembershipState> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   const values = {
     fullName: readText(formData, "fullName"),
@@ -115,7 +116,7 @@ export async function createMembershipAction(
 export type SendCardEmailState = { ok: true } | { ok: false; reason: "rateLimited" | "failed" };
 
 export async function sendCardEmailAction(id: number): Promise<SendCardEmailState> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   const result = await sendCardEmail(id);
   if (result.ok) return { ok: true };
@@ -126,7 +127,7 @@ export async function sendCardEmailAction(id: number): Promise<SendCardEmailStat
 export type CardLinkState = { ok: true; url: string } | { ok: false };
 
 export async function createCardLinkAction(id: number): Promise<CardLinkState> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   const result = await createCardLink(id);
 
@@ -144,7 +145,7 @@ export async function renewMembershipAction(
   _previousState: RenewMembershipState,
   formData: FormData,
 ): Promise<RenewMembershipState> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   const values = {
     levelId: readText(formData, "levelId"),
@@ -179,7 +180,7 @@ export async function updateCustomerAction(
   _previousState: EditCustomerState,
   formData: FormData,
 ): Promise<EditCustomerState> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   const values = {
     fullName: readText(formData, "fullName"),
@@ -204,11 +205,13 @@ export async function updateCustomerAction(
   return { status: "saved", values, errors: {} };
 }
 
-export async function cancelMembershipAction(id: number): Promise<void> {
-  await requireUser(["admin"]);
+export async function cancelMembershipAction(id: number): Promise<boolean> {
+  await requireActionUser(["admin"]);
 
-  await cancelMember(id);
-  revalidatePath("/", "layout");
+  const cancelled = await cancelMember(id);
+  if (cancelled) revalidatePath("/", "layout");
+
+  return cancelled;
 }
 
 export type EditLevelState = {
@@ -236,7 +239,7 @@ export async function updateLevelAction(
   _previousState: EditLevelState,
   formData: FormData,
 ): Promise<EditLevelState> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   const values = {
     price: readText(formData, "price"),
@@ -275,7 +278,34 @@ export async function exportMovementsAction(filters: {
   query?: string;
   period: MovementPeriod;
 }): Promise<string> {
-  await requireUser(["admin"]);
+  await requireActionUser(["admin"]);
 
   return exportMovementsCsv(filters);
+}
+
+export type LogoState = {
+  status: "idle" | "saved";
+  error?: "noFile" | "tooLarge" | "invalid" | "storageUnavailable" | "unavailable";
+};
+
+export async function uploadLogoAction(_previousState: LogoState, formData: FormData): Promise<LogoState> {
+  await requireActionUser(["admin"]);
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) return { status: "idle", error: "noFile" };
+
+  const result = await uploadLogo(file);
+  if (!result.ok) return { status: "idle", error: result.reason };
+
+  revalidatePath("/", "layout");
+  return { status: "saved" };
+}
+
+export async function removeLogoAction(): Promise<boolean> {
+  await requireActionUser(["admin"]);
+
+  const removed = await removeLogo();
+  if (removed) revalidatePath("/", "layout");
+
+  return removed;
 }
