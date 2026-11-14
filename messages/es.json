@@ -24,6 +24,13 @@
       "confirm": "Cerrar sesión",
       "confirming": "Cerrando sesión…"
     },
+    "language": {
+      "title": "Idioma",
+      "options": {
+        "es": "Español",
+        "en": "English"
+      }
+    },
     "dismissToast": "Cerrar aviso",
     "toastRegion": "Avisos",
     "offline": "Sin conexión. Revisa tu internet e inténtalo de nuevo."
@@ -45,11 +52,12 @@
         "emailRequired": "Escribe tu correo.",
         "suspended": "Este negocio está suspendido. Pide ayuda al equipo de Member+.",
         "inactive": "Tu usuario está desactivado. Pide ayuda al administrador de tu negocio.",
-        "locked": "Demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}."
+        "locked": "Demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
+        "turnstileFailed": "No pudimos verificar que eres una persona. Inténtalo de nuevo."
       },
       "brand": {
         "headline": "Cada cliente\nreconocido,\ncada cobro rápido.",
-        "businessName": "Café Aurora",
+        "businessName": "Member+",
         "cards": {
           "onyx": {
             "tier": "Onyx",
@@ -64,7 +72,11 @@
         }
       },
       "email": "Correo electrónico",
-      "emailPlaceholder": "Escribe tu correo"
+      "emailPlaceholder": "Escribe tu correo",
+      "turnstile": {
+        "label": "Verificación de seguridad",
+        "unavailable": "No pudimos cargar la verificación de seguridad. Puedes intentar entrar de todos modos."
+      }
     }
   },
   "cashier": {

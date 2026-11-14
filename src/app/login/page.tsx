@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Logo } from "@/components/ui/logo";
 import { LoginBrandPanel } from "@/features/auth/login-brand-panel";
+import { LanguageSelect } from "@/features/i18n/language-select";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { LoginForm } from "@/features/auth/login-form";
@@ -18,7 +19,7 @@ export const instant = false;
 export default async function LoginPage() {
   await connection();
   const user = await getSessionUser();
-  if (user && user.role !== "platform") redirect(roleHomePaths[user.role]);
+  if (user) redirect(roleHomePaths[user.role]);
 
   const t = await getTranslations("auth.login");
 
@@ -29,12 +30,15 @@ export default async function LoginPage() {
       </aside>
       <section className="relative -mt-10 flex flex-1 flex-col items-center justify-center rounded-t-xl bg-surface px-6 py-10 lg:mt-0 lg:rounded-none">
         <div className="flex w-full max-w-auth flex-col gap-10">
-          <Logo className="h-10 w-auto self-start lg:h-12" />
+          <div className="flex items-center justify-between gap-4">
+            <Logo className="h-10 w-auto lg:h-12" />
+            <LanguageSelect className="w-36" />
+          </div>
           <div className="flex flex-col gap-1.5 transition-[opacity,translate] duration-250 ease-out starting:translate-y-2 starting:opacity-0">
             <h1 className="text-title text-foreground">{t("title")}</h1>
             <p className="text-base text-muted">{t("subtitle")}</p>
           </div>
-          <LoginForm />
+          <LoginForm turnstileSiteKey={process.env.TURNSTILE_SITEKEY ?? ""} />
         </div>
       </section>
     </main>
