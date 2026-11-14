@@ -7,6 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { BusinessLogo } from "@/components/ui/business-logo";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
@@ -64,11 +65,11 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
 
   return (
     <>
+      <Tooltip label={businessName} description={t("editHint")} disabled={!compact} className={compact ? "w-full" : "contents"}>
       <button
         type="button"
         onClick={openDialog}
         aria-label={t("edit")}
-        title={compact ? businessName : undefined}
         className={cx(
           "group flex items-center rounded-full text-left transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97",
           compact ? "h-12 w-full justify-center" : "min-w-0 flex-1 gap-3 py-1 pl-1 pr-4",
@@ -100,6 +101,7 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
           </span>
         )}
       </button>
+      </Tooltip>
       <Dialog open={visible} onClose={() => setOpen(false)} title={t("title")}>
         <form action={formAction} noValidate className="flex flex-col gap-5">
           <p className="text-base text-muted">{t("description")}</p>

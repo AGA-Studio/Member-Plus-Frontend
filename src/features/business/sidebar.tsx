@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { Logo } from "@/components/ui/logo";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { LogoDialog } from "./logo-dialog";
@@ -20,15 +21,21 @@ type SidebarProps = {
 
 const settleMilliseconds = 320;
 
+const indicatorOffsets = ["translate-y-0", "translate-y-13", "translate-y-26", "translate-y-39"] as const;
+
 const labelEnter =
   "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";
 
 export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName }: SidebarProps) {
   const t = useTranslations("business");
+  const logout = useTranslations("common.logout");
   const pathname = usePathname();
   const panelId = useId();
   const panelRef = useRef<HTMLElement>(null);
   const [expanded, setExpanded] = useState(false);
+  const activeIndex = businessNavItems.findIndex(
+    ({ href }) => pathname === href || pathname.startsWith(`${href}/`),
+  );
   const [isPill, setIsPill] = useState(true);
 
   function expand() {
@@ -94,25 +101,27 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
               </button>
             </>
           ) : (
-            <button
-              type="button"
-              onClick={expand}
-              aria-label={t("sidebar.open")}
-              aria-expanded={false}
-              aria-controls={panelId}
-              data-entry-target="origin"
-              className="group relative flex size-12 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97"
-            >
-              <Logo
-                variant="icon"
-                className="absolute h-8 w-auto scale-100 opacity-100 transition-[opacity,scale] duration-200 ease-out group-hover:scale-75 group-hover:opacity-0 group-focus-visible:scale-75 group-focus-visible:opacity-0"
-              />
-              <PanelLeftOpen
-                aria-hidden
-                strokeWidth={1.75}
-                className="absolute size-5 scale-75 text-primary-text opacity-0 transition-[opacity,scale] duration-200 ease-out group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100"
-              />
-            </button>
+            <Tooltip label={t("sidebar.open")} className="shrink-0">
+              <button
+                type="button"
+                onClick={expand}
+                aria-label={t("sidebar.open")}
+                aria-expanded={false}
+                aria-controls={panelId}
+                data-entry-target="origin"
+                className="group relative flex size-12 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97"
+              >
+                <Logo
+                  variant="icon"
+                  className="absolute h-8 w-auto scale-100 opacity-100 transition-[opacity,scale] duration-200 ease-out group-hover:scale-75 group-hover:opacity-0 group-focus-visible:scale-75 group-focus-visible:opacity-0"
+                />
+                <PanelLeftOpen
+                  aria-hidden
+                  strokeWidth={1.75}
+                  className="absolute size-5 scale-75 text-primary-text opacity-0 transition-[opacity,scale] duration-200 ease-out group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100"
+                />
+              </button>
+            </Tooltip>
           )}
         </div>
 
@@ -122,31 +131,40 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
           ) : (
             <span aria-hidden className="mx-3 my-2 h-px bg-border" />
           )}
+          <div className="relative flex flex-col gap-1">
+            <span
+              aria-hidden
+              className={cx(
+                "absolute inset-x-0 top-0 h-12 rounded-full bg-primary-soft transition-[translate,opacity] duration-300 ease-in-out",
+                activeIndex === -1 ? "opacity-0" : indicatorOffsets[activeIndex],
+              )}
+            />
           {businessNavItems.map(({ href, key, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             const label = t(`nav.${key}`);
 
             return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={active ? "page" : undefined}
-                aria-label={label}
-                title={expanded ? undefined : label}
-                className={cx(
-                  "flex h-12 shrink-0 items-center rounded-full text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
-                  active
-                    ? "bg-primary-soft font-semibold text-primary-text"
-                    : "text-foreground hover:bg-surface-muted",
-                )}
-              >
-                <span className="flex size-12 shrink-0 items-center justify-center">
-                  <Icon aria-hidden strokeWidth={1.75} className={cx("size-5", active ? "text-primary-text" : "text-muted")} />
-                </span>
-                {expanded ? <span className={cx("truncate pr-4", labelEnter)}>{label}</span> : null}
-              </Link>
+              <Tooltip key={href} label={label} disabled={expanded} className="w-full shrink-0">
+                <Link
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  aria-label={label}
+                  className={cx(
+                    "relative flex h-12 items-center rounded-full text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
+                    active
+                      ? "font-semibold text-primary-text"
+                      : "text-foreground hover:bg-surface-muted",
+                  )}
+                >
+                  <span className="flex size-12 shrink-0 items-center justify-center">
+                    <Icon aria-hidden strokeWidth={1.75} className={cx("size-5", active ? "text-primary-text" : "text-muted")} />
+                  </span>
+                  {expanded ? <span className={cx("truncate pr-4", labelEnter)}>{label}</span> : null}
+                </Link>
+              </Tooltip>
             );
           })}
+          </div>
         </nav>
 
         <div
@@ -162,7 +180,13 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
             userName={userName}
             compact={!expanded}
           />
-          <LogoutButton />
+          {expanded ? (
+            <LogoutButton />
+          ) : (
+            <Tooltip label={logout("title")}>
+              <LogoutButton />
+            </Tooltip>
+          )}
         </div>
       </aside>
     </div>
