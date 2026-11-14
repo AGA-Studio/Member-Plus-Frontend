@@ -1,5 +1,4 @@
 import { backendUrl } from "./backend";
-import { fallbackBusinessName, mockBusinessNames } from "./mock/businesses";
 import type { SessionUser, UserRole } from "@/lib/domain";
 import { sessionCookieName } from "@/lib/session-cookie";
 
@@ -12,7 +11,10 @@ type BackendUser = {
   email: string;
   role: BackendRole;
   is_active: boolean;
+  business: { id: number; name: string; logo_url: string | null; status: string } | null;
 };
+
+const fallbackBusinessName = "Member+";
 
 const roleMap: Record<BackendRole, UserRole> = {
   platform: "platform",
@@ -51,10 +53,7 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionLook
   if (!response.ok) return { status: "unavailable" };
 
   const user = (await response.json()) as BackendUser;
-  const businessName =
-    user.business_id === null
-      ? fallbackBusinessName
-      : (mockBusinessNames[user.business_id] ?? fallbackBusinessName);
+  const businessName = user.business?.name ?? fallbackBusinessName;
 
   return {
     status: "ok",

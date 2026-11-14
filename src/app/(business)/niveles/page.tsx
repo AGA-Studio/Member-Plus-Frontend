@@ -5,10 +5,10 @@ import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
 import { EditLevelDialog } from "@/features/business/edit-level-dialog";
-import { countMembersByTier, listLevels } from "@/lib/api/levels";
+import { listLevels } from "@/lib/api/levels";
 import { cx } from "@/lib/cx";
 import type { Tier } from "@/lib/domain";
-import { formatPoints } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
 import { revealClasses } from "@/lib/motion";
 
 export const instant = false;
@@ -29,10 +29,8 @@ const swatchClasses: Record<Tier, string> = {
 export default async function LevelsPage() {
   await connection();
   const t = await getTranslations("business.levels");
-  const tierLabels = await getTranslations("tiers");
   const format = await getFormatter();
   const levels = await listLevels();
-  const counts = await countMembersByTier();
 
   return (
     <>
@@ -45,16 +43,16 @@ export default async function LevelsPage() {
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {levels.map((level, index) => {
           const rows = [
-            { label: t("rows.from"), value: t("pointsValue", { count: formatPoints(format, level.minPoints) }) },
+            { label: t("rows.price"), value: level.priceCents === 0 ? t("free") : formatMoney(format, level.priceCents) },
             { label: t("rows.discount"), value: format.number(level.benefits.discountPercent / 100, { style: "percent" }) },
             { label: t("rows.pointsPerTen"), value: t("pointsPerTenValue", { count: level.benefits.pointsPerTenPesos }) },
             { label: t("rows.cashback"), value: format.number(level.benefits.cashbackPercent / 100, { style: "percent" }) },
           ];
 
           return (
-            <li key={level.tier} className={cx(revealClasses(index + 2), "flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm")}>
+            <li key={level.id} className={cx(revealClasses(index + 2), "flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm")}>
               <div className={cx("flex h-24 items-center px-5", swatchClasses[level.tier])}>
-                <h2 className="text-heading">{tierLabels(level.tier)}</h2>
+                <h2 className="text-heading">{level.name}</h2>
               </div>
               <dl className="flex flex-1 flex-col gap-3 p-5">
                 {rows.map((row) => (
@@ -65,8 +63,8 @@ export default async function LevelsPage() {
                 ))}
               </dl>
               <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-3">
-                <span className="text-sm text-muted">{t("customers", { count: counts[level.tier] })}</span>
-                <EditLevelDialog level={level} tierLabel={tierLabels(level.tier)} />
+                <span className="text-sm text-muted">{t("customers", { count: level.customersCount })}</span>
+                <EditLevelDialog level={level} tierLabel={level.name} />
               </div>
             </li>
           );

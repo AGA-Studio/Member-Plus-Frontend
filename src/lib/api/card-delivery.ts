@@ -1,39 +1,64 @@
 import { headers } from "next/headers";
-import type { PublicCard } from "@/lib/domain";
-import { findMemberByCode, normalizeMemberCode } from "./members";
-import { mockBusinessNames } from "./mock/businesses";
+import type { MemberStatus, PublicCard, Tier } from "@/lib/domain";
+import { findMemberByCode } from "./members";
 import { simulateLatency } from "./mock/latency";
 
-const mockTokenPrefix = "demo-";
-const mockBusinessId = 1;
-const mockGoogleWalletUrl = "https://wallet.google.com/";
+type DemoCard = {
+  businessName: string;
+  fullName: string;
+  code: string;
+  tier: Tier;
+  tierName: string;
+  status: MemberStatus;
+  validUntil: string;
+};
 
-function tokenForCode(code: string): string {
-  return `${mockTokenPrefix}${code.toLowerCase()}`;
+const mockTokenPrefix = "demo-";
+const mockGoogleWalletUrl = "https://wallet.google.com/";
+const dayInMilliseconds = 24 * 60 * 60 * 1000;
+
+function daysFromNow(days: number): string {
+  return new Date(Date.now() + days * dayInMilliseconds).toISOString();
 }
 
-function codeFromToken(token: string): string | null {
-  if (!token.startsWith(mockTokenPrefix)) return null;
-  return normalizeMemberCode(token.slice(mockTokenPrefix.length));
+function demoCards(): Record<string, DemoCard> {
+  return {
+    "demo-mp-4f7k2": {
+      businessName: "Café Aurora",
+      fullName: "Laura Méndez",
+      code: "MP-4F7K2",
+      tier: "gold",
+      tierName: "Oro",
+      status: "active",
+      validUntil: daysFromNow(180),
+    },
+    "demo-mp-vencida": {
+      businessName: "Café Aurora",
+      fullName: "Marcos Vela",
+      code: "MP-1C6YN",
+      tier: "silver",
+      tierName: "Plata",
+      status: "expired",
+      validUntil: daysFromNow(-20),
+    },
+    "demo-mp-cancelada": {
+      businessName: "Café Aurora",
+      fullName: "Paola Castillo",
+      code: "MP-5X1QE",
+      tier: "bronze",
+      tierName: "Bronce",
+      status: "cancelled",
+      validUntil: daysFromNow(-70),
+    },
+  };
 }
 
 export async function getPublicCard(token: string): Promise<PublicCard | null> {
   await simulateLatency();
-  const code = codeFromToken(token);
-  if (!code) return null;
+  const card = demoCards()[token.toLowerCase()];
+  if (!card) return null;
 
-  const member = await findMemberByCode(code);
-  if (!member) return null;
-
-  return {
-    businessName: mockBusinessNames[mockBusinessId],
-    fullName: member.fullName,
-    code: member.code,
-    tier: member.tier,
-    status: member.status,
-    validUntil: member.validUntil,
-    googleWalletEnabled: true,
-  };
+  return { ...card, googleWalletEnabled: true };
 }
 
 export type GoogleWalletResult =
@@ -61,7 +86,7 @@ export async function createCardLink(rawCode: string): Promise<CardLinkResult> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
 
-  return { ok: true, url: `${protocol}://${host}/tarjeta/${tokenForCode(member.code)}` };
+  return { ok: true, url: `${protocol}://${host}/tarjeta/${mockTokenPrefix}${member.code.toLowerCase()}` };
 }
 
 export type SendCardEmailResult =

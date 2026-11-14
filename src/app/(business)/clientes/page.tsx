@@ -13,10 +13,10 @@ import { buttonStyles } from "@/components/ui/button";
 import { FilterBar } from "@/features/business/filter-bar";
 import { getStatusKey, readParam, statusTones } from "@/features/business/member-status";
 import { NewMembershipDialog } from "@/features/business/new-membership-dialog";
+import { listLevels } from "@/lib/api/levels";
 import { listMembers } from "@/lib/api/members";
 import { parsePage } from "@/lib/api/paginate";
-import { getLastPurchaseDates } from "@/lib/api/purchases";
-import { tiers, type MemberStatus, type Tier } from "@/lib/domain";
+import type { MemberStatus } from "@/lib/domain";
 import { formatPoints } from "@/lib/format";
 
 export const instant = false;
@@ -33,24 +33,23 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
   await connection();
   const params = await searchParams;
   const query = readParam(params.q);
-  const tierParam = readParam(params.tier);
   const statusParam = readParam(params.status);
-  const tier = tiers.find((item) => item === tierParam);
   const status = statusFilters.find((item) => item === statusParam);
   const requestedPage = parsePage(readParam(params.page));
 
   const t = await getTranslations("business.customers");
-  const tierLabels = await getTranslations("tiers");
   const statusLabels = await getTranslations("memberStatus");
   const format = await getFormatter();
+  const levels = await listLevels();
+  const level = levels.find((item) => String(item.id) === readParam(params.level));
+  const levelOptions = levels.map((item) => ({ value: String(item.id), label: item.name }));
   const result = await listMembers({
     query,
-    tier: tier as Tier | undefined,
+    levelId: level?.id,
     status: status as MemberStatus | "expiring" | undefined,
     page: requestedPage,
   });
-  const lastPurchases = await getLastPurchaseDates();
-  const filtered = Boolean(query || tier || status);
+  const filtered = Boolean(query || level || status);
   const from = (result.page - 1) * result.pageSize + 1;
   const to = from + result.items.length - 1;
 
@@ -67,6 +66,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
             <NewMembershipDialog
               triggerLabel={t("newMembership")}
               triggerClassName={buttonStyles({ size: "md" })}
+              levelOptions={levelOptions}
             />
           }
         />
@@ -77,10 +77,10 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
         searchPlaceholder={t("searchPlaceholder")}
         filters={[
           {
-            name: "tier",
+            name: "level",
             label: t("filters.tier"),
             allLabel: t("filters.allTiers"),
-            options: tiers.map((item) => ({ value: item, label: tierLabels(item) })),
+            options: levelOptions,
           },
           {
             name: "status",
@@ -116,7 +116,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
               <tbody>
                 {result.items.map((member) => {
                   const statusKey = getStatusKey(member);
-                  const lastPurchase = lastPurchases[member.code];
+                  const lastPurchase = member.lastPurchaseAt;
 
                   return (
                     <tr key={member.code} className="border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted">
@@ -134,7 +134,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                         </Link>
                       </td>
                       <td className="px-4 py-3 font-mono text-sm tabular-nums text-foreground">{member.code}</td>
-                      <td className="px-4 py-3"><Badge tone={member.tier}>{tierLabels(member.tier)}</Badge></td>
+                      <td className="px-4 py-3"><Badge tone={member.tier}>{member.tierName}</Badge></td>
                       <td className="px-4 py-3 text-right text-base tabular-nums text-foreground">{formatPoints(format, member.points)}</td>
                       <td className="px-4 py-3 text-base text-foreground">{lastPurchase ? formatDate(lastPurchase) : t("noLastPurchase")}</td>
                       <td className="px-6 py-3"><Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge></td>
@@ -160,7 +160,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                         <span className="flex items-center gap-2 text-sm text-muted">
                           <span className="font-mono tabular-nums">{member.code}</span>
                           <span aria-hidden className="size-1 rounded-full bg-border-strong" />
-                          <span>{tierLabels(member.tier)}</span>
+                          <span>{member.tierName}</span>
                         </span>
                       </span>
                       <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
@@ -173,7 +173,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
             <div className="border-t border-border">
               <Pagination
                 pathname="/clientes"
-                params={{ q: query, tier: tier, status: status }}
+                params={{ q: query, level: level ? String(level.id) : undefined, status: status }}
                 page={result.page}
                 pageCount={result.pageCount}
                 summary={t("range", { from, to, total: result.total })}

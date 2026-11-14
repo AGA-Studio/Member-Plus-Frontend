@@ -67,12 +67,6 @@
       "emailPlaceholder": "Enter your email"
     }
   },
-  "tiers": {
-    "bronze": "Bronze",
-    "silver": "Silver",
-    "gold": "Gold",
-    "onyx": "Onyx"
-  },
   "cashier": {
     "header": {
       "role": "Register",
@@ -243,10 +237,9 @@
         "points": "Points",
         "cashback": "Cashback",
         "lastPurchase": "Last purchase",
-        "toNextLevel": "{points} to {tier}",
         "available": "Available at the register",
         "noPurchases": "No purchases",
-        "topLevel": "Highest level"
+        "currentLevel": "{tier} level"
       },
       "data": {
         "title": "Details",
@@ -283,8 +276,10 @@
           "fullNameRequired": "Enter the customer's name.",
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
-          "unavailable": "We couldn't save the details. Try again."
-        }
+          "unavailable": "We couldn't save the details. Try again.",
+          "phoneInvalid": "Check the phone number: use digits only."
+        },
+        "level": "Level"
       },
       "cancelDialog": {
         "title": "Cancel {name}'s membership",
@@ -361,7 +356,8 @@
           "fullNameRequired": "Enter the customer's name.",
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
-          "unavailable": "We couldn't create the membership. Try again."
+          "unavailable": "We couldn't create the membership. Try again.",
+          "phoneInvalid": "Check the phone number: use digits only."
         },
         "sendCard": "Email the card",
         "sendCardHint": "The customer gets a link to save it to Google Wallet or download it."
@@ -385,41 +381,39 @@
       "subtitle": "Define what each customer earns by level",
       "notice": "Changes apply to new purchases. Past purchases are not recalculated.",
       "rows": {
-        "from": "From",
+        "price": "Price",
         "discount": "Discount",
         "pointsPerTen": "Points per $10",
         "cashback": "Cashback"
       },
-      "pointsValue": "{count} points",
       "pointsPerTenValue": "{count, plural, one {# point} other {# points}}",
       "customers": "{count, plural, one {# customer} other {# customers}}",
       "edit": "Edit",
       "editDialog": {
         "title": "Edit {tier} level",
-        "minPoints": "Points to reach this level",
+        "price": "Level price (MXN)",
         "discount": "Discount on each purchase (%)",
         "pointsPerTen": "Points per $10",
         "cashback": "Cashback (%)",
         "submit": "Save changes",
         "saving": "Saving…",
         "errors": {
-          "minPointsInvalid": "Enter a number of points, 0 or more.",
+          "priceInvalid": "Enter a price of 0 or more.",
           "discountInvalid": "Enter a value between 0 and 100.",
           "pointsPerTenInvalid": "Enter a number of points, 0 or more.",
           "cashbackInvalid": "Enter a value between 0 and 100.",
           "unavailable": "We couldn't save the level. Try again."
         }
-      }
+      },
+      "free": "Free"
     },
     "movements": {
       "metaTitle": "Transactions · Member+",
       "title": "Transactions",
-      "subtitle": "Every purchase registered at your registers",
+      "subtitle": "All the purchases registered in your business",
       "searchLabel": "Search transactions",
       "searchPlaceholder": "Search customer or code",
       "filters": {
-        "register": "Register",
-        "allRegisters": "Register: All",
         "period": "Period"
       },
       "summary": {
@@ -446,7 +440,7 @@
       },
       "noResults": {
         "title": "No transactions match these filters",
-        "description": "Try another name, another register or clear the filters."
+        "description": "Try another name or remove the filters."
       },
       "periods": {
         "7d": "Last 7 days",
@@ -460,19 +454,7 @@
         "label": "Download CSV",
         "preparing": "Preparing…",
         "fileName": "transactions.csv",
-        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}.",
-        "headers": {
-          "date": "Date",
-          "register": "Register",
-          "customer": "Customer",
-          "code": "Code",
-          "concept": "Description",
-          "amount": "Amount",
-          "discount": "Discount",
-          "points": "Points",
-          "cashbackEarned": "Cashback earned",
-          "cashbackUsed": "Cashback used"
-        }
+        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}."
       }
     }
   },

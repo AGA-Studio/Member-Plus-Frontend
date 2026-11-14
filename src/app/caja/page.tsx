@@ -24,7 +24,6 @@ export default async function CashierPage({ searchParams }: PageProps<"/caja">) 
   const member = requestedCode ? await findMemberByCode(requestedCode) : null;
 
   const t = await getTranslations("cashier.purchase");
-  const tiers = await getTranslations("tiers");
   const user = await requireSession();
 
   return (
@@ -48,11 +47,11 @@ export default async function CashierPage({ searchParams }: PageProps<"/caja">) 
             member={
               member
                 ? {
-                    code: member.code,
+                    id: member.id,
                     status: member.status,
                     cashbackBalanceCents: member.cashbackBalanceCents,
                     benefits: member.benefits,
-                    tierLabel: tiers(member.tier),
+                    tierLabel: member.tierName,
                   }
                 : null
             }

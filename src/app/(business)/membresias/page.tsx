@@ -14,9 +14,10 @@ import { Pagination } from "@/components/ui/pagination";
 import { FilterBar } from "@/features/business/filter-bar";
 import { getStatusKey, readParam, statusTones } from "@/features/business/member-status";
 import { NewMembershipDialog } from "@/features/business/new-membership-dialog";
+import { listLevels } from "@/lib/api/levels";
 import { countMembers, listMembers } from "@/lib/api/members";
 import { parsePage } from "@/lib/api/paginate";
-import { tiers, type MemberStatus } from "@/lib/domain";
+import type { MemberStatus } from "@/lib/domain";
 
 export const instant = false;
 
@@ -33,29 +34,30 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
   await connection();
   const params = await searchParams;
   const query = readParam(params.q);
-  const tier = tiers.find((item) => item === readParam(params.tier));
   const tab: TabKey = tabKeys.find((item) => item === readParam(params.tab)) ?? "all";
   const requestedPage = parsePage(readParam(params.page));
 
   const t = await getTranslations("business.memberships");
-  const tierLabels = await getTranslations("tiers");
   const statusLabels = await getTranslations("memberStatus");
   const format = await getFormatter();
+  const levels = await listLevels();
+  const level = levels.find((item) => String(item.id) === readParam(params.level));
+  const levelOptions = levels.map((item) => ({ value: String(item.id), label: item.name }));
   const counts = await countMembers();
   const result = await listMembers({
     query,
-    tier,
+    levelId: level?.id,
     status: tab === "all" ? undefined : (tab as MemberStatus | "expiring"),
     page: requestedPage,
   });
-  const filtered = Boolean(query || tier || tab !== "all");
+  const filtered = Boolean(query || level || tab !== "all");
   const from = (result.page - 1) * result.pageSize + 1;
   const to = from + result.items.length - 1;
 
   const tabHref = (key: TabKey) => {
     const search = new URLSearchParams();
     if (query) search.set("q", query);
-    if (tier) search.set("tier", tier);
+    if (level) search.set("level", String(level.id));
     if (key !== "all") search.set("tab", key);
     const queryString = search.toString();
     return queryString ? `/membresias?${queryString}` : "/membresias";
@@ -78,6 +80,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
             <NewMembershipDialog
               triggerLabel={t("newMembership")}
               triggerClassName={buttonStyles({ size: "md" })}
+              levelOptions={levelOptions}
             />
           </>
         }
@@ -99,10 +102,10 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
         searchPlaceholder={t("searchPlaceholder")}
         filters={[
           {
-            name: "tier",
+            name: "level",
             label: t("levelFilter"),
             allLabel: t("allLevels"),
-            options: tiers.map((item) => ({ value: item, label: tierLabels(item) })),
+            options: levelOptions,
           },
         ]}
       />
@@ -141,7 +144,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                         </Link>
                       </td>
                       <td className="px-4 py-3 font-mono text-sm tabular-nums text-foreground">{member.code}</td>
-                      <td className="px-4 py-3"><Badge tone={member.tier}>{tierLabels(member.tier)}</Badge></td>
+                      <td className="px-4 py-3"><Badge tone={member.tier}>{member.tierName}</Badge></td>
                       <td className="px-4 py-3 text-base text-muted">{formatDay(member.issuedAt)}</td>
                       <td className="px-4 py-3 text-base text-foreground">{formatDay(member.validUntil)}</td>
                       <td className="px-6 py-3"><Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge></td>
@@ -166,7 +169,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                         <span className="flex items-center gap-2 text-sm text-muted">
                           <span className="font-mono tabular-nums">{member.code}</span>
                           <span aria-hidden className="size-1 rounded-full bg-border-strong" />
-                          <span>{tierLabels(member.tier)}</span>
+                          <span>{member.tierName}</span>
                         </span>
                       </span>
                       <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
@@ -179,7 +182,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
             <div className="border-t border-border">
               <Pagination
                 pathname="/membresias"
-                params={{ q: query, tier, tab: tab === "all" ? undefined : tab }}
+                params={{ q: query, level: level ? String(level.id) : undefined, tab: tab === "all" ? undefined : tab }}
                 page={result.page}
                 pageCount={result.pageCount}
                 summary={t("range", { from, to, total: result.total })}

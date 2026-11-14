@@ -20,7 +20,7 @@ import { calculatePurchase } from "@/lib/pricing";
 import { registerPurchaseAction, type PurchaseState } from "./actions";
 
 type PurchaseFormProps = {
-  member: (Pick<Member, "code" | "cashbackBalanceCents" | "status"> & {
+  member: (Pick<Member, "id" | "cashbackBalanceCents" | "status"> & {
     benefits: TierBenefits;
     tierLabel: string;
   }) | null;
@@ -42,10 +42,17 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
   const { show } = useToast();
   const [state, formAction, pending] = useActionState(registerPurchaseAction, initialState);
   const [amount, setAmount] = useState("");
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
   const [useCashback, setUseCashback] = useState(false);
   const switchLabelId = useId();
   const switchHintId = useId();
   const submitHintId = useId();
+
+  const [handledState, setHandledState] = useState(state);
+  if (state !== handledState) {
+    setHandledState(state);
+    if (state.newKey) setIdempotencyKey(crypto.randomUUID());
+  }
 
   useEffect(() => {
     if (state.error) show("danger", t(`errors.${state.error}`));
@@ -79,7 +86,8 @@ export function PurchaseForm({ member }: PurchaseFormProps) {
       noValidate
       className="flex flex-col gap-6 rounded-lg border border-border bg-surface p-5 pb-28 shadow-sm sm:p-6 lg:pb-6"
     >
-      <input type="hidden" name="memberCode" value={member?.code ?? ""} />
+      <input type="hidden" name="memberId" value={member?.id ?? ""} />
+      <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
       <input type="hidden" name="useCashback" value={useCashback && canUseCashback ? "on" : ""} />
 
       <div className="flex items-center justify-between gap-4">

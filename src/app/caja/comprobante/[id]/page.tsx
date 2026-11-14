@@ -31,7 +31,6 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
   if (!receipt) notFound();
 
   const t = await getTranslations("cashier.receipt");
-  const tiers = await getTranslations("tiers");
   const format = await getFormatter();
   const { breakdown } = receipt;
 
@@ -54,7 +53,7 @@ export default async function ReceiptPage({ params }: PageProps<"/caja/comproban
     { label: t("amount"), value: formatMoney(format, breakdown.amountCents) },
     {
       label: t("discount", {
-        tier: tiers(receipt.tier),
+        tier: receipt.tierName,
         percent: receipt.discountPercent,
       }),
       value: formatDiscount(format, breakdown.discountCents),

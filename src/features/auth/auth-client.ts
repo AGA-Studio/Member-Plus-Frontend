@@ -37,8 +37,8 @@ export async function loginWithBackend(email: string, password: string): Promise
   }
 
   if (response.status === 403) {
-    const body = (await response.json().catch(() => ({}))) as { detail?: string };
-    return { ok: false, kind: body.detail === "Business suspended" ? "suspended" : "inactive" };
+    const body = (await response.json().catch(() => ({}))) as { code?: string };
+    return { ok: false, kind: body.code === "business_suspended" ? "suspended" : "inactive" };
   }
 
   if (!response.ok) return { ok: false, kind: "unavailable" };

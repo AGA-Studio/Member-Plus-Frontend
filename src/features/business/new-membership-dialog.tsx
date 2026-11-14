@@ -8,23 +8,21 @@ import { Dialog } from "@/components/ui/dialog";
 import { SelectField } from "@/components/ui/select-field";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/ui/text-field";
-import { tiers } from "@/lib/domain";
 import { createMembershipAction, type NewMembershipState } from "./actions";
-
-const initialState: NewMembershipState = {
-  values: { fullName: "", email: "", phone: "", tier: "bronze" },
-  errors: {},
-};
 
 type NewMembershipDialogProps = {
   triggerLabel: string;
   triggerClassName: string;
+  levelOptions: { value: string; label: string }[];
 };
 
-export function NewMembershipDialog({ triggerLabel, triggerClassName }: NewMembershipDialogProps) {
+export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptions }: NewMembershipDialogProps) {
   const t = useTranslations("business.memberships.newDialog");
-  const tierLabels = useTranslations("tiers");
   const common = useTranslations("common");
+  const initialState: NewMembershipState = {
+    values: { fullName: "", email: "", phone: "", levelId: levelOptions[0]?.value ?? "" },
+    errors: {},
+  };
   const [open, setOpen] = useState(false);
   const [sendCard, setSendCard] = useState(true);
   const sendCardLabelId = useId();
@@ -64,12 +62,13 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName }: NewMembe
             placeholder={t("phonePlaceholder")}
             defaultValue={state.values.phone}
             autoComplete="off"
+            error={state.errors.phone ? t(`errors.${state.errors.phone}`) : undefined}
           />
           <SelectField
-            name="tier"
+            name="levelId"
             label={t("tier")}
-            defaultValue={state.values.tier}
-            options={tiers.map((tier) => ({ value: tier, label: tierLabels(tier) }))}
+            defaultValue={state.values.levelId}
+            options={levelOptions}
           />
           <input type="hidden" name="sendCardEmail" value={sendCard ? "on" : ""} />
           <div className="flex items-center justify-between gap-4 rounded-md border border-border p-4">

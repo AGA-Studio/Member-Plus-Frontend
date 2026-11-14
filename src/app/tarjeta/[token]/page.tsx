@@ -33,7 +33,6 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
   if (!card) notFound();
 
   const t = await getTranslations("card");
-  const tiers = await getTranslations("tiers");
   const format = await getFormatter();
   const validUntil = format.dateTime(new Date(card.validUntil), {
     day: "numeric",
@@ -57,7 +56,7 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
         <div id={captureId} className="flex flex-col">
           <MembershipCard
             tier={card.tier}
-            tierLabel={tiers(card.tier)}
+            tierLabel={card.tierName}
             businessName={card.businessName}
             memberName={card.fullName}
             code={card.code}

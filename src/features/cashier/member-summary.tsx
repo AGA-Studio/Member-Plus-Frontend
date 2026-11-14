@@ -19,7 +19,6 @@ const statusTones = {
 
 export async function MemberSummary({ member, businessName }: MemberSummaryProps) {
   const t = await getTranslations("cashier.purchase.member");
-  const tiers = await getTranslations("tiers");
   const format = await getFormatter();
   const validUntil = format.dateTime(new Date(member.validUntil), {
     day: "numeric",
@@ -37,7 +36,7 @@ export async function MemberSummary({ member, businessName }: MemberSummaryProps
     <div className="flex flex-col gap-4">
       <MembershipCard
         tier={member.tier}
-        tierLabel={tiers(member.tier)}
+        tierLabel={member.tierName}
         businessName={businessName}
         memberName={member.fullName}
         code={member.code}
@@ -49,7 +48,7 @@ export async function MemberSummary({ member, businessName }: MemberSummaryProps
           <div className="flex min-w-0 flex-col gap-2">
             <h2 className="text-heading text-foreground">{member.fullName}</h2>
             <div className="flex flex-wrap items-center gap-2">
-              <Badge tone={member.tier}>{tiers(member.tier)}</Badge>
+              <Badge tone={member.tier}>{member.tierName}</Badge>
               <Badge tone={statusTones[member.status]}>{t(`status.${member.status}`)}</Badge>
             </div>
             <p className="flex items-center gap-1.5 text-sm text-muted">

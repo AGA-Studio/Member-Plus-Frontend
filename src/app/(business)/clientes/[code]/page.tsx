@@ -62,19 +62,17 @@ export default async function CustomerPage({
   if (!member) notFound();
 
   const t = await getTranslations("business.customer");
-  const tierLabels = await getTranslations("tiers");
   const statusLabels = await getTranslations("memberStatus");
   const format = await getFormatter();
   const tab: TabKey = tabKeys.find((item) => item === readParam(query.tab)) ?? "purchases";
   const requestedPage = parsePage(readParam(query.page));
   const [levels, purchases] = await Promise.all([
     listLevels(),
-    listPurchasesByMember(member.code, requestedPage),
+    listPurchasesByMember(member.id, requestedPage),
   ]);
   const statusKey = getStatusKey(member);
   const basePath = `/clientes/${encodeURIComponent(member.code)}`;
 
-  const nextLevel = levels.find((level) => level.minPoints > member.points);
   const lastPurchase = purchases.items[0];
   const formatDay = (iso: string) =>
     format.dateTime(new Date(iso), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -88,9 +86,7 @@ export default async function CustomerPage({
       icon: Star,
       label: t("metrics.points"),
       value: formatPoints(format, member.points),
-      hint: nextLevel
-        ? t("metrics.toNextLevel", { points: formatPoints(format, nextLevel.minPoints - member.points), tier: tierLabels(nextLevel.tier) })
-        : t("metrics.topLevel"),
+      hint: t("metrics.currentLevel", { tier: member.tierName }),
       mobile: true,
     },
     {
@@ -111,7 +107,7 @@ export default async function CustomerPage({
 
   const dataRows = [
     { label: t("data.code"), value: member.code, mono: true },
-    { label: t("data.level"), value: tierLabels(member.tier) },
+    { label: t("data.level"), value: member.tierName },
     { label: t("data.since"), value: formatDay(member.issuedAt) },
     { label: t("data.validUntil"), value: formatDay(member.validUntil) },
     { label: t("data.email"), value: member.email },
@@ -144,7 +140,9 @@ export default async function CustomerPage({
 
   return (
     <CustomerDialogsProvider
-      code={member.code}
+      id={member.id}
+      levelId={member.tierId}
+      levelOptions={levels.map((level) => ({ value: String(level.id), label: level.name }))}
       fullName={member.fullName}
       email={member.email}
       phone={member.phone}
@@ -190,7 +188,7 @@ export default async function CustomerPage({
         <div className={cx(revealClasses(2), "flex flex-col gap-6")}>
           <MembershipCard
             tier={member.tier}
-            tierLabel={tierLabels(member.tier)}
+            tierLabel={member.tierName}
             businessName={user.businessName}
             memberName={member.fullName}
             code={member.code}

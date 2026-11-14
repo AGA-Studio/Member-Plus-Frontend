@@ -14,6 +14,7 @@ import {
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
 import {
@@ -36,7 +37,9 @@ function useCustomerDialogs(): CustomerDialogsContextValue {
 }
 
 type CustomerDialogsProviderProps = {
-  code: string;
+  id: number;
+  levelId: number;
+  levelOptions: { value: string; label: string }[];
   fullName: string;
   email: string;
   phone: string;
@@ -44,7 +47,9 @@ type CustomerDialogsProviderProps = {
 };
 
 export function CustomerDialogsProvider({
-  code,
+  id,
+  levelId,
+  levelOptions,
   fullName,
   email,
   phone,
@@ -60,11 +65,11 @@ export function CustomerDialogsProvider({
 
   const initialState: EditCustomerState = {
     status: "idle",
-    values: { fullName, email, phone },
+    values: { fullName, email, phone, levelId: String(levelId) },
     errors: {},
   };
   const [state, formAction, saving] = useActionState(
-    updateCustomerAction.bind(null, code),
+    updateCustomerAction.bind(null, id),
     initialState,
   );
 
@@ -88,7 +93,7 @@ export function CustomerDialogsProvider({
 
   function confirmCancel() {
     startCancelling(async () => {
-      await cancelMembershipAction(code);
+      await cancelMembershipAction(id);
       setCancelOpen(false);
       show("success", toasts("membershipCancelled"));
     });
@@ -129,6 +134,13 @@ export function CustomerDialogsProvider({
             optional
             defaultValue={state.values.phone}
             autoComplete="off"
+            error={state.errors.phone ? t(`editDialog.errors.${state.errors.phone}`) : undefined}
+          />
+          <SelectField
+            name="levelId"
+            label={t("editDialog.level")}
+            defaultValue={state.values.levelId}
+            options={levelOptions}
           />
           <div className="flex justify-end gap-3">
             <Button variant="secondary" onClick={() => setEditOpen(false)}>
