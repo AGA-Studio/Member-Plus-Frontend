@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { cx } from "@/lib/cx";
+import { iconButtonClasses, type IconButtonTone } from "@/components/ui/icon-button";
 import { logoutFromBackend } from "./auth-client";
 import { useEntryTransition } from "./entry-transition";
 
@@ -63,7 +63,7 @@ export function LogoutDialog({ open, onClose }: LogoutDialogProps) {
 }
 
 type LogoutButtonProps = {
-  tone?: "muted" | "strong" | "inverse";
+  tone?: IconButtonTone;
 };
 
 export function LogoutButton({ tone = "muted" }: LogoutButtonProps) {
@@ -76,12 +76,7 @@ export function LogoutButton({ tone = "muted" }: LogoutButtonProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t("title")}
-        className={cx(
-          "flex size-11 items-center justify-center transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
-          tone === "inverse"
-            ? "rounded-full text-ink-300 hover:bg-white/10 hover:text-white"
-            : cx("rounded-md hover:bg-surface-muted hover:text-foreground", tone === "strong" ? "text-foreground" : "text-muted"),
-        )}
+        className={iconButtonClasses(tone)}
       >
         <LogOut aria-hidden strokeWidth={1.75} className="size-5" />
       </button>

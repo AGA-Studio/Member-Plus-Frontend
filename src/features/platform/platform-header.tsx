@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { getInitials } from "@/components/ui/avatar";
 import { Logo } from "@/components/ui/logo";
 import { LogoutButton } from "@/features/auth/logout-button";
+import { LanguageButton } from "@/features/i18n/language-button";
 import { requireSession } from "@/lib/session";
 
 export async function PlatformHeader() {
@@ -28,6 +29,7 @@ export async function PlatformHeader() {
           >
             {getInitials(user.fullName)}
           </span>
+          <LanguageButton tone="strong" />
           <LogoutButton tone="strong" />
         </div>
       </div>

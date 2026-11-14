@@ -24,6 +24,13 @@
       "confirm": "Cerrar sesión",
       "confirming": "Cerrando sesión…"
     },
+    "language": {
+      "title": "Idioma",
+      "options": {
+        "es": "Español",
+        "en": "English"
+      }
+    },
     "dismissToast": "Cerrar aviso",
     "toastRegion": "Avisos",
     "offline": "Sin conexión. Revisa tu internet e inténtalo de nuevo."
