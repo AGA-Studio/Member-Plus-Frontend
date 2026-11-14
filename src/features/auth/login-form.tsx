@@ -6,6 +6,7 @@ import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { loginWithBackend, type LoginFailure, type LoginRole } from "./auth-client";
+import { useEntryTransition } from "./entry-transition";
 
 const enterClasses =
   "transition-[opacity,translate] duration-250 ease-out starting:translate-y-2 starting:opacity-0";
@@ -19,6 +20,7 @@ const roleHomePaths: Record<LoginRole, string> = {
 export function LoginForm() {
   const t = useTranslations("auth.login");
   const router = useRouter();
+  const { begin } = useEntryTransition();
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<"emailRequired" | null>(null);
@@ -40,7 +42,8 @@ export function LoginForm() {
       const outcome = await loginWithBackend(trimmedEmail, password);
 
       if (outcome.ok) {
-        router.replace(`${roleHomePaths[outcome.role]}?toast=signedIn`);
+        const playsIntro = begin();
+        router.replace(playsIntro ? roleHomePaths[outcome.role] : `${roleHomePaths[outcome.role]}?toast=signedIn`);
         router.refresh();
         return;
       }

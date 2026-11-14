@@ -12,7 +12,7 @@ export async function PlatformHeader() {
     <header className="shrink-0 border-b border-border bg-surface">
       <div className="mx-auto flex h-16 w-full max-w-page items-center justify-between gap-4 px-4 sm:px-6 lg:h-20 lg:px-8">
         <div className="flex items-center gap-4">
-          <Logo className="h-8 w-auto lg:h-10" />
+          <Logo className="h-8 w-auto lg:h-10" entryTarget />
           <span className="hidden rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-text sm:inline-flex">
             {t("label")}
           </span>

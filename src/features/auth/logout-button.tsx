@@ -100,6 +100,7 @@ export function UserAvatarButton({ initials }: UserAvatarButtonProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t("title")}
+        data-entry-target="origin"
         className="flex size-11 items-center justify-center rounded-full bg-primary-soft text-sm font-medium text-primary-text transition-transform duration-150 ease-out active:scale-97"
       >
         {initials}
