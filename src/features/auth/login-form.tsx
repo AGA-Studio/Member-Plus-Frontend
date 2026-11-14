@@ -13,6 +13,7 @@ const enterClasses =
 const roleHomePaths: Record<LoginRole, string> = {
   cashier: "/caja",
   admin: "/clientes",
+  platform: "/plataforma",
 };
 
 export function LoginForm() {
