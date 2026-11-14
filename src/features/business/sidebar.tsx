@@ -44,7 +44,7 @@ export function Sidebar({ userName, userRole, initials }: SidebarProps) {
           );
         })}
       </nav>
-      <div className="flex shrink-0 items-center gap-3 rounded-md border border-border p-3">
+      <div className="-mx-4 -mb-6 flex shrink-0 items-center gap-3 border-t border-border px-7 py-4">
         <span
           aria-hidden
           className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-medium text-primary-text"
