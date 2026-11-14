@@ -24,7 +24,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
 
   return (
     <aside className="hidden h-full w-66 shrink-0 flex-col gap-6 border-r border-border bg-surface px-4 py-6 lg:flex">
-      <Logo className="ml-3 h-10 w-auto shrink-0 self-start" />
+      <Logo className="ml-3 h-10 w-auto shrink-0 self-start" entryTarget />
       <LogoDialog businessName={businessName} initials={businessInitials} logoUrl={businessLogoUrl} />
       <nav aria-label={t("nav.label")} className="flex flex-1 flex-col gap-1 overflow-y-auto">
         <p className="px-3 pb-1 text-xs font-medium text-muted">{t("nav.section")}</p>

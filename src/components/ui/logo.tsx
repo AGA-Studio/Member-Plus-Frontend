@@ -14,9 +14,10 @@ type LogoProps = {
   variant?: "full" | "icon";
   surface?: "light" | "dark";
   className?: string;
+  entryTarget?: boolean;
 };
 
-export function Logo({ variant = "full", surface = "light", className }: LogoProps) {
+export function Logo({ variant = "full", surface = "light", className, entryTarget = false }: LogoProps) {
   const t = useTranslations("common");
 
   return (
@@ -25,6 +26,7 @@ export function Logo({ variant = "full", surface = "light", className }: LogoPro
       alt={t("brandName")}
       priority
       className={className}
+      data-entry-target={entryTarget ? "logo" : undefined}
     />
   );
 }

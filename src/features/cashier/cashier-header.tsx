@@ -17,6 +17,7 @@ export async function CashierHeader() {
             initials={user.businessInitials}
             logoUrl={user.businessLogoUrl}
             className="shadow-md lg:size-12 lg:text-base"
+            entryOrigin
           />
           <div className="flex min-w-0 flex-col">
             <span className="truncate font-display text-base font-semibold lg:text-lg">{user.businessName}</span>
