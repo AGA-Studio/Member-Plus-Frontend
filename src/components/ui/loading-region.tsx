@@ -15,8 +15,8 @@ export async function LoadingRegion({ className, quick = false, children }: Load
     <div role="status" aria-busy="true" className={cx(
         "flex flex-col gap-6",
         quick
-          ? "transition-opacity duration-150 ease-out starting:opacity-0"
-          : "transition-[opacity,translate] duration-250 ease-out starting:translate-y-2 starting:opacity-0",
+          ? "transition-opacity delay-100 duration-150 ease-out starting:opacity-0"
+          : "transition-[opacity,translate] delay-150 duration-250 ease-out starting:translate-y-2 starting:opacity-0",
         className,
       )}>
       <span className="sr-only">{t("loading")}</span>

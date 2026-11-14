@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { findMemberByCode, normalizeMemberCode } from "@/lib/api/members";
 import { registerPurchase } from "@/lib/api/purchases";
@@ -45,5 +46,6 @@ export async function registerPurchaseAction(
     return { error: result.reason, newKey: true };
   }
 
+  revalidatePath("/", "layout");
   redirect(`/caja/comprobante/${result.receiptId}?toast=purchaseRegistered`);
 }
