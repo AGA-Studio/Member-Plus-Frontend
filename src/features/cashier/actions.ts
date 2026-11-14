@@ -22,6 +22,7 @@ export async function lookupCardAction(rawCode: string): Promise<LookupResult> {
 
 export type PurchaseState = {
   error?: "invalidAmount" | "memberNotFound" | "unavailable";
+  newKey?: boolean;
 };
 
 export async function registerPurchaseAction(
@@ -31,13 +32,18 @@ export async function registerPurchaseAction(
   await requireSession();
 
   const result = await registerPurchase({
-    memberCode: String(formData.get("memberCode") ?? ""),
+    memberId: Number(formData.get("memberId")),
     amountCents: parseAmountToCents(String(formData.get("amount") ?? "")),
     concept: String(formData.get("concept") ?? "").trim(),
     useCashback: formData.get("useCashback") === "on",
+    idempotencyKey: String(formData.get("idempotencyKey") ?? ""),
   });
 
-  if (!result.ok) return { error: result.reason };
+  if (!result.ok) {
+    if (result.reason === "conflict") return { error: "unavailable", newKey: true };
+    if (result.reason === "unavailable") return { error: "unavailable" };
+    return { error: result.reason, newKey: true };
+  }
 
   redirect(`/caja/comprobante/${result.receiptId}?toast=purchaseRegistered`);
 }

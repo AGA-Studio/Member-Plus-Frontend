@@ -3,6 +3,7 @@ export const toastTones = {
   signedOut: "success",
   membershipCreated: "success",
   membershipCreatedSent: "success",
+  membershipCreatedPending: "info",
   membershipCreatedEmailFailed: "info",
   purchaseRegistered: "success",
   customerUpdated: "success",

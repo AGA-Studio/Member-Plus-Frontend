@@ -1,78 +1,85 @@
-import { headers } from "next/headers";
-import type { PublicCard } from "@/lib/domain";
-import { findMemberByCode, normalizeMemberCode } from "./members";
-import { mockBusinessNames } from "./mock/businesses";
-import { simulateLatency } from "./mock/latency";
+import type { MemberStatus, PublicCard, Tier } from "@/lib/domain";
+import { backendCall } from "./backend";
 
-const mockTokenPrefix = "demo-";
-const mockBusinessId = 1;
-const mockGoogleWalletUrl = "https://wallet.google.com/";
-
-function tokenForCode(code: string): string {
-  return `${mockTokenPrefix}${code.toLowerCase()}`;
-}
-
-function codeFromToken(token: string): string | null {
-  if (!token.startsWith(mockTokenPrefix)) return null;
-  return normalizeMemberCode(token.slice(mockTokenPrefix.length));
-}
+type BackendPublicCard = {
+  business: { name: string; logo_url: string | null };
+  full_name: string;
+  code: string;
+  level: { name: string; finish: Tier };
+  status: MemberStatus;
+  valid_until: string;
+  wallet: { google: boolean };
+};
 
 export async function getPublicCard(token: string): Promise<PublicCard | null> {
-  await simulateLatency();
-  const code = codeFromToken(token);
-  if (!code) return null;
+  const result = await backendCall<BackendPublicCard>("GET", `/card/${encodeURIComponent(token)}`);
+  if (result.ok) {
+    const card = result.data;
 
-  const member = await findMemberByCode(code);
-  if (!member) return null;
+    return {
+      businessName: card.business.name,
+      businessLogoUrl: card.business.logo_url,
+      fullName: card.full_name,
+      code: card.code,
+      tier: card.level.finish,
+      tierName: card.level.name,
+      status: card.status,
+      validUntil: card.valid_until,
+      googleWalletEnabled: card.wallet.google,
+    };
+  }
+  if (result.status === 404) return null;
 
-  return {
-    businessName: mockBusinessNames[mockBusinessId],
-    fullName: member.fullName,
-    code: member.code,
-    tier: member.tier,
-    status: member.status,
-    validUntil: member.validUntil,
-    googleWalletEnabled: true,
-  };
+  throw new Error(`Public card request failed with status ${result.status}`);
 }
 
 export type GoogleWalletResult =
   | { ok: true; url: string }
-  | { ok: false; reason: "notFound" | "cancelled" | "unavailable" };
+  | { ok: false; reason: "notFound" | "unavailable" };
 
 export async function getGoogleWalletUrl(token: string): Promise<GoogleWalletResult> {
-  const card = await getPublicCard(token);
-  if (!card) return { ok: false, reason: "notFound" };
-  if (card.status === "cancelled") return { ok: false, reason: "cancelled" };
-  if (!card.googleWalletEnabled) return { ok: false, reason: "unavailable" };
+  const result = await backendCall<{ save_url: string }>(
+    "GET",
+    `/card/${encodeURIComponent(token)}/google-wallet`,
+  );
+  if (result.ok) return { ok: true, url: result.data.save_url };
 
-  return { ok: true, url: mockGoogleWalletUrl };
+  return { ok: false, reason: result.status === 404 ? "notFound" : "unavailable" };
 }
 
-export type CardLinkResult = { ok: true; url: string } | { ok: false; reason: "notFound" | "cancelled" };
+export type CardLinkResult =
+  | { ok: true; url: string }
+  | { ok: false; reason: "notFound" | "notActive" | "unavailable" };
 
-export async function createCardLink(rawCode: string): Promise<CardLinkResult> {
-  await simulateLatency();
-  const member = await findMemberByCode(rawCode);
-  if (!member) return { ok: false, reason: "notFound" };
-  if (member.status === "cancelled") return { ok: false, reason: "cancelled" };
+export async function createCardLink(customerId: number): Promise<CardLinkResult> {
+  const result = await backendCall<{ url: string; expires_at: string }>(
+    "POST",
+    `/customer/${customerId}/card-link`,
+  );
+  if (result.ok) return { ok: true, url: result.data.url };
+  if (result.status === 404) return { ok: false, reason: "notFound" };
+  if (result.code === "customer_cancelled" || result.code === "customer_expired") {
+    return { ok: false, reason: "notActive" };
+  }
 
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-
-  return { ok: true, url: `${protocol}://${host}/tarjeta/${tokenForCode(member.code)}` };
+  return { ok: false, reason: "unavailable" };
 }
 
 export type SendCardEmailResult =
   | { ok: true; sentTo: string }
-  | { ok: false; reason: "notFound" | "cancelled" | "failed" };
+  | { ok: false; reason: "notFound" | "notActive" | "rateLimited" | "failed" };
 
-export async function sendCardEmail(rawCode: string): Promise<SendCardEmailResult> {
-  await simulateLatency();
-  const member = await findMemberByCode(rawCode);
-  if (!member) return { ok: false, reason: "notFound" };
-  if (member.status === "cancelled") return { ok: false, reason: "cancelled" };
+export async function sendCardEmail(customerId: number): Promise<SendCardEmailResult> {
+  const result = await backendCall<{ sent_to: string; last_sent_at: string }>(
+    "POST",
+    `/customer/${customerId}/card-link/send`,
+  );
+  if (result.ok) return { ok: true, sentTo: result.data.sent_to };
+  if (result.status === 404) return { ok: false, reason: "notFound" };
+  if (result.code === "customer_cancelled" || result.code === "customer_expired") {
+    return { ok: false, reason: "notActive" };
+  }
+  if (result.code === "card_email_rate_limited") return { ok: false, reason: "rateLimited" };
 
-  return { ok: true, sentTo: member.email };
+  return { ok: false, reason: "failed" };
 }

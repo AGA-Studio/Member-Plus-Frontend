@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useState } from "react";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { TextField } from "@/components/ui/text-field";
@@ -24,7 +25,7 @@ export function EditLevelDialog({ level, tierLabel }: EditLevelDialogProps) {
   const initialState: EditLevelState = {
     status: "idle",
     values: {
-      minPoints: String(level.minPoints),
+      price: String(level.priceCents / 100),
       discount: String(level.benefits.discountPercent),
       pointsPerTen: String(level.benefits.pointsPerTenPesos),
       cashback: String(level.benefits.cashbackPercent),
@@ -32,7 +33,7 @@ export function EditLevelDialog({ level, tierLabel }: EditLevelDialogProps) {
     errors: {},
   };
   const [state, formAction, saving] = useActionState(
-    updateLevelAction.bind(null, level.tier),
+    updateLevelAction.bind(null, level.id),
     initialState,
   );
   useEffect(() => {
@@ -59,12 +60,13 @@ export function EditLevelDialog({ level, tierLabel }: EditLevelDialogProps) {
         variant="drawer"
       >
         <form action={formAction} noValidate className="flex flex-col gap-5">
+          {state.errors.form ? <Alert tone="danger">{t(`editDialog.errors.${state.errors.form}`)}</Alert> : null}
           <TextField
-            name="minPoints"
-            label={t("editDialog.minPoints")}
-            inputMode="numeric"
-            defaultValue={state.values.minPoints}
-            error={state.errors.minPoints ? t(`editDialog.errors.${state.errors.minPoints}`) : undefined}
+            name="price"
+            label={t("editDialog.price")}
+            inputMode="decimal"
+            defaultValue={state.values.price}
+            error={state.errors.price ? t(`editDialog.errors.${state.errors.price}`) : undefined}
           />
           <TextField
             name="discount"

@@ -67,12 +67,6 @@
       "emailPlaceholder": "Enter your email"
     }
   },
-  "tiers": {
-    "bronze": "Bronze",
-    "silver": "Silver",
-    "gold": "Gold",
-    "onyx": "Onyx"
-  },
   "cashier": {
     "header": {
       "role": "Register",
@@ -237,16 +231,16 @@
         "edit": "Edit details",
         "printCard": "Print card",
         "cancel": "Cancel membership",
-        "deliver": "Deliver card"
+        "deliver": "Deliver card",
+        "renew": "Renew"
       },
       "metrics": {
         "points": "Points",
         "cashback": "Cashback",
         "lastPurchase": "Last purchase",
-        "toNextLevel": "{points} to {tier}",
         "available": "Available at the register",
         "noPurchases": "No purchases",
-        "topLevel": "Highest level"
+        "currentLevel": "{tier} level"
       },
       "data": {
         "title": "Details",
@@ -283,8 +277,10 @@
           "fullNameRequired": "Enter the customer's name.",
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
-          "unavailable": "We couldn't save the details. Try again."
-        }
+          "unavailable": "We couldn't save the details. Try again.",
+          "phoneInvalid": "Check the phone number: use digits only."
+        },
+        "level": "Level"
       },
       "cancelDialog": {
         "title": "Cancel {name}'s membership",
@@ -297,7 +293,8 @@
       "tabs": {
         "purchases": "Purchases",
         "points": "Points and cashback",
-        "data": "Details"
+        "data": "Details",
+        "payments": "Payments"
       },
       "points": {
         "date": "Date",
@@ -309,11 +306,42 @@
       },
       "deliver": {
         "title": "Deliver card",
-        "description": "Send {email} a link to save their card to Google Wallet or download it as an image or PDF.",
+        "description": "Send {email} a link to save their card to Google Wallet or download it as an image or PDF. The link works while the card is valid.",
         "sendEmail": "Send by email",
         "sending": "Sending…",
         "copyLink": "Copy link",
         "copying": "Copying…"
+      },
+      "payments": {
+        "emptyTitle": "No payments yet",
+        "emptyDescription": "{name}'s membership payments will show up here.",
+        "date": "Date",
+        "period": "Period",
+        "level": "Level",
+        "method": "Method",
+        "amount": "Amount",
+        "kind": {
+          "new": "New",
+          "renewal": "Renewal"
+        },
+        "range": "{from}–{to} of {total} payments",
+        "periodRange": "{start} – {end}",
+        "kindLevel": "{kind} · {level}",
+        "dateMethod": "{date} · {method}"
+      },
+      "renewDialog": {
+        "title": "Renew {name}'s membership",
+        "description": "Adds a validity period and records the payment. If the card is still valid, the new period starts when the current one ends.",
+        "level": "Level",
+        "method": "Payment method",
+        "amount": "Amount charged (MXN)",
+        "submit": "Renew membership",
+        "renewing": "Renewing…",
+        "errors": {
+          "amountInvalid": "Enter an amount of 0 or more.",
+          "unavailable": "We couldn't renew the membership. Try again.",
+          "cancelled": "This membership is cancelled and can't be renewed."
+        }
       }
     },
     "memberships": {
@@ -361,10 +389,14 @@
           "fullNameRequired": "Enter the customer's name.",
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
-          "unavailable": "We couldn't create the membership. Try again."
+          "unavailable": "We couldn't create the membership. Try again.",
+          "phoneInvalid": "Check the phone number: use digits only.",
+          "amountInvalid": "Enter an amount of 0 or more."
         },
         "sendCard": "Email the card",
-        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it."
+        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it.",
+        "paymentMethod": "Payment method",
+        "amount": "Amount charged (MXN)"
       },
       "searchLabel": "Search memberships",
       "searchPlaceholder": "Search by name or code",
@@ -385,41 +417,39 @@
       "subtitle": "Define what each customer earns by level",
       "notice": "Changes apply to new purchases. Past purchases are not recalculated.",
       "rows": {
-        "from": "From",
+        "price": "Price",
         "discount": "Discount",
         "pointsPerTen": "Points per $10",
         "cashback": "Cashback"
       },
-      "pointsValue": "{count} points",
       "pointsPerTenValue": "{count, plural, one {# point} other {# points}}",
       "customers": "{count, plural, one {# customer} other {# customers}}",
       "edit": "Edit",
       "editDialog": {
         "title": "Edit {tier} level",
-        "minPoints": "Points to reach this level",
+        "price": "Level price (MXN)",
         "discount": "Discount on each purchase (%)",
         "pointsPerTen": "Points per $10",
         "cashback": "Cashback (%)",
         "submit": "Save changes",
         "saving": "Saving…",
         "errors": {
-          "minPointsInvalid": "Enter a number of points, 0 or more.",
+          "priceInvalid": "Enter a price of 0 or more.",
           "discountInvalid": "Enter a value between 0 and 100.",
           "pointsPerTenInvalid": "Enter a number of points, 0 or more.",
           "cashbackInvalid": "Enter a value between 0 and 100.",
           "unavailable": "We couldn't save the level. Try again."
         }
-      }
+      },
+      "free": "Free"
     },
     "movements": {
       "metaTitle": "Transactions · Member+",
       "title": "Transactions",
-      "subtitle": "Every purchase registered at your registers",
+      "subtitle": "All the purchases registered in your business",
       "searchLabel": "Search transactions",
       "searchPlaceholder": "Search customer or code",
       "filters": {
-        "register": "Register",
-        "allRegisters": "Register: All",
         "period": "Period"
       },
       "summary": {
@@ -446,7 +476,7 @@
       },
       "noResults": {
         "title": "No transactions match these filters",
-        "description": "Try another name, another register or clear the filters."
+        "description": "Try another name or remove the filters."
       },
       "periods": {
         "7d": "Last 7 days",
@@ -460,19 +490,7 @@
         "label": "Download CSV",
         "preparing": "Preparing…",
         "fileName": "transactions.csv",
-        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}.",
-        "headers": {
-          "date": "Date",
-          "register": "Register",
-          "customer": "Customer",
-          "code": "Code",
-          "concept": "Description",
-          "amount": "Amount",
-          "discount": "Discount",
-          "points": "Points",
-          "cashbackEarned": "Cashback earned",
-          "cashbackUsed": "Cashback used"
-        }
+        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}."
       }
     }
   },
@@ -491,7 +509,10 @@
     "cardLinkCopied": "Link copied.",
     "cardLinkFailed": "We couldn't copy the link. Try again.",
     "membershipCreatedSent": "Membership created. We emailed the card.",
-    "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile."
+    "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
+    "membershipRenewed": "Membership renewed.",
+    "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
+    "cardEmailRateLimited": "Wait a moment before sending another email."
   },
   "system": {
     "notFound": {
@@ -522,10 +543,6 @@
     "downloadImage": "Download image",
     "downloadPdf": "Download PDF",
     "scanHint": "Show the QR code at the register to earn points and cashback.",
-    "notices": {
-      "expired": "This card has expired. You can save it, but it no longer gives benefits.",
-      "cancelled": "This card was cancelled. Talk to your business if you think this is a mistake."
-    },
     "toasts": {
       "imageSaved": "Image downloaded.",
       "pdfSaved": "PDF downloaded.",
@@ -536,5 +553,10 @@
       "title": "This link doesn't work",
       "description": "It may have expired or a new one may have been created. Ask your business to send you the card again."
     }
+  },
+  "paymentMethods": {
+    "cash": "Cash",
+    "card": "Card",
+    "transfer": "Transfer"
   }
 }

@@ -23,7 +23,6 @@ export default async function PrintCardsPage({ searchParams }: PageProps<"/membr
   const params = await searchParams;
   const code = readParam(params.code);
   const t = await getTranslations("business.print");
-  const tierLabels = await getTranslations("tiers");
 
   const single = code ? await findMemberByCode(code) : null;
   const members = code ? (single ? [single] : []) : await listActiveMembers();
@@ -53,7 +52,7 @@ export default async function PrintCardsPage({ searchParams }: PageProps<"/membr
               <li key={member.code} className="break-inside-avoid">
                 <MembershipCard
                   tier={member.tier}
-                  tierLabel={tierLabels(member.tier)}
+                  tierLabel={member.tierName}
                   businessName={user.businessName}
                   memberName={member.fullName}
                   code={member.code}

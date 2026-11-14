@@ -1,28 +1,51 @@
-import type { Member, MemberStatus, Page, Tier } from "@/lib/domain";
-import { getBenefits } from "./levels";
-import { simulateLatency } from "./mock/latency";
-import { matchesQuery, paginate } from "./paginate";
+import type { MembershipPayment, Member, MemberStatus, Page, PaymentMethod, Tier } from "@/lib/domain";
 import {
-  isExpiringSoon,
-  mockStore,
-  resolveMemberStatus,
-  type StoredMember,
-} from "./mock/store";
+  backendCall,
+  backendGet,
+  fieldFromValidationError,
+  toPage,
+  type BackendPage,
+} from "./backend";
 
-function toMember(stored: StoredMember): Member {
+export type BackendCustomer = {
+  id: number;
+  code: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  level: { id: number; name: string; finish: Tier };
+  status: MemberStatus;
+  expiring_soon: boolean;
+  issued_at: string;
+  valid_until: string;
+  points_balance: number;
+  cashback_balance_cents: number;
+  benefits: { discount_percent: number; points_per_ten: number; cashback_percent: number };
+  last_purchase_at: string | null;
+};
+
+export function toMember(customer: BackendCustomer): Member {
   return {
-    code: stored.code,
-    fullName: stored.fullName,
-    email: stored.email,
-    phone: stored.phone,
-    tier: stored.tier,
-    status: resolveMemberStatus(stored),
-    expiringSoon: isExpiringSoon(stored),
-    issuedAt: stored.issuedAt,
-    validUntil: stored.validUntil,
-    points: stored.points,
-    cashbackBalanceCents: stored.cashbackBalanceCents,
-    benefits: getBenefits(stored.tier),
+    id: customer.id,
+    code: customer.code,
+    fullName: customer.full_name,
+    email: customer.email,
+    phone: customer.phone ?? "",
+    tier: customer.level.finish,
+    tierId: customer.level.id,
+    tierName: customer.level.name,
+    status: customer.status,
+    expiringSoon: customer.expiring_soon,
+    issuedAt: customer.issued_at,
+    validUntil: customer.valid_until,
+    points: customer.points_balance,
+    cashbackBalanceCents: customer.cashback_balance_cents,
+    lastPurchaseAt: customer.last_purchase_at,
+    benefits: {
+      discountPercent: customer.benefits.discount_percent,
+      pointsPerTenPesos: customer.benefits.points_per_ten,
+      cashbackPercent: customer.benefits.cashback_percent,
+    },
   };
 }
 
@@ -31,132 +54,184 @@ export function normalizeMemberCode(rawCode: string): string {
 }
 
 export async function findMemberByCode(rawCode: string): Promise<Member | null> {
-  await simulateLatency();
   const code = normalizeMemberCode(rawCode);
-  const stored = mockStore().members.find((member) => member.code === code);
+  if (!code) return null;
 
-  return stored ? toMember(stored) : null;
+  const result = await backendCall<BackendCustomer>("GET", "/customer/lookup", { query: { code } });
+  if (result.ok) return toMember(result.data);
+  if (result.status === 404) return null;
+
+  throw new Error(`Customer lookup failed with status ${result.status}`);
 }
 
 export type MemberFilters = {
   query?: string;
-  tier?: Tier;
+  levelId?: number;
   status?: MemberStatus | "expiring";
   page: number;
 };
 
-export async function listMembers({ query, tier, status, page }: MemberFilters): Promise<Page<Member>> {
-  await simulateLatency();
-  const members = mockStore().members
-    .map(toMember)
-    .filter((member) => matchesQuery(query, member.fullName, member.email, member.code))
-    .filter((member) => !tier || member.tier === tier)
-    .filter((member) => {
-      if (!status) return true;
-      if (status === "expiring") return member.expiringSoon;
-      return member.status === status;
-    })
-    .sort((a, b) => a.fullName.localeCompare(b.fullName, "es"));
-
-  return paginate(members, page);
-}
-
-export async function countMembers(): Promise<{ all: number; active: number; expiring: number; cancelled: number }> {
-  const members = mockStore().members.map(toMember);
-
-  return {
-    all: members.length,
-    active: members.filter((member) => member.status === "active").length,
-    expiring: members.filter((member) => member.expiringSoon).length,
-    cancelled: members.filter((member) => member.status === "cancelled").length,
-  };
-}
-
-function generateCode(): string {
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let suffix = "";
-  for (let index = 0; index < 5; index += 1) {
-    suffix += alphabet[Math.floor(Math.random() * alphabet.length)];
-  }
-  return `MP-${suffix}`;
-}
-
-type CreateMemberInput = {
-  fullName: string;
-  email: string;
-  phone: string;
-  tier: Tier;
-};
-
-export type CreateMemberResult =
-  | { ok: true; code: string }
-  | { ok: false; reason: "emailTaken" };
-
-const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
-
-export async function createMember(input: CreateMemberInput): Promise<CreateMemberResult> {
-  const email = input.email.trim().toLowerCase();
-  if (mockStore().members.some((member) => member.email.toLowerCase() === email)) {
-    return { ok: false, reason: "emailTaken" };
-  }
-
-  let code = generateCode();
-  while (mockStore().members.some((member) => member.code === code)) code = generateCode();
-
-  const now = Date.now();
-  mockStore().members.push({
-    code,
-    fullName: input.fullName.trim(),
-    email,
-    phone: input.phone.trim(),
-    tier: input.tier,
-    cancelled: false,
-    issuedAt: new Date(now).toISOString(),
-    validUntil: new Date(now + oneYearInMilliseconds).toISOString(),
-    points: 0,
-    cashbackBalanceCents: 0,
+export async function listMembers({ query, levelId, status, page }: MemberFilters): Promise<Page<Member>> {
+  const result = await backendGet<BackendPage<BackendCustomer>>("/customer/list", {
+    q: query,
+    level_id: levelId,
+    status,
+    page,
   });
 
-  return { ok: true, code };
+  return toPage(result, toMember);
 }
 
-type UpdateMemberInput = {
-  code: string;
-  fullName: string;
-  email: string;
-  phone: string;
-};
-
-export type UpdateMemberResult = { ok: true } | { ok: false; reason: "notFound" | "emailTaken" };
-
-export async function updateMember({ code, fullName, email, phone }: UpdateMemberInput): Promise<UpdateMemberResult> {
-  const stored = mockStore().members.find((member) => member.code === code);
-  if (!stored) return { ok: false, reason: "notFound" };
-
-  const normalizedEmail = email.trim().toLowerCase();
-  const taken = mockStore().members.some(
-    (member) => member.code !== code && member.email.toLowerCase() === normalizedEmail,
-  );
-  if (taken) return { ok: false, reason: "emailTaken" };
-
-  stored.fullName = fullName.trim();
-  stored.email = normalizedEmail;
-  stored.phone = phone.trim();
-  return { ok: true };
-}
-
-export async function cancelMember(code: string): Promise<boolean> {
-  const stored = mockStore().members.find((member) => member.code === code);
-  if (!stored) return false;
-  stored.cancelled = true;
-  return true;
+export async function countMembers(): Promise<{
+  all: number;
+  active: number;
+  expiring: number;
+  expired: number;
+  cancelled: number;
+}> {
+  return backendGet("/customer/summary");
 }
 
 export async function listActiveMembers(): Promise<Member[]> {
-  await simulateLatency();
+  const result = await backendGet<BackendPage<BackendCustomer>>("/customer/list", {
+    status: "active",
+    page_size: 500,
+  });
 
-  return mockStore()
-    .members.map(toMember)
-    .filter((member) => member.status === "active")
-    .sort((a, b) => a.fullName.localeCompare(b.fullName, "es"));
+  return result.items.map(toMember);
+}
+
+type CustomerFields = {
+  fullName: string;
+  email: string;
+  phone: string;
+};
+
+export type CustomerWriteFailure = "emailTaken" | "fullNameInvalid" | "emailInvalid" | "phoneInvalid" | "levelInvalid" | "unavailable";
+
+function toWriteFailure(status: number, code: string | null, detail: unknown): CustomerWriteFailure {
+  if (code === "email_taken") return "emailTaken";
+  if (code === "tier_invalid") return "levelInvalid";
+  if (status === 422) {
+    const field = fieldFromValidationError(detail);
+    if (field === "full_name") return "fullNameInvalid";
+    if (field === "email") return "emailInvalid";
+    if (field === "phone") return "phoneInvalid";
+  }
+
+  return "unavailable";
+}
+
+export type CardEmailStatus = "sent" | "failed" | "pending" | "skipped";
+
+export type CreateMemberResult =
+  | { ok: true; id: number; code: string; cardEmail: CardEmailStatus }
+  | { ok: false; reason: CustomerWriteFailure };
+
+type CreateMemberInput = CustomerFields & {
+  levelId: number;
+  sendCardEmail: boolean;
+  paymentMethod: PaymentMethod;
+  amountCents: number;
+};
+
+export async function createMember(input: CreateMemberInput): Promise<CreateMemberResult> {
+  const result = await backendCall<BackendCustomer & { card_email: { status: CardEmailStatus } }>(
+    "POST",
+    "/customer/create",
+    {
+      body: {
+        full_name: input.fullName.trim(),
+        email: input.email.trim(),
+        phone: input.phone.trim() || null,
+        level_id: input.levelId,
+        send_card_email: input.sendCardEmail,
+        payment_method: input.paymentMethod,
+        amount_cents: input.amountCents,
+      },
+    },
+  );
+  if (!result.ok) return { ok: false, reason: toWriteFailure(result.status, result.code, result.detail) };
+
+  return { ok: true, id: result.data.id, code: result.data.code, cardEmail: result.data.card_email.status };
+}
+
+type RenewMemberInput = {
+  levelId: number;
+  paymentMethod: PaymentMethod;
+  amountCents: number;
+};
+
+export type RenewMemberResult = { ok: true } | { ok: false; reason: "cancelled" | "levelInvalid" | "unavailable" };
+
+export async function renewMember(id: number, input: RenewMemberInput): Promise<RenewMemberResult> {
+  const result = await backendCall<BackendCustomer>("POST", `/customer/${id}/renew`, {
+    body: {
+      level_id: input.levelId,
+      payment_method: input.paymentMethod,
+      amount_cents: input.amountCents,
+    },
+  });
+  if (result.ok) return { ok: true };
+  if (result.code === "customer_cancelled") return { ok: false, reason: "cancelled" };
+  if (result.code === "tier_invalid") return { ok: false, reason: "levelInvalid" };
+
+  return { ok: false, reason: "unavailable" };
+}
+
+type BackendPayment = {
+  id: number;
+  created_at: string;
+  kind: "new" | "renewal";
+  method: PaymentMethod;
+  amount_cents: number;
+  level: { id: number; name: string };
+  period_start: string;
+  period_end: string;
+  recorded_by_name: string;
+};
+
+export async function listPayments(id: number, page: number): Promise<Page<MembershipPayment>> {
+  const result = await backendGet<BackendPage<BackendPayment>>(`/customer/${id}/payment/list`, {
+    page,
+    page_size: 6,
+  });
+
+  return toPage(result, (payment) => ({
+    id: payment.id,
+    createdAt: payment.created_at,
+    kind: payment.kind,
+    method: payment.method,
+    amountCents: payment.amount_cents,
+    levelName: payment.level.name,
+    periodStart: payment.period_start,
+    periodEnd: payment.period_end,
+    recordedByName: payment.recorded_by_name,
+  }));
+}
+
+export type UpdateMemberResult = { ok: true } | { ok: false; reason: CustomerWriteFailure | "notFound" };
+
+export async function updateMember(
+  id: number,
+  input: CustomerFields & { levelId?: number },
+): Promise<UpdateMemberResult> {
+  const result = await backendCall<BackendCustomer>("PATCH", `/customer/${id}/update`, {
+    body: {
+      full_name: input.fullName.trim(),
+      email: input.email.trim(),
+      phone: input.phone.trim() || null,
+      ...(input.levelId !== undefined ? { level_id: input.levelId } : {}),
+    },
+  });
+  if (result.ok) return { ok: true };
+  if (result.status === 404) return { ok: false, reason: "notFound" };
+
+  return { ok: false, reason: toWriteFailure(result.status, result.code, result.detail) };
+}
+
+export async function cancelMember(id: number): Promise<boolean> {
+  const result = await backendCall<BackendCustomer>("POST", `/customer/${id}/cancel`);
+
+  return result.ok;
 }

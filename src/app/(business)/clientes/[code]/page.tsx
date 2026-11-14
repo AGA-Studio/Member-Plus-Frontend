@@ -16,11 +16,12 @@ import {
   CancelMembershipButton,
   CustomerDialogsProvider,
   EditCustomerButton,
+  RenewMembershipButton,
 } from "@/features/business/customer-dialogs";
 import { DeliverCardButton } from "@/features/business/deliver-card";
 import { getStatusKey, readParam, statusTones } from "@/features/business/member-status";
 import { listLevels } from "@/lib/api/levels";
-import { findMemberByCode } from "@/lib/api/members";
+import { findMemberByCode, listPayments } from "@/lib/api/members";
 import { parsePage } from "@/lib/api/paginate";
 import { listPurchasesByMember } from "@/lib/api/purchases";
 import { cx } from "@/lib/cx";
@@ -42,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle") };
 }
 
-const tabKeys = ["purchases", "points", "data"] as const;
+const tabKeys = ["purchases", "points", "payments", "data"] as const;
 type TabKey = (typeof tabKeys)[number];
 
 function capitalize(text: string): string {
@@ -62,19 +63,19 @@ export default async function CustomerPage({
   if (!member) notFound();
 
   const t = await getTranslations("business.customer");
-  const tierLabels = await getTranslations("tiers");
   const statusLabels = await getTranslations("memberStatus");
   const format = await getFormatter();
   const tab: TabKey = tabKeys.find((item) => item === readParam(query.tab)) ?? "purchases";
   const requestedPage = parsePage(readParam(query.page));
-  const [levels, purchases] = await Promise.all([
+  const [levels, purchases, payments] = await Promise.all([
     listLevels(),
-    listPurchasesByMember(member.code, requestedPage),
+    listPurchasesByMember(member.id, tab === "payments" ? 1 : requestedPage),
+    tab === "payments" ? listPayments(member.id, requestedPage) : Promise.resolve(null),
   ]);
+  const methodLabels = await getTranslations("paymentMethods");
   const statusKey = getStatusKey(member);
   const basePath = `/clientes/${encodeURIComponent(member.code)}`;
 
-  const nextLevel = levels.find((level) => level.minPoints > member.points);
   const lastPurchase = purchases.items[0];
   const formatDay = (iso: string) =>
     format.dateTime(new Date(iso), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
@@ -88,9 +89,7 @@ export default async function CustomerPage({
       icon: Star,
       label: t("metrics.points"),
       value: formatPoints(format, member.points),
-      hint: nextLevel
-        ? t("metrics.toNextLevel", { points: formatPoints(format, nextLevel.minPoints - member.points), tier: tierLabels(nextLevel.tier) })
-        : t("metrics.topLevel"),
+      hint: t("metrics.currentLevel", { tier: member.tierName }),
       mobile: true,
     },
     {
@@ -111,7 +110,7 @@ export default async function CustomerPage({
 
   const dataRows = [
     { label: t("data.code"), value: member.code, mono: true },
-    { label: t("data.level"), value: tierLabels(member.tier) },
+    { label: t("data.level"), value: member.tierName },
     { label: t("data.since"), value: formatDay(member.issuedAt) },
     { label: t("data.validUntil"), value: formatDay(member.validUntil) },
     { label: t("data.email"), value: member.email },
@@ -144,7 +143,9 @@ export default async function CustomerPage({
 
   return (
     <CustomerDialogsProvider
-      code={member.code}
+      id={member.id}
+      levelId={member.tierId}
+      levelOptions={levels.map((level) => ({ value: String(level.id), label: level.name, priceCents: level.priceCents }))}
       fullName={member.fullName}
       email={member.email}
       phone={member.phone}
@@ -159,8 +160,8 @@ export default async function CustomerPage({
         </Link>
       </Reveal>
 
-      <Reveal index={1} className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-col gap-1">
+      <Reveal index={1} className="flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
+        <div className="flex min-w-0 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-title text-foreground">{member.fullName}</h1>
             <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
@@ -175,10 +176,11 @@ export default async function CustomerPage({
             ) : null}
           </p>
         </div>
-        <div className="hidden items-center gap-3 sm:flex">
+        <div className="hidden flex-wrap items-center gap-3 sm:flex 2xl:justify-end">
           {isCancelled ? null : <CancelMembershipButton />}
           {printLink("")}
-          {isCancelled ? null : <DeliverCardButton code={member.code} email={member.email} />}
+          {member.status === "active" ? <DeliverCardButton id={member.id} email={member.email} /> : null}
+          {isCancelled ? null : <RenewMembershipButton />}
           <EditCustomerButton />
         </div>
       </Reveal>
@@ -190,7 +192,7 @@ export default async function CustomerPage({
         <div className={cx(revealClasses(2), "flex flex-col gap-6")}>
           <MembershipCard
             tier={member.tier}
-            tierLabel={tierLabels(member.tier)}
+            tierLabel={member.tierName}
             businessName={user.businessName}
             memberName={member.fullName}
             code={member.code}
@@ -199,7 +201,8 @@ export default async function CustomerPage({
           <div className="grid grid-cols-2 gap-3 sm:hidden">
             <EditCustomerButton />
             {printLink("")}
-            {isCancelled ? null : <DeliverCardButton code={member.code} email={member.email} className="col-span-2" />}
+            {member.status === "active" ? <DeliverCardButton id={member.id} email={member.email} className="col-span-2" /> : null}
+            {isCancelled ? null : <RenewMembershipButton className="col-span-2" />}
           </div>
           <div className="hidden lg:block">{dataList}</div>
         </div>
@@ -237,6 +240,76 @@ export default async function CustomerPage({
 
           {tab === "data" ? (
             dataList
+          ) : tab === "payments" && payments ? (
+            <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+              {payments.items.length === 0 ? (
+                <EmptyState
+                  icon={CreditCard}
+                  title={t("payments.emptyTitle")}
+                  description={t("payments.emptyDescription", { name: member.fullName })}
+                />
+              ) : (
+                <>
+                  <table className="hidden w-full sm:table">
+                    <thead className="bg-surface-muted text-left text-sm text-muted">
+                      <tr>
+                        <th scope="col" className="px-5 py-3 font-medium">{t("payments.date")}</th>
+                        <th scope="col" className="px-4 py-3 font-medium">{t("payments.period")}</th>
+                        <th scope="col" className="px-4 py-3 font-medium">{t("payments.level")}</th>
+                        <th scope="col" className="px-4 py-3 font-medium">{t("payments.method")}</th>
+                        <th scope="col" className="px-5 py-3 text-right font-medium">{t("payments.amount")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {payments.items.map((payment) => (
+                        <tr key={payment.id} className="border-t border-border">
+                          <td className="px-5 py-3">
+                            <span className="flex flex-col">
+                              <span className="text-base text-foreground">{formatShortDay(payment.createdAt)}</span>
+                              <span className="text-sm text-muted">{t(`payments.kind.${payment.kind}`)}</span>
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-base text-foreground">
+                            {t("payments.periodRange", { start: formatDay(payment.periodStart), end: formatDay(payment.periodEnd) })}
+                          </td>
+                          <td className="px-4 py-3 text-base text-foreground">{payment.levelName}</td>
+                          <td className="px-4 py-3 text-base text-foreground">{methodLabels(payment.method)}</td>
+                          <td className="px-5 py-3 text-right text-base font-medium tabular-nums text-foreground">{formatMoney(format, payment.amountCents)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <ul className="sm:hidden">
+                    {payments.items.map((payment) => (
+                      <li key={payment.id} className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 first:border-t-0">
+                        <span className="flex flex-col">
+                          <span className="text-base font-medium text-foreground">
+                            {t("payments.kindLevel", { kind: t(`payments.kind.${payment.kind}`), level: payment.levelName })}
+                          </span>
+                          <span className="text-sm text-muted">
+                            {t("payments.dateMethod", { date: formatShortDay(payment.createdAt), method: methodLabels(payment.method) })}
+                          </span>
+                        </span>
+                        <span className="text-base font-medium tabular-nums text-foreground">{formatMoney(format, payment.amountCents)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="border-t border-border">
+                    <Pagination
+                      pathname={basePath}
+                      params={{ tab: "payments" }}
+                      page={payments.page}
+                      pageCount={payments.pageCount}
+                      summary={t("payments.range", {
+                        from: (payments.page - 1) * payments.pageSize + 1,
+                        to: (payments.page - 1) * payments.pageSize + payments.items.length,
+                        total: payments.total,
+                      })}
+                    />
+                  </div>
+                </>
+              )}
+            </section>
           ) : (
             <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
               {purchases.items.length === 0 ? (

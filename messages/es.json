@@ -67,12 +67,6 @@
       "emailPlaceholder": "Escribe tu correo"
     }
   },
-  "tiers": {
-    "bronze": "Bronce",
-    "silver": "Plata",
-    "gold": "Oro",
-    "onyx": "Onyx"
-  },
   "cashier": {
     "header": {
       "role": "Caja",
@@ -237,16 +231,16 @@
         "edit": "Editar datos",
         "printCard": "Imprimir tarjeta",
         "cancel": "Cancelar membresía",
-        "deliver": "Entregar tarjeta"
+        "deliver": "Entregar tarjeta",
+        "renew": "Renovar"
       },
       "metrics": {
         "points": "Puntos",
         "cashback": "Cashback",
         "lastPurchase": "Última compra",
-        "toNextLevel": "Faltan {points} para {tier}",
         "available": "Disponible en caja",
         "noPurchases": "Sin compras",
-        "topLevel": "Nivel más alto"
+        "currentLevel": "Nivel {tier}"
       },
       "data": {
         "title": "Datos",
@@ -283,8 +277,10 @@
           "fullNameRequired": "Escribe el nombre del cliente.",
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
-          "unavailable": "No pudimos guardar los datos. Inténtalo de nuevo."
-        }
+          "unavailable": "No pudimos guardar los datos. Inténtalo de nuevo.",
+          "phoneInvalid": "Revisa el teléfono: usa solo números."
+        },
+        "level": "Nivel"
       },
       "cancelDialog": {
         "title": "Cancelar la membresía de {name}",
@@ -297,7 +293,8 @@
       "tabs": {
         "purchases": "Compras",
         "points": "Puntos y cashback",
-        "data": "Datos"
+        "data": "Datos",
+        "payments": "Pagos"
       },
       "points": {
         "date": "Fecha",
@@ -309,11 +306,42 @@
       },
       "deliver": {
         "title": "Entregar tarjeta",
-        "description": "Envía a {email} un enlace para guardar su tarjeta en Google Wallet o descargarla como imagen o PDF.",
+        "description": "Envía a {email} un enlace para guardar su tarjeta en Google Wallet o descargarla como imagen o PDF. El enlace funciona mientras la tarjeta esté vigente.",
         "sendEmail": "Enviar por correo",
         "sending": "Enviando…",
         "copyLink": "Copiar enlace",
         "copying": "Copiando…"
+      },
+      "payments": {
+        "emptyTitle": "Aún no hay pagos",
+        "emptyDescription": "Los pagos de la membresía de {name} aparecerán aquí.",
+        "date": "Fecha",
+        "period": "Periodo",
+        "level": "Nivel",
+        "method": "Método",
+        "amount": "Monto",
+        "kind": {
+          "new": "Alta",
+          "renewal": "Renovación"
+        },
+        "range": "{from}–{to} de {total} pagos",
+        "periodRange": "{start} – {end}",
+        "kindLevel": "{kind} · {level}",
+        "dateMethod": "{date} · {method}"
+      },
+      "renewDialog": {
+        "title": "Renovar la membresía de {name}",
+        "description": "Suma un periodo de vigencia y registra el pago. Si la tarjeta sigue vigente, el periodo nuevo empieza al terminar el actual.",
+        "level": "Nivel",
+        "method": "Método de pago",
+        "amount": "Monto cobrado (MXN)",
+        "submit": "Renovar membresía",
+        "renewing": "Renovando…",
+        "errors": {
+          "amountInvalid": "Escribe un monto de 0 en adelante.",
+          "unavailable": "No pudimos renovar la membresía. Inténtalo de nuevo.",
+          "cancelled": "Esta membresía está cancelada y no se puede renovar."
+        }
       }
     },
     "memberships": {
@@ -361,10 +389,14 @@
           "fullNameRequired": "Escribe el nombre del cliente.",
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
-          "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo."
+          "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo.",
+          "phoneInvalid": "Revisa el teléfono: usa solo números.",
+          "amountInvalid": "Escribe un monto de 0 en adelante."
         },
         "sendCard": "Enviar tarjeta por correo",
-        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla."
+        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla.",
+        "paymentMethod": "Método de pago",
+        "amount": "Monto cobrado (MXN)"
       },
       "searchLabel": "Buscar membresías",
       "searchPlaceholder": "Buscar por nombre o código",
@@ -385,41 +417,39 @@
       "subtitle": "Define qué gana cada cliente según su nivel",
       "notice": "Los cambios aplican a las compras nuevas. Las compras anteriores no se recalculan.",
       "rows": {
-        "from": "Desde",
+        "price": "Precio",
         "discount": "Descuento",
         "pointsPerTen": "Puntos por cada $10",
         "cashback": "Cashback"
       },
-      "pointsValue": "{count} puntos",
       "pointsPerTenValue": "{count, plural, one {# punto} other {# puntos}}",
       "customers": "{count, plural, one {# cliente} other {# clientes}}",
       "edit": "Editar",
       "editDialog": {
         "title": "Editar nivel {tier}",
-        "minPoints": "Puntos para llegar a este nivel",
+        "price": "Precio del nivel (MXN)",
         "discount": "Descuento en cada compra (%)",
         "pointsPerTen": "Puntos por cada $10",
         "cashback": "Cashback (%)",
         "submit": "Guardar cambios",
         "saving": "Guardando…",
         "errors": {
-          "minPointsInvalid": "Escribe un número de puntos de 0 en adelante.",
+          "priceInvalid": "Escribe un precio de 0 en adelante.",
           "discountInvalid": "Escribe un valor entre 0 y 100.",
           "pointsPerTenInvalid": "Escribe un número de puntos de 0 en adelante.",
           "cashbackInvalid": "Escribe un valor entre 0 y 100.",
           "unavailable": "No pudimos guardar el nivel. Inténtalo de nuevo."
         }
-      }
+      },
+      "free": "Gratis"
     },
     "movements": {
       "metaTitle": "Movimientos · Member+",
       "title": "Movimientos",
-      "subtitle": "Todas las compras registradas en tus cajas",
+      "subtitle": "Todas las compras registradas en tu negocio",
       "searchLabel": "Buscar movimientos",
       "searchPlaceholder": "Buscar cliente o código",
       "filters": {
-        "register": "Caja",
-        "allRegisters": "Caja: Todas",
         "period": "Periodo"
       },
       "summary": {
@@ -446,7 +476,7 @@
       },
       "noResults": {
         "title": "No hay movimientos con estos filtros",
-        "description": "Prueba con otro nombre, otra caja o quita los filtros."
+        "description": "Prueba con otro nombre o quita los filtros."
       },
       "periods": {
         "7d": "Últimos 7 días",
@@ -460,19 +490,7 @@
         "label": "Descargar CSV",
         "preparing": "Preparando…",
         "fileName": "movimientos.csv",
-        "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}.",
-        "headers": {
-          "date": "Fecha",
-          "register": "Caja",
-          "customer": "Cliente",
-          "code": "Código",
-          "concept": "Concepto",
-          "amount": "Monto",
-          "discount": "Descuento",
-          "points": "Puntos",
-          "cashbackEarned": "Cashback ganado",
-          "cashbackUsed": "Cashback usado"
-        }
+        "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}."
       }
     }
   },
@@ -491,7 +509,10 @@
     "cardLinkCopied": "Enlace copiado.",
     "cardLinkFailed": "No pudimos copiar el enlace. Inténtalo de nuevo.",
     "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
-    "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha."
+    "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
+    "membershipRenewed": "Membresía renovada.",
+    "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
+    "cardEmailRateLimited": "Espera un momento antes de enviar otro correo."
   },
   "system": {
     "notFound": {
@@ -522,10 +543,6 @@
     "downloadImage": "Descargar imagen",
     "downloadPdf": "Descargar PDF",
     "scanHint": "Muestra el código QR en caja para acumular puntos y cashback.",
-    "notices": {
-      "expired": "Esta tarjeta venció. Puedes guardarla, pero ya no da beneficios.",
-      "cancelled": "Esta tarjeta fue cancelada. Habla con tu negocio si crees que es un error."
-    },
     "toasts": {
       "imageSaved": "Imagen descargada.",
       "pdfSaved": "PDF descargado.",
@@ -536,5 +553,10 @@
       "title": "Este enlace no funciona",
       "description": "Puede que haya vencido o que se haya generado uno nuevo. Pide a tu negocio que te envíe la tarjeta otra vez."
     }
+  },
+  "paymentMethods": {
+    "cash": "Efectivo",
+    "card": "Tarjeta",
+    "transfer": "Transferencia"
   }
 }

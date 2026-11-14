@@ -6,9 +6,10 @@ type SelectFieldProps = {
   options: SelectOption[];
   name?: string;
   defaultValue?: string;
+  onValueChange?: (value: string) => void;
 };
 
-export function SelectField({ label, options, name, defaultValue }: SelectFieldProps) {
+export function SelectField({ label, options, name, defaultValue, onValueChange }: SelectFieldProps) {
   const labelId = useId();
 
   return (
@@ -16,7 +17,13 @@ export function SelectField({ label, options, name, defaultValue }: SelectFieldP
       <span id={labelId} className="text-sm font-medium text-foreground">
         {label}
       </span>
-      <Select name={name} defaultValue={defaultValue} options={options} labelledBy={labelId} />
+      <Select
+        name={name}
+        defaultValue={defaultValue}
+        onValueChange={onValueChange}
+        options={options}
+        labelledBy={labelId}
+      />
     </div>
   );
 }

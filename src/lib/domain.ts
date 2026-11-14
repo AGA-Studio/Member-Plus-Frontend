@@ -1,7 +1,5 @@
 export type Tier = "bronze" | "silver" | "gold" | "onyx";
 
-export const tiers: readonly Tier[] = ["bronze", "silver", "gold", "onyx"];
-
 export type MemberStatus = "active" | "expired" | "cancelled";
 
 export type TierBenefits = {
@@ -11,23 +9,30 @@ export type TierBenefits = {
 };
 
 export type Level = {
+  id: number;
+  name: string;
   tier: Tier;
-  minPoints: number;
+  priceCents: number;
+  customersCount: number;
   benefits: TierBenefits;
 };
 
 export type Member = {
+  id: number;
   code: string;
   fullName: string;
   email: string;
   phone: string;
   tier: Tier;
+  tierId: number;
+  tierName: string;
   status: MemberStatus;
   expiringSoon: boolean;
   issuedAt: string;
   validUntil: string;
   points: number;
   cashbackBalanceCents: number;
+  lastPurchaseAt: string | null;
   benefits: TierBenefits;
 };
 
@@ -44,17 +49,17 @@ export type Purchase = {
   id: string;
   memberCode: string;
   memberName: string;
-  tier: Tier;
   concept: string;
   createdAt: string;
-  registerName: string;
+  cashierName: string;
+  cardStatus: MemberStatus;
   breakdown: PurchaseBreakdown;
   discountPercent: number;
-  pointsAfter?: number;
-  cashbackBalanceAfterCents?: number;
 };
 
 export type Receipt = Purchase & {
+  tier: Tier;
+  tierName: string;
   pointsAfter: number;
   cashbackBalanceAfterCents: number;
 };
@@ -80,10 +85,28 @@ export type Page<T> = {
 
 export type PublicCard = {
   businessName: string;
+  businessLogoUrl: string | null;
   fullName: string;
   code: string;
   tier: Tier;
+  tierName: string;
   status: MemberStatus;
   validUntil: string;
   googleWalletEnabled: boolean;
+};
+
+export type PaymentMethod = "cash" | "card" | "transfer";
+
+export const paymentMethods: readonly PaymentMethod[] = ["cash", "card", "transfer"];
+
+export type MembershipPayment = {
+  id: number;
+  createdAt: string;
+  kind: "new" | "renewal";
+  method: PaymentMethod;
+  amountCents: number;
+  levelName: string;
+  periodStart: string;
+  periodEnd: string;
+  recordedByName: string;
 };

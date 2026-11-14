@@ -14,7 +14,6 @@ import { parsePage } from "@/lib/api/paginate";
 import {
   defaultMovementPeriod,
   listMovements,
-  listRegisterNames,
   movementPeriods,
 } from "@/lib/api/purchases";
 import type { Purchase } from "@/lib/domain";
@@ -37,15 +36,13 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
   await connection();
   const params = await searchParams;
   const query = readParam(params.q);
-  const registers = await listRegisterNames();
-  const register = registers.find((item) => item === readParam(params.register));
   const period = movementPeriods.find((item) => item === readParam(params.period)) ?? defaultMovementPeriod;
   const requestedPage = parsePage(readParam(params.page));
 
   const t = await getTranslations("business.movements");
   const format = await getFormatter();
-  const { page, summary } = await listMovements({ query, register, period, page: requestedPage });
-  const filtered = Boolean(query || register || period !== defaultMovementPeriod);
+  const { page, summary } = await listMovements({ query, period, page: requestedPage });
+  const filtered = Boolean(query || period !== defaultMovementPeriod);
   const from = (page.page - 1) * page.pageSize + 1;
   const to = from + page.items.length - 1;
 
@@ -87,7 +84,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
   const pagination = (
     <Pagination
       pathname="/movimientos"
-      params={{ q: query, register, period: period === defaultMovementPeriod ? undefined : period }}
+      params={{ q: query, period: period === defaultMovementPeriod ? undefined : period }}
       page={page.page}
       pageCount={page.pageCount}
       summary={t("range", { from, to, total: page.total })}
@@ -100,7 +97,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
         <PageHeader
           title={t("title")}
           subtitle={t("subtitle")}
-          actions={<ExportCsvButton query={query} register={register} period={period} />}
+          actions={<ExportCsvButton query={query} period={period} />}
         />
       </Reveal>
       <Reveal index={1}>
@@ -113,12 +110,6 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
               label: t("filters.period"),
               defaultValue: defaultMovementPeriod,
               options: movementPeriods.map((item) => ({ value: item, label: t(`periods.${item}`) })),
-            },
-            {
-              name: "register",
-              label: t("filters.register"),
-              allLabel: t("filters.allRegisters"),
-              options: registers.map((item) => ({ value: item, label: item })),
             },
           ]}
         />
@@ -167,7 +158,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
                         <td className="px-6 py-3">
                           <span className="flex flex-col">
                             <span className="text-base text-foreground">{formatDateTime(purchase.createdAt)}</span>
-                            <span className="text-sm text-muted">{purchase.registerName}</span>
+                            <span className="text-sm text-muted">{purchase.cashierName}</span>
                           </span>
                         </td>
                         <td className="px-4 py-3">
