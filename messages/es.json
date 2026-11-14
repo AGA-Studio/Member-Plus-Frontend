@@ -512,7 +512,12 @@
         "invalid": "No pudimos leer esa imagen. Usa un archivo JPEG, PNG o WebP.",
         "storageUnavailable": "El almacenamiento de imágenes no está disponible por ahora. Inténtalo más tarde.",
         "unavailable": "No pudimos guardar el logo. Inténtalo de nuevo."
-      }
+      },
+      "editHint": "Editar negocio"
+    },
+    "sidebar": {
+      "open": "Abrir el menú lateral",
+      "close": "Cerrar el menú lateral"
     }
   },
   "toasts": {

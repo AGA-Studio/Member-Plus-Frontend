@@ -1,8 +1,10 @@
 "use client";
 
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useEffect, useId, useRef, useState } from "react";
 import { Logo } from "@/components/ui/logo";
 import { cx } from "@/lib/cx";
 import { LogoutButton } from "@/features/auth/logout-button";
@@ -14,54 +16,155 @@ type SidebarProps = {
   businessInitials: string;
   businessLogoUrl: string | null;
   userName: string;
-  userRole: string;
-  initials: string;
 };
 
-export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName, userRole, initials }: SidebarProps) {
+const settleMilliseconds = 320;
+
+const labelEnter =
+  "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";
+
+export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName }: SidebarProps) {
   const t = useTranslations("business");
   const pathname = usePathname();
+  const panelId = useId();
+  const panelRef = useRef<HTMLElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [isPill, setIsPill] = useState(true);
+
+  function expand() {
+    setIsPill(false);
+    setExpanded(true);
+  }
+
+  function collapse() {
+    setExpanded(false);
+  }
+
+  useEffect(() => {
+    if (expanded) return;
+
+    const timer = window.setTimeout(() => setIsPill(true), settleMilliseconds);
+
+    return () => window.clearTimeout(timer);
+  }, [expanded]);
+
+  useEffect(() => {
+    if (!expanded) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape" || document.querySelector("dialog[open]")) return;
+      setExpanded(false);
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [expanded]);
 
   return (
-    <aside className="hidden h-full w-66 shrink-0 flex-col gap-6 border-r border-border bg-surface px-4 py-6 lg:flex">
-      <Logo className="ml-3 h-10 w-auto shrink-0 self-start" entryTarget />
-      <LogoDialog businessName={businessName} initials={businessInitials} logoUrl={businessLogoUrl} />
-      <nav aria-label={t("nav.label")} className="flex flex-1 flex-col gap-1 overflow-y-auto">
-        <p className="px-3 pb-1 text-xs font-medium text-muted">{t("nav.section")}</p>
-        {businessNavItems.map(({ href, key, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
-
-          return (
-            <Link
-              key={href}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              className={cx(
-                "flex h-11 items-center gap-3 rounded-md px-3 text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
-                active
-                  ? "bg-primary-soft font-semibold text-primary-text"
-                  : "text-foreground hover:bg-surface-muted",
-              )}
+    <div
+      className={cx(
+        "relative hidden shrink-0 transition-[width] duration-300 ease-in-out lg:block",
+        expanded ? "w-70" : "w-22",
+      )}
+    >
+      <aside
+        ref={panelRef}
+        id={panelId}
+        className={cx(
+          "absolute inset-y-3 left-3 z-30 flex flex-col gap-2 overflow-hidden border border-border bg-surface p-2",
+          "transition-[width,box-shadow] duration-300 ease-in-out",
+          expanded ? "w-64 shadow-md" : "w-16 shadow-md",
+          isPill ? "rounded-full" : "rounded-xl",
+        )}
+      >
+        <div className="flex h-12 shrink-0 items-center justify-between">
+          {expanded ? (
+            <>
+              <Logo className={cx("ml-2 h-8 w-auto", labelEnter)} entryTarget />
+              <button
+                type="button"
+                onClick={collapse}
+                aria-label={t("sidebar.close")}
+                aria-expanded
+                aria-controls={panelId}
+                className="flex size-12 shrink-0 items-center justify-center rounded-full text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97"
+              >
+                <PanelLeftClose aria-hidden strokeWidth={1.75} className="size-5" />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={expand}
+              aria-label={t("sidebar.open")}
+              aria-expanded={false}
+              aria-controls={panelId}
+              data-entry-target="origin"
+              className="group relative flex size-12 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97"
             >
-              <Icon aria-hidden strokeWidth={1.75} className={cx("size-5", active ? "text-primary-text" : "text-muted")} />
-              {t(`nav.${key}`)}
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="-mx-4 -mb-6 flex shrink-0 items-center gap-3 border-t border-border px-7 py-4">
-        <span
-          aria-hidden
-          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-medium text-primary-text"
-        >
-          {initials}
-        </span>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-medium text-foreground">{userName}</span>
-          <span className="truncate text-xs text-muted">{userRole}</span>
+              <Logo
+                variant="icon"
+                className="absolute h-8 w-auto scale-100 opacity-100 transition-[opacity,scale] duration-200 ease-out group-hover:scale-75 group-hover:opacity-0 group-focus-visible:scale-75 group-focus-visible:opacity-0"
+              />
+              <PanelLeftOpen
+                aria-hidden
+                strokeWidth={1.75}
+                className="absolute size-5 scale-75 text-primary-text opacity-0 transition-[opacity,scale] duration-200 ease-out group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100"
+              />
+            </button>
+          )}
         </div>
-        <LogoutButton />
-      </div>
-    </aside>
+
+        <nav aria-label={t("nav.label")} className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden">
+          {expanded ? (
+            <p className={cx("px-4 pb-1 pt-2 text-xs font-medium text-muted", labelEnter)}>{t("nav.section")}</p>
+          ) : (
+            <span aria-hidden className="mx-3 my-2 h-px bg-border" />
+          )}
+          {businessNavItems.map(({ href, key, icon: Icon }) => {
+            const active = pathname === href || pathname.startsWith(`${href}/`);
+            const label = t(`nav.${key}`);
+
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                aria-label={label}
+                title={expanded ? undefined : label}
+                className={cx(
+                  "flex h-12 shrink-0 items-center rounded-full text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
+                  active
+                    ? "bg-primary-soft font-semibold text-primary-text"
+                    : "text-foreground hover:bg-surface-muted",
+                )}
+              >
+                <span className="flex size-12 shrink-0 items-center justify-center">
+                  <Icon aria-hidden strokeWidth={1.75} className={cx("size-5", active ? "text-primary-text" : "text-muted")} />
+                </span>
+                {expanded ? <span className={cx("truncate pr-4", labelEnter)}>{label}</span> : null}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div
+          className={cx(
+            "flex shrink-0 border-t border-border pt-2",
+            expanded ? "items-center gap-1" : "flex-col items-center gap-1",
+          )}
+        >
+          <LogoDialog
+            businessName={businessName}
+            initials={businessInitials}
+            logoUrl={businessLogoUrl}
+            userName={userName}
+            compact={!expanded}
+          />
+          <LogoutButton />
+        </div>
+      </aside>
+    </div>
   );
 }
