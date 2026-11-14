@@ -6,6 +6,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -54,6 +55,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const t = useTranslations("common");
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const nextId = useRef(0);
+  const regionRef = useRef<HTMLDivElement>(null);
 
   const remove = useCallback((id: number) => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
@@ -84,14 +86,34 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(() => ({ show }), [show]);
 
+  const hasToasts = toasts.length > 0;
+  const newestId = toasts.at(-1)?.id ?? 0;
+
+  useEffect(() => {
+    const region = regionRef.current;
+    if (!region) return;
+
+    const isOpen = region.matches(":popover-open");
+    if (!hasToasts) {
+      if (isOpen) region.hidePopover();
+      return;
+    }
+
+    const dialogIsOpen = document.querySelector("dialog[open]") !== null;
+    if (isOpen && dialogIsOpen) region.hidePopover();
+    if (!region.matches(":popover-open")) region.showPopover();
+  }, [hasToasts, newestId]);
+
   return (
     <ToastContext.Provider value={value}>
       {children}
       <div
+        ref={regionRef}
+        popover="manual"
         role="region"
         aria-label={t("toastRegion")}
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-4 top-4 z-50 flex flex-col items-center gap-3 sm:inset-x-auto sm:right-6 sm:top-6 sm:items-end"
+        className="pointer-events-none fixed inset-x-4 bottom-auto top-4 m-0 h-auto w-auto overflow-visible border-0 bg-transparent p-0 flex flex-col items-center gap-3 sm:inset-x-auto sm:right-6 sm:top-6 sm:items-end"
       >
         {toasts.map((toast) => {
           const Icon = toneIcons[toast.tone];

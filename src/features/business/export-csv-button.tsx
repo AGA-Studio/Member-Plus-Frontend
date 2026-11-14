@@ -6,6 +6,7 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast-provider";
 import type { MovementPeriod } from "@/lib/api/purchases";
+import { useAttempt } from "@/lib/use-action-guard";
 import { exportMovementsAction } from "./actions";
 
 type ExportCsvButtonProps = {
@@ -20,11 +21,13 @@ function countRows(csv: string): number {
 export function ExportCsvButton({ query, period }: ExportCsvButtonProps) {
   const t = useTranslations("business.movements.export");
   const { show } = useToast();
+  const attempt = useAttempt();
   const [pending, startTransition] = useTransition();
 
   function handleClick() {
     startTransition(async () => {
-      const csv = await exportMovementsAction({ query, period });
+      const csv = await attempt(() => exportMovementsAction({ query, period }), t("failed"));
+      if (csv === undefined) return;
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
