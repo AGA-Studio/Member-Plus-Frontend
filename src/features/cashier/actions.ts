@@ -9,7 +9,7 @@ import { requireActionUser } from "@/lib/session";
 export type LookupResult = { ok: true; code: string } | { ok: false; reason: "empty" | "notFound" };
 
 export async function lookupCardAction(rawCode: string): Promise<LookupResult> {
-  await requireActionUser();
+  await requireActionUser(["cashier"]);
 
   const code = normalizeMemberCode(rawCode);
   if (!code) return { ok: false, reason: "empty" };
@@ -29,7 +29,7 @@ export async function registerPurchaseAction(
   _previousState: PurchaseState,
   formData: FormData,
 ): Promise<PurchaseState> {
-  await requireActionUser();
+  await requireActionUser(["cashier"]);
 
   const result = await registerPurchase({
     memberId: Number(formData.get("memberId")),
