@@ -231,7 +231,8 @@
         "edit": "Editar datos",
         "printCard": "Imprimir tarjeta",
         "cancel": "Cancelar membresía",
-        "deliver": "Entregar tarjeta"
+        "deliver": "Entregar tarjeta",
+        "renew": "Renovar"
       },
       "metrics": {
         "points": "Puntos",
@@ -292,7 +293,8 @@
       "tabs": {
         "purchases": "Compras",
         "points": "Puntos y cashback",
-        "data": "Datos"
+        "data": "Datos",
+        "payments": "Pagos"
       },
       "points": {
         "date": "Fecha",
@@ -304,11 +306,42 @@
       },
       "deliver": {
         "title": "Entregar tarjeta",
-        "description": "Envía a {email} un enlace para guardar su tarjeta en Google Wallet o descargarla como imagen o PDF.",
+        "description": "Envía a {email} un enlace para guardar su tarjeta en Google Wallet o descargarla como imagen o PDF. El enlace funciona mientras la tarjeta esté vigente.",
         "sendEmail": "Enviar por correo",
         "sending": "Enviando…",
         "copyLink": "Copiar enlace",
         "copying": "Copiando…"
+      },
+      "payments": {
+        "emptyTitle": "Aún no hay pagos",
+        "emptyDescription": "Los pagos de la membresía de {name} aparecerán aquí.",
+        "date": "Fecha",
+        "period": "Periodo",
+        "level": "Nivel",
+        "method": "Método",
+        "amount": "Monto",
+        "kind": {
+          "new": "Alta",
+          "renewal": "Renovación"
+        },
+        "range": "{from}–{to} de {total} pagos",
+        "periodRange": "{start} – {end}",
+        "kindLevel": "{kind} · {level}",
+        "dateMethod": "{date} · {method}"
+      },
+      "renewDialog": {
+        "title": "Renovar la membresía de {name}",
+        "description": "Suma un periodo de vigencia y registra el pago. Si la tarjeta sigue vigente, el periodo nuevo empieza al terminar el actual.",
+        "level": "Nivel",
+        "method": "Método de pago",
+        "amount": "Monto cobrado (MXN)",
+        "submit": "Renovar membresía",
+        "renewing": "Renovando…",
+        "errors": {
+          "amountInvalid": "Escribe un monto de 0 en adelante.",
+          "unavailable": "No pudimos renovar la membresía. Inténtalo de nuevo.",
+          "cancelled": "Esta membresía está cancelada y no se puede renovar."
+        }
       }
     },
     "memberships": {
@@ -357,10 +390,13 @@
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
           "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo.",
-          "phoneInvalid": "Revisa el teléfono: usa solo números."
+          "phoneInvalid": "Revisa el teléfono: usa solo números.",
+          "amountInvalid": "Escribe un monto de 0 en adelante."
         },
         "sendCard": "Enviar tarjeta por correo",
-        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla."
+        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla.",
+        "paymentMethod": "Método de pago",
+        "amount": "Monto cobrado (MXN)"
       },
       "searchLabel": "Buscar membresías",
       "searchPlaceholder": "Buscar por nombre o código",
@@ -473,7 +509,10 @@
     "cardLinkCopied": "Enlace copiado.",
     "cardLinkFailed": "No pudimos copiar el enlace. Inténtalo de nuevo.",
     "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
-    "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha."
+    "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
+    "membershipRenewed": "Membresía renovada.",
+    "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
+    "cardEmailRateLimited": "Espera un momento antes de enviar otro correo."
   },
   "system": {
     "notFound": {
@@ -504,10 +543,6 @@
     "downloadImage": "Descargar imagen",
     "downloadPdf": "Descargar PDF",
     "scanHint": "Muestra el código QR en caja para acumular puntos y cashback.",
-    "notices": {
-      "expired": "Esta tarjeta venció. Puedes guardarla, pero ya no da beneficios.",
-      "cancelled": "Esta tarjeta fue cancelada. Habla con tu negocio si crees que es un error."
-    },
     "toasts": {
       "imageSaved": "Imagen descargada.",
       "pdfSaved": "PDF descargado.",
@@ -518,5 +553,10 @@
       "title": "Este enlace no funciona",
       "description": "Puede que haya vencido o que se haya generado uno nuevo. Pide a tu negocio que te envíe la tarjeta otra vez."
     }
+  },
+  "paymentMethods": {
+    "cash": "Efectivo",
+    "card": "Tarjeta",
+    "transfer": "Transferencia"
   }
 }

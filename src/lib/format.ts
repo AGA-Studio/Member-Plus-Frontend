@@ -36,3 +36,7 @@ export function parseAmountToCents(rawAmount: string): number {
 
   return Number(wholeDigits) * 100 + Number(fractionDigits);
 }
+
+export function formatPlainPesos(cents: number): string {
+  return (cents / 100).toFixed(2);
+}

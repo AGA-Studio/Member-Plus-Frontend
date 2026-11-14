@@ -3,7 +3,6 @@ import { CalendarCheck } from "lucide-react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Alert } from "@/components/ui/alert";
 import { Logo } from "@/components/ui/logo";
 import { MembershipCard } from "@/components/ui/membership-card";
 import { CardDownloads } from "@/features/card/card-downloads";
@@ -40,7 +39,6 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
     year: "numeric",
     timeZone: "UTC",
   });
-  const isCancelled = card.status === "cancelled";
 
   return (
     <main className="flex min-h-dvh flex-col bg-brand">
@@ -60,7 +58,6 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
             businessName={card.businessName}
             memberName={card.fullName}
             code={card.code}
-            className={isCancelled ? "opacity-50" : undefined}
           />
         </div>
       </div>
@@ -71,18 +68,13 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
             <CalendarCheck aria-hidden strokeWidth={1.75} className="size-4" />
             {t("validUntil", { date: validUntil })}
           </p>
-          {card.status === "expired" ? <Alert tone="warning">{t("notices.expired")}</Alert> : null}
-          {isCancelled ? (
-            <Alert tone="danger">{t("notices.cancelled")}</Alert>
-          ) : (
-            <CardDownloads
-              token={decodeURIComponent(token)}
-              code={card.code}
-              captureId={captureId}
-              googleWalletEnabled={card.googleWalletEnabled}
-            />
-          )}
-          {isCancelled ? null : <p className="text-center text-sm text-muted">{t("scanHint")}</p>}
+          <CardDownloads
+            token={decodeURIComponent(token)}
+            code={card.code}
+            captureId={captureId}
+            googleWalletEnabled={card.googleWalletEnabled}
+          />
+          <p className="text-center text-sm text-muted">{t("scanHint")}</p>
         </div>
       </section>
     </main>

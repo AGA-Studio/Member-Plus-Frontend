@@ -85,6 +85,7 @@ export type Page<T> = {
 
 export type PublicCard = {
   businessName: string;
+  businessLogoUrl: string | null;
   fullName: string;
   code: string;
   tier: Tier;
@@ -92,4 +93,20 @@ export type PublicCard = {
   status: MemberStatus;
   validUntil: string;
   googleWalletEnabled: boolean;
+};
+
+export type PaymentMethod = "cash" | "card" | "transfer";
+
+export const paymentMethods: readonly PaymentMethod[] = ["cash", "card", "transfer"];
+
+export type MembershipPayment = {
+  id: number;
+  createdAt: string;
+  kind: "new" | "renewal";
+  method: PaymentMethod;
+  amountCents: number;
+  levelName: string;
+  periodStart: string;
+  periodEnd: string;
+  recordedByName: string;
 };

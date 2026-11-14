@@ -1,4 +1,4 @@
-import type { Member, MemberStatus, Page, Tier } from "@/lib/domain";
+import type { MembershipPayment, Member, MemberStatus, Page, PaymentMethod, Tier } from "@/lib/domain";
 import {
   backendCall,
   backendGet,
@@ -122,22 +122,92 @@ function toWriteFailure(status: number, code: string | null, detail: unknown): C
   return "unavailable";
 }
 
+export type CardEmailStatus = "sent" | "failed" | "pending" | "skipped";
+
 export type CreateMemberResult =
-  | { ok: true; id: number; code: string }
+  | { ok: true; id: number; code: string; cardEmail: CardEmailStatus }
   | { ok: false; reason: CustomerWriteFailure };
 
-export async function createMember(input: CustomerFields & { levelId: number }): Promise<CreateMemberResult> {
-  const result = await backendCall<BackendCustomer>("POST", "/customer/create", {
-    body: {
-      full_name: input.fullName.trim(),
-      email: input.email.trim(),
-      phone: input.phone.trim() || null,
-      level_id: input.levelId,
+type CreateMemberInput = CustomerFields & {
+  levelId: number;
+  sendCardEmail: boolean;
+  paymentMethod: PaymentMethod;
+  amountCents: number;
+};
+
+export async function createMember(input: CreateMemberInput): Promise<CreateMemberResult> {
+  const result = await backendCall<BackendCustomer & { card_email: { status: CardEmailStatus } }>(
+    "POST",
+    "/customer/create",
+    {
+      body: {
+        full_name: input.fullName.trim(),
+        email: input.email.trim(),
+        phone: input.phone.trim() || null,
+        level_id: input.levelId,
+        send_card_email: input.sendCardEmail,
+        payment_method: input.paymentMethod,
+        amount_cents: input.amountCents,
+      },
     },
-  });
+  );
   if (!result.ok) return { ok: false, reason: toWriteFailure(result.status, result.code, result.detail) };
 
-  return { ok: true, id: result.data.id, code: result.data.code };
+  return { ok: true, id: result.data.id, code: result.data.code, cardEmail: result.data.card_email.status };
+}
+
+type RenewMemberInput = {
+  levelId: number;
+  paymentMethod: PaymentMethod;
+  amountCents: number;
+};
+
+export type RenewMemberResult = { ok: true } | { ok: false; reason: "cancelled" | "levelInvalid" | "unavailable" };
+
+export async function renewMember(id: number, input: RenewMemberInput): Promise<RenewMemberResult> {
+  const result = await backendCall<BackendCustomer>("POST", `/customer/${id}/renew`, {
+    body: {
+      level_id: input.levelId,
+      payment_method: input.paymentMethod,
+      amount_cents: input.amountCents,
+    },
+  });
+  if (result.ok) return { ok: true };
+  if (result.code === "customer_cancelled") return { ok: false, reason: "cancelled" };
+  if (result.code === "tier_invalid") return { ok: false, reason: "levelInvalid" };
+
+  return { ok: false, reason: "unavailable" };
+}
+
+type BackendPayment = {
+  id: number;
+  created_at: string;
+  kind: "new" | "renewal";
+  method: PaymentMethod;
+  amount_cents: number;
+  level: { id: number; name: string };
+  period_start: string;
+  period_end: string;
+  recorded_by_name: string;
+};
+
+export async function listPayments(id: number, page: number): Promise<Page<MembershipPayment>> {
+  const result = await backendGet<BackendPage<BackendPayment>>(`/customer/${id}/payment/list`, {
+    page,
+    page_size: 6,
+  });
+
+  return toPage(result, (payment) => ({
+    id: payment.id,
+    createdAt: payment.created_at,
+    kind: payment.kind,
+    method: payment.method,
+    amountCents: payment.amount_cents,
+    levelName: payment.level.name,
+    periodStart: payment.period_start,
+    periodEnd: payment.period_end,
+    recordedByName: payment.recorded_by_name,
+  }));
 }
 
 export type UpdateMemberResult = { ok: true } | { ok: false; reason: CustomerWriteFailure | "notFound" };

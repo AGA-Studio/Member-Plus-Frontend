@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
 import { updateLevel } from "@/lib/api/levels";
-import { cancelMember, createMember, updateMember, type CustomerWriteFailure } from "@/lib/api/members";
+import { cancelMember, createMember, renewMember, updateMember, type CustomerWriteFailure } from "@/lib/api/members";
 import { exportMovementsCsv, type MovementPeriod } from "@/lib/api/purchases";
+import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
 import { requireUser } from "@/lib/session";
 
@@ -20,6 +21,16 @@ function readNumber(formData: FormData, name: string): number {
   return raw === "" ? Number.NaN : Number(raw);
 }
 
+function isPaymentMethod(value: string): value is PaymentMethod {
+  return paymentMethods.some((method) => method === value);
+}
+
+function readAmountCents(formData: FormData, name: string): number {
+  const raw = readText(formData, name).replace(/,/g, "");
+
+  return /^\d{1,7}(\.\d{1,2})?$/.test(raw) ? parseAmountToCents(raw) : Number.NaN;
+}
+
 function readLevelId(formData: FormData): number {
   const levelId = Number(readText(formData, "levelId"));
   return Number.isInteger(levelId) && levelId > 0 ? levelId : Number.NaN;
@@ -29,6 +40,7 @@ type CustomerFieldErrors = {
   fullName?: "fullNameRequired";
   email?: "emailInvalid" | "emailTaken";
   phone?: "phoneInvalid";
+  amount?: "amountInvalid";
   form?: "unavailable";
 };
 
@@ -48,7 +60,7 @@ function toFieldErrors(reason: CustomerWriteFailure | "notFound"): CustomerField
 }
 
 export type NewMembershipState = {
-  values: { fullName: string; email: string; phone: string; levelId: string };
+  values: { fullName: string; email: string; phone: string; levelId: string; paymentMethod: string; amount: string };
   errors: CustomerFieldErrors;
 };
 
@@ -63,47 +75,97 @@ export async function createMembershipAction(
     email: readText(formData, "email"),
     phone: readText(formData, "phone"),
     levelId: readText(formData, "levelId"),
+    paymentMethod: readText(formData, "paymentMethod"),
+    amount: readText(formData, "amount"),
   };
   const levelId = readLevelId(formData);
+  const amountCents = readAmountCents(formData, "amount");
   const errors: CustomerFieldErrors = {};
 
   if (!values.fullName) errors.fullName = "fullNameRequired";
   if (!emailPattern.test(values.email)) errors.email = "emailInvalid";
-  if (Number.isNaN(levelId)) errors.form = "unavailable";
-  if (errors.fullName || errors.email || errors.form) return { values, errors };
+  if (Number.isNaN(amountCents)) errors.amount = "amountInvalid";
+  if (Number.isNaN(levelId) || !isPaymentMethod(values.paymentMethod)) errors.form = "unavailable";
+  if (errors.fullName || errors.email || errors.amount || errors.form || !isPaymentMethod(values.paymentMethod)) {
+    return { values, errors };
+  }
 
-  const result = await createMember({ ...values, levelId });
+  const result = await createMember({
+    fullName: values.fullName,
+    email: values.email,
+    phone: values.phone,
+    levelId,
+    sendCardEmail: formData.get("sendCardEmail") === "on",
+    paymentMethod: values.paymentMethod,
+    amountCents,
+  });
   if (!result.ok) return { values, errors: toFieldErrors(result.reason) };
 
   revalidatePath("/", "layout");
-  const customerPath = `/clientes/${encodeURIComponent(result.code)}`;
+  const toastByEmailStatus = {
+    sent: "membershipCreatedSent",
+    pending: "membershipCreatedPending",
+    failed: "membershipCreatedEmailFailed",
+    skipped: "membershipCreated",
+  } as const;
 
-  if (formData.get("sendCardEmail") !== "on") redirect(`${customerPath}?toast=membershipCreated`);
-
-  const delivery = await sendCardEmail(result.code);
-  redirect(
-    `${customerPath}?toast=${delivery.ok ? "membershipCreatedSent" : "membershipCreatedEmailFailed"}`,
-  );
+  redirect(`/clientes/${encodeURIComponent(result.code)}?toast=${toastByEmailStatus[result.cardEmail]}`);
 }
 
-export type SendCardEmailState = { ok: boolean };
+export type SendCardEmailState = { ok: true } | { ok: false; reason: "rateLimited" | "failed" };
 
-export async function sendCardEmailAction(code: string): Promise<SendCardEmailState> {
+export async function sendCardEmailAction(id: number): Promise<SendCardEmailState> {
   await requireUser(["admin"]);
 
-  const result = await sendCardEmail(code);
+  const result = await sendCardEmail(id);
+  if (result.ok) return { ok: true };
 
-  return { ok: result.ok };
+  return { ok: false, reason: result.reason === "rateLimited" ? "rateLimited" : "failed" };
 }
 
 export type CardLinkState = { ok: true; url: string } | { ok: false };
 
-export async function createCardLinkAction(code: string): Promise<CardLinkState> {
+export async function createCardLinkAction(id: number): Promise<CardLinkState> {
   await requireUser(["admin"]);
 
-  const result = await createCardLink(code);
+  const result = await createCardLink(id);
 
   return result.ok ? { ok: true, url: result.url } : { ok: false };
+}
+
+export type RenewMembershipState = {
+  status: "idle" | "renewed";
+  values: { levelId: string; paymentMethod: string; amount: string };
+  errors: { amount?: "amountInvalid"; form?: "unavailable" | "cancelled" };
+};
+
+export async function renewMembershipAction(
+  id: number,
+  _previousState: RenewMembershipState,
+  formData: FormData,
+): Promise<RenewMembershipState> {
+  await requireUser(["admin"]);
+
+  const values = {
+    levelId: readText(formData, "levelId"),
+    paymentMethod: readText(formData, "paymentMethod"),
+    amount: readText(formData, "amount"),
+  };
+  const levelId = readLevelId(formData);
+  const amountCents = readAmountCents(formData, "amount");
+
+  if (Number.isNaN(amountCents)) return { status: "idle", values, errors: { amount: "amountInvalid" } };
+  if (Number.isNaN(levelId) || !isPaymentMethod(values.paymentMethod)) {
+    return { status: "idle", values, errors: { form: "unavailable" } };
+  }
+
+  const result = await renewMember(id, { levelId, paymentMethod: values.paymentMethod, amountCents });
+  if (!result.ok) {
+    return { status: "idle", values, errors: { form: result.reason === "cancelled" ? "cancelled" : "unavailable" } };
+  }
+
+  revalidatePath("/", "layout");
+  return { status: "renewed", values, errors: {} };
 }
 
 export type EditCustomerState = {

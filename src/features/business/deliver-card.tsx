@@ -9,14 +9,14 @@ import { useToast } from "@/components/ui/toast-provider";
 import { createCardLinkAction, sendCardEmailAction } from "./actions";
 
 type DeliverCardButtonProps = {
-  code: string;
+  id: number;
   email: string;
   className?: string;
 };
 
 type Busy = "email" | "link" | null;
 
-export function DeliverCardButton({ code, email, className }: DeliverCardButtonProps) {
+export function DeliverCardButton({ id, email, className }: DeliverCardButtonProps) {
   const t = useTranslations("business.customer");
   const toasts = useTranslations("toasts");
   const common = useTranslations("common");
@@ -26,7 +26,7 @@ export function DeliverCardButton({ code, email, className }: DeliverCardButtonP
 
   async function sendEmail() {
     setBusy("email");
-    const result = await sendCardEmailAction(code);
+    const result = await sendCardEmailAction(id);
     setBusy(null);
 
     if (result.ok) {
@@ -35,12 +35,12 @@ export function DeliverCardButton({ code, email, className }: DeliverCardButtonP
       return;
     }
 
-    show("danger", toasts("cardEmailFailed"));
+    show("danger", toasts(result.reason === "rateLimited" ? "cardEmailRateLimited" : "cardEmailFailed"));
   }
 
   async function copyLink() {
     setBusy("link");
-    const result = await createCardLinkAction(code);
+    const result = await createCardLinkAction(id);
 
     try {
       if (!result.ok) throw new Error("Card link could not be created");

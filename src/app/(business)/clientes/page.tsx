@@ -43,6 +43,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
   const levels = await listLevels();
   const level = levels.find((item) => String(item.id) === readParam(params.level));
   const levelOptions = levels.map((item) => ({ value: String(item.id), label: item.name }));
+  const levelPrices = levels.map((item) => ({ value: String(item.id), label: item.name, priceCents: item.priceCents }));
   const result = await listMembers({
     query,
     levelId: level?.id,
@@ -66,7 +67,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
             <NewMembershipDialog
               triggerLabel={t("newMembership")}
               triggerClassName={buttonStyles({ size: "md" })}
-              levelOptions={levelOptions}
+              levelOptions={levelPrices}
             />
           }
         />

@@ -1,5 +1,6 @@
 "use client";
 
+import { RefreshCw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   createContext,
@@ -17,14 +18,19 @@ import { Dialog } from "@/components/ui/dialog";
 import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
+import { paymentMethods } from "@/lib/domain";
+import { formatPlainPesos } from "@/lib/format";
 import {
   cancelMembershipAction,
+  renewMembershipAction,
   updateCustomerAction,
   type EditCustomerState,
+  type RenewMembershipState,
 } from "./actions";
 
 type CustomerDialogsContextValue = {
   openEdit: () => void;
+  openRenew: () => void;
   openCancel: () => void;
 };
 
@@ -39,7 +45,7 @@ function useCustomerDialogs(): CustomerDialogsContextValue {
 type CustomerDialogsProviderProps = {
   id: number;
   levelId: number;
-  levelOptions: { value: string; label: string }[];
+  levelOptions: { value: string; label: string; priceCents: number }[];
   fullName: string;
   email: string;
   phone: string;
@@ -59,7 +65,11 @@ export function CustomerDialogsProvider({
   const common = useTranslations("common");
   const toasts = useTranslations("toasts");
   const { show } = useToast();
+  const methods = useTranslations("paymentMethods");
   const [editOpen, setEditOpen] = useState(false);
+  const [renewOpen, setRenewOpen] = useState(false);
+  const currentLevel = levelOptions.find((option) => option.value === String(levelId));
+  const [renewAmount, setRenewAmount] = useState(formatPlainPesos(currentLevel?.priceCents ?? 0));
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelling, startCancelling] = useTransition();
 
@@ -77,6 +87,23 @@ export function CustomerDialogsProvider({
     if (state.status === "saved") show("success", toasts("customerUpdated"));
   }, [state, show, toasts]);
 
+  const initialRenewState: RenewMembershipState = {
+    status: "idle",
+    values: { levelId: String(levelId), paymentMethod: "cash", amount: renewAmount },
+    errors: {},
+  };
+  const [renewState, renewAction, renewing] = useActionState(
+    renewMembershipAction.bind(null, id),
+    initialRenewState,
+  );
+
+  useEffect(() => {
+    if (renewState.status === "renewed") show("success", toasts("membershipRenewed"));
+  }, [renewState, show, toasts]);
+
+  const [acknowledgedRenew, setAcknowledgedRenew] = useState(renewState);
+  const renewVisible = renewOpen && !(renewState.status === "renewed" && renewState !== acknowledgedRenew);
+
   const [acknowledgedState, setAcknowledgedState] = useState(state);
   const editVisible = editOpen && !(state.status === "saved" && state !== acknowledgedState);
 
@@ -86,9 +113,13 @@ export function CustomerDialogsProvider({
         setAcknowledgedState(state);
         setEditOpen(true);
       },
+      openRenew: () => {
+        setAcknowledgedRenew(renewState);
+        setRenewOpen(true);
+      },
       openCancel: () => setCancelOpen(true),
     }),
-    [state],
+    [state, renewState],
   );
 
   function confirmCancel() {
@@ -154,6 +185,54 @@ export function CustomerDialogsProvider({
       </Dialog>
 
       <Dialog
+        open={renewVisible}
+        onClose={() => setRenewOpen(false)}
+        title={t("renewDialog.title", { name: fullName })}
+      >
+        <form action={renewAction} noValidate className="flex flex-col gap-5">
+          <p className="text-base text-muted">{t("renewDialog.description")}</p>
+          {renewState.errors.form ? (
+            <Alert tone="danger">{t(`renewDialog.errors.${renewState.errors.form}`)}</Alert>
+          ) : null}
+          <SelectField
+            name="levelId"
+            label={t("renewDialog.level")}
+            defaultValue={renewState.values.levelId}
+            options={levelOptions}
+            onValueChange={(selected) => {
+              const level = levelOptions.find((option) => option.value === selected);
+              if (level) setRenewAmount(formatPlainPesos(level.priceCents));
+            }}
+          />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <SelectField
+              name="paymentMethod"
+              label={t("renewDialog.method")}
+              defaultValue={renewState.values.paymentMethod}
+              options={paymentMethods.map((method) => ({ value: method, label: methods(method) }))}
+            />
+            <TextField
+              name="amount"
+              label={t("renewDialog.amount")}
+              inputMode="decimal"
+              value={renewAmount}
+              onChange={(event) => setRenewAmount(event.target.value)}
+              autoComplete="off"
+              error={renewState.errors.amount ? t(`renewDialog.errors.${renewState.errors.amount}`) : undefined}
+            />
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" onClick={() => setRenewOpen(false)}>
+              {common("cancel")}
+            </Button>
+            <Button type="submit" loading={renewing}>
+              {renewing ? t("renewDialog.renewing") : t("renewDialog.submit")}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+
+      <Dialog
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
         title={t("cancelDialog.title", { name: fullName })}
@@ -183,6 +262,18 @@ export function EditCustomerButton({ className }: TriggerProps) {
   return (
     <Button className={className} onClick={openEdit}>
       {t("actions.edit")}
+    </Button>
+  );
+}
+
+export function RenewMembershipButton({ className }: TriggerProps) {
+  const t = useTranslations("business.customer");
+  const { openRenew } = useCustomerDialogs();
+
+  return (
+    <Button variant="outline" className={className} onClick={openRenew}>
+      <RefreshCw aria-hidden strokeWidth={1.75} className="size-5" />
+      {t("actions.renew")}
     </Button>
   );
 }

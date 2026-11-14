@@ -231,7 +231,8 @@
         "edit": "Edit details",
         "printCard": "Print card",
         "cancel": "Cancel membership",
-        "deliver": "Deliver card"
+        "deliver": "Deliver card",
+        "renew": "Renew"
       },
       "metrics": {
         "points": "Points",
@@ -292,7 +293,8 @@
       "tabs": {
         "purchases": "Purchases",
         "points": "Points and cashback",
-        "data": "Details"
+        "data": "Details",
+        "payments": "Payments"
       },
       "points": {
         "date": "Date",
@@ -304,11 +306,42 @@
       },
       "deliver": {
         "title": "Deliver card",
-        "description": "Send {email} a link to save their card to Google Wallet or download it as an image or PDF.",
+        "description": "Send {email} a link to save their card to Google Wallet or download it as an image or PDF. The link works while the card is valid.",
         "sendEmail": "Send by email",
         "sending": "Sending…",
         "copyLink": "Copy link",
         "copying": "Copying…"
+      },
+      "payments": {
+        "emptyTitle": "No payments yet",
+        "emptyDescription": "{name}'s membership payments will show up here.",
+        "date": "Date",
+        "period": "Period",
+        "level": "Level",
+        "method": "Method",
+        "amount": "Amount",
+        "kind": {
+          "new": "New",
+          "renewal": "Renewal"
+        },
+        "range": "{from}–{to} of {total} payments",
+        "periodRange": "{start} – {end}",
+        "kindLevel": "{kind} · {level}",
+        "dateMethod": "{date} · {method}"
+      },
+      "renewDialog": {
+        "title": "Renew {name}'s membership",
+        "description": "Adds a validity period and records the payment. If the card is still valid, the new period starts when the current one ends.",
+        "level": "Level",
+        "method": "Payment method",
+        "amount": "Amount charged (MXN)",
+        "submit": "Renew membership",
+        "renewing": "Renewing…",
+        "errors": {
+          "amountInvalid": "Enter an amount of 0 or more.",
+          "unavailable": "We couldn't renew the membership. Try again.",
+          "cancelled": "This membership is cancelled and can't be renewed."
+        }
       }
     },
     "memberships": {
@@ -357,10 +390,13 @@
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
           "unavailable": "We couldn't create the membership. Try again.",
-          "phoneInvalid": "Check the phone number: use digits only."
+          "phoneInvalid": "Check the phone number: use digits only.",
+          "amountInvalid": "Enter an amount of 0 or more."
         },
         "sendCard": "Email the card",
-        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it."
+        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it.",
+        "paymentMethod": "Payment method",
+        "amount": "Amount charged (MXN)"
       },
       "searchLabel": "Search memberships",
       "searchPlaceholder": "Search by name or code",
@@ -473,7 +509,10 @@
     "cardLinkCopied": "Link copied.",
     "cardLinkFailed": "We couldn't copy the link. Try again.",
     "membershipCreatedSent": "Membership created. We emailed the card.",
-    "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile."
+    "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
+    "membershipRenewed": "Membership renewed.",
+    "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
+    "cardEmailRateLimited": "Wait a moment before sending another email."
   },
   "system": {
     "notFound": {
@@ -504,10 +543,6 @@
     "downloadImage": "Download image",
     "downloadPdf": "Download PDF",
     "scanHint": "Show the QR code at the register to earn points and cashback.",
-    "notices": {
-      "expired": "This card has expired. You can save it, but it no longer gives benefits.",
-      "cancelled": "This card was cancelled. Talk to your business if you think this is a mistake."
-    },
     "toasts": {
       "imageSaved": "Image downloaded.",
       "pdfSaved": "PDF downloaded.",
@@ -518,5 +553,10 @@
       "title": "This link doesn't work",
       "description": "It may have expired or a new one may have been created. Ask your business to send you the card again."
     }
+  },
+  "paymentMethods": {
+    "cash": "Cash",
+    "card": "Card",
+    "transfer": "Transfer"
   }
 }

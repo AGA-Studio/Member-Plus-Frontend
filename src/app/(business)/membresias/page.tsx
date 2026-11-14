@@ -43,6 +43,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
   const levels = await listLevels();
   const level = levels.find((item) => String(item.id) === readParam(params.level));
   const levelOptions = levels.map((item) => ({ value: String(item.id), label: item.name }));
+  const levelPrices = levels.map((item) => ({ value: String(item.id), label: item.name, priceCents: item.priceCents }));
   const counts = await countMembers();
   const result = await listMembers({
     query,
@@ -80,7 +81,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
             <NewMembershipDialog
               triggerLabel={t("newMembership")}
               triggerClassName={buttonStyles({ size: "md" })}
-              levelOptions={levelOptions}
+              levelOptions={levelPrices}
             />
           </>
         }

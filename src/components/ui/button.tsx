@@ -36,7 +36,7 @@ export function buttonStyles({
   className,
 }: ButtonStyleOptions = {}): string {
   return cx(
-    "inline-flex select-none items-center justify-center gap-2 rounded-md font-semibold",
+    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md font-semibold",
     "transition-[background-color,color,border-color,opacity,transform] duration-150 ease-out",
     "active:scale-97 disabled:pointer-events-none disabled:opacity-50",
     variantClasses[variant],

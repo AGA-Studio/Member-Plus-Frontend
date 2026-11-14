@@ -7,24 +7,35 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { SelectField } from "@/components/ui/select-field";
 import { Switch } from "@/components/ui/switch";
+import { paymentMethods } from "@/lib/domain";
+import { formatPlainPesos } from "@/lib/format";
 import { TextField } from "@/components/ui/text-field";
 import { createMembershipAction, type NewMembershipState } from "./actions";
 
 type NewMembershipDialogProps = {
   triggerLabel: string;
   triggerClassName: string;
-  levelOptions: { value: string; label: string }[];
+  levelOptions: { value: string; label: string; priceCents: number }[];
 };
 
 export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptions }: NewMembershipDialogProps) {
   const t = useTranslations("business.memberships.newDialog");
+  const methods = useTranslations("paymentMethods");
   const common = useTranslations("common");
   const initialState: NewMembershipState = {
-    values: { fullName: "", email: "", phone: "", levelId: levelOptions[0]?.value ?? "" },
+    values: {
+      fullName: "",
+      email: "",
+      phone: "",
+      levelId: levelOptions[0]?.value ?? "",
+      paymentMethod: "cash",
+      amount: formatPlainPesos(levelOptions[0]?.priceCents ?? 0),
+    },
     errors: {},
   };
   const [open, setOpen] = useState(false);
   const [sendCard, setSendCard] = useState(true);
+  const [amount, setAmount] = useState(initialState.values.amount);
   const sendCardLabelId = useId();
   const sendCardHintId = useId();
   const [state, formAction, pending] = useActionState(createMembershipAction, initialState);
@@ -69,7 +80,28 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptio
             label={t("tier")}
             defaultValue={state.values.levelId}
             options={levelOptions}
+            onValueChange={(levelId) => {
+              const level = levelOptions.find((option) => option.value === levelId);
+              if (level) setAmount(formatPlainPesos(level.priceCents));
+            }}
           />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <SelectField
+              name="paymentMethod"
+              label={t("paymentMethod")}
+              defaultValue={state.values.paymentMethod}
+              options={paymentMethods.map((method) => ({ value: method, label: methods(method) }))}
+            />
+            <TextField
+              name="amount"
+              label={t("amount")}
+              inputMode="decimal"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              autoComplete="off"
+              error={state.errors.amount ? t(`errors.${state.errors.amount}`) : undefined}
+            />
+          </div>
           <input type="hidden" name="sendCardEmail" value={sendCard ? "on" : ""} />
           <div className="flex items-center justify-between gap-4 rounded-md border border-border p-4">
             <div className="flex flex-col gap-0.5">
