@@ -19,15 +19,19 @@ import { cx } from "@/lib/cx";
 
 type EntryTransitionValue = {
   begin: () => boolean;
+  exit: () => Promise<boolean>;
 };
 
-const EntryTransitionContext = createContext<EntryTransitionValue>({ begin: () => false });
+const EntryTransitionContext = createContext<EntryTransitionValue>({
+  begin: () => false,
+  exit: async () => false,
+});
 
 export function useEntryTransition(): EntryTransitionValue {
   return useContext(EntryTransitionContext);
 }
 
-type Phase = "idle" | "cover" | "reveal";
+type Phase = "idle" | "cover" | "reveal" | "closing" | "closed";
 
 const appRoutePrefixes = ["/caja", "/clientes", "/membresias", "/niveles", "/movimientos", "/plataforma"];
 const excludedRoutes = ["/membresias/imprimir"];
@@ -44,9 +48,19 @@ const targetSearchMilliseconds = 1500;
 const flightMilliseconds = 500;
 const revealMilliseconds = 600;
 const safetyMilliseconds = 6000;
+const closeMilliseconds = 520;
+const closeLogoMilliseconds = 460;
+const closeLogoDelayMilliseconds = 120;
+const closeFadeMilliseconds = 280;
 
 function wait(milliseconds: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+}
+
+function findVisibleTarget(): HTMLElement | null {
+  const candidates = [...document.querySelectorAll<HTMLElement>("[data-entry-target]")];
+
+  return candidates.find((candidate) => candidate.getBoundingClientRect().width > 0) ?? null;
 }
 
 function readEasing(name: string, fallback: string): string {
@@ -82,6 +96,9 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
   const [instantCover, setInstantCover] = useState(loadsWithIntro);
   const appRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const exitAnimations = useRef<Animation[]>([]);
+  const exitStartPath = useRef("");
   const startedAt = useRef(0);
   const startPath = useRef(pathname);
   const playing = useRef(false);
@@ -181,6 +198,121 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
     return true;
   }, [pathname]);
 
+  const closeApp = useCallback(async (): Promise<boolean> => {
+    if (playing.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    const app = appRef.current;
+    if (!app) return false;
+
+    playing.current = true;
+    exitStartPath.current = pathname;
+    const target = findVisibleTarget();
+    const targetRect = target?.getBoundingClientRect();
+    const originX = targetRect ? targetRect.left + targetRect.width / 2 : window.innerWidth / 2;
+    const originY = targetRect ? targetRect.top + targetRect.height / 2 : window.innerHeight / 2;
+    const isLogoTarget = target?.dataset.entryTarget === "logo";
+    const easeInOut = readEasing("--ease-in-out", "ease-in-out");
+
+    setInstantCover(true);
+    flushSync(() => setPhase("closing"));
+    const logo = logoRef.current;
+    if (!logo) {
+      playing.current = false;
+      setPhase("idle");
+      return false;
+    }
+
+    const logoRect = logo.getBoundingClientRect();
+    const logoX = logoRect.left + logoRect.width / 2;
+    const logoY = logoRect.top + logoRect.height / 2;
+    const atTarget =
+      isLogoTarget && targetRect
+        ? {
+            transform: `translate(${originX - logoX}px, ${originY - logoY}px) scale(${targetRect.width / logoRect.width})`,
+            opacity: 1,
+          }
+        : { transform: `translate(${originX - logoX}px, ${originY - logoY}px) scale(0.3)`, opacity: 0 };
+    const atCenter = { transform: "translate(0px, 0px) scale(1)", opacity: 1 };
+
+    const radius = Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY),
+    );
+    const contract = app.animate(
+      [
+        { clipPath: `circle(${radius}px at ${originX}px ${originY}px)` },
+        { clipPath: `circle(0px at ${originX}px ${originY}px)` },
+      ],
+      { duration: closeMilliseconds, easing: easeInOut, fill: "both" },
+    );
+    const fly = logo.animate([atTarget, atCenter], {
+      duration: closeLogoMilliseconds,
+      delay: closeLogoDelayMilliseconds,
+      easing: easeInOut,
+      fill: "both",
+    });
+    exitAnimations.current = [contract, fly];
+
+    try {
+      await Promise.all([contract.finished, fly.finished]);
+    } catch {
+      return true;
+    }
+    flushSync(() => setPhase("closed"));
+
+    return true;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (phase !== "closed" || pathname === exitStartPath.current) return;
+
+    let cancelled = false;
+
+    async function reveal() {
+      await wait(120);
+      const overlay = overlayRef.current;
+      if (cancelled || !overlay) return;
+
+      const app = appRef.current;
+      app?.getAnimations().forEach((animation) => animation.cancel());
+      const fade = overlay.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: closeFadeMilliseconds,
+        easing: readEasing("--ease-out", "ease-out"),
+        fill: "forwards",
+      });
+      exitAnimations.current.push(fade);
+      await fade.finished;
+    }
+
+    reveal()
+      .catch(() => undefined)
+      .finally(() => {
+        exitAnimations.current.forEach((animation) => animation.cancel());
+        exitAnimations.current = [];
+        playing.current = false;
+        setInstantCover(false);
+        setPhase("idle");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [phase, pathname]);
+
+  useEffect(() => {
+    if (phase !== "closing" && phase !== "closed") return;
+
+    const safety = window.setTimeout(() => {
+      appRef.current?.getAnimations().forEach((animation) => animation.cancel());
+      exitAnimations.current.forEach((animation) => animation.cancel());
+      exitAnimations.current = [];
+      playing.current = false;
+      setInstantCover(false);
+      setPhase("idle");
+    }, safetyMilliseconds);
+
+    return () => window.clearTimeout(safety);
+  }, [phase]);
+
   useEffect(() => {
     if (!loadsWithIntro) return;
 
@@ -194,7 +326,7 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
     void play(loginCoverMilliseconds, true);
   }, [phase, instantCover, pathname, play]);
 
-  const value = useMemo(() => ({ begin }), [begin]);
+  const value = useMemo(() => ({ begin, exit: closeApp }), [begin, closeApp]);
 
   return (
     <EntryTransitionContext.Provider value={value}>
@@ -203,11 +335,12 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
       </div>
       {phase !== "idle" ? (
         <div
+          ref={overlayRef}
           aria-hidden
           className={cx(
             "fixed inset-0 flex items-center justify-center bg-brand",
             !instantCover && "transition-opacity duration-200 ease-out starting:opacity-0",
-            phase === "cover" ? "z-50" : "z-0",
+            phase === "cover" || phase === "closed" ? "z-50" : "z-0",
           )}
         >
           <div

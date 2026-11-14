@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { cx } from "@/lib/cx";
 import { logoutFromBackend } from "./auth-client";
+import { useEntryTransition } from "./entry-transition";
 
 type LogoutDialogProps = {
   open: boolean;
@@ -17,6 +18,7 @@ type LogoutDialogProps = {
 export function LogoutDialog({ open, onClose }: LogoutDialogProps) {
   const t = useTranslations("common.logout");
   const router = useRouter();
+  const { exit } = useEntryTransition();
   const [pending, startTransition] = useTransition();
   const [leaving, setLeaving] = useState(false);
   const onCloseRef = useRef(onClose);
@@ -36,6 +38,8 @@ export function LogoutDialog({ open, onClose }: LogoutDialogProps) {
     setLeaving(true);
     startTransition(async () => {
       await logoutFromBackend();
+      onCloseRef.current();
+      await exit();
       router.replace("/login?toast=signedOut");
       router.refresh();
     });
