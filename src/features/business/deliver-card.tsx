@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast-provider";
+import { useAttempt } from "@/lib/use-action-guard";
 import { createCardLinkAction, sendCardEmailAction } from "./actions";
 
 type DeliverCardButtonProps = {
@@ -22,12 +23,14 @@ export function DeliverCardButton({ id, email, className }: DeliverCardButtonPro
   const common = useTranslations("common");
   const { show } = useToast();
   const [open, setOpen] = useState(false);
+  const attempt = useAttempt();
   const [busy, setBusy] = useState<Busy>(null);
 
   async function sendEmail() {
     setBusy("email");
-    const result = await sendCardEmailAction(id);
+    const result = await attempt(() => sendCardEmailAction(id), toasts("cardEmailFailed"));
     setBusy(null);
+    if (!result) return;
 
     if (result.ok) {
       setOpen(false);
@@ -40,10 +43,10 @@ export function DeliverCardButton({ id, email, className }: DeliverCardButtonPro
 
   async function copyLink() {
     setBusy("link");
-    const result = await createCardLinkAction(id);
+    const result = await attempt(() => createCardLinkAction(id), toasts("cardLinkFailed"));
 
     try {
-      if (!result.ok) throw new Error("Card link could not be created");
+      if (!result?.ok) throw new Error("Card link could not be created");
       await navigator.clipboard.writeText(result.url);
       setOpen(false);
       show("success", toasts("cardLinkCopied"));

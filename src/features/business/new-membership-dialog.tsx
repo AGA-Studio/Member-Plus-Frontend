@@ -8,6 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { SelectField } from "@/components/ui/select-field";
 import { Switch } from "@/components/ui/switch";
 import { paymentMethods } from "@/lib/domain";
+import { useGuardedAction } from "@/lib/use-action-guard";
 import { formatPlainPesos } from "@/lib/format";
 import { TextField } from "@/components/ui/text-field";
 import { createMembershipAction, type NewMembershipState } from "./actions";
@@ -38,7 +39,8 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptio
   const [amount, setAmount] = useState(initialState.values.amount);
   const sendCardLabelId = useId();
   const sendCardHintId = useId();
-  const [state, formAction, pending] = useActionState(createMembershipAction, initialState);
+  const guardedCreate = useGuardedAction(createMembershipAction, t("errors.unavailable"));
+  const [state, formAction, pending] = useActionState(guardedCreate, initialState);
 
   return (
     <>

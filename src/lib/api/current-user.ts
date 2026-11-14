@@ -64,6 +64,7 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionLook
       businessId: user.business_id,
       businessName,
       businessInitials: getInitials(businessName),
+      businessLogoUrl: user.business?.logo_url ?? null,
     },
   };
 }

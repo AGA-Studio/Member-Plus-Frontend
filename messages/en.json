@@ -25,7 +25,8 @@
       "confirming": "Signing out…"
     },
     "dismissToast": "Dismiss notice",
-    "toastRegion": "Notices"
+    "toastRegion": "Notices",
+    "offline": "No connection. Check your internet and try again."
   },
   "auth": {
     "login": {
@@ -84,7 +85,8 @@
       "searching": "Searching…",
       "errors": {
         "empty": "Enter the card code.",
-        "notFound": "We couldn't find that card. Check the code."
+        "notFound": "We couldn't find that card. Check the code.",
+        "unavailable": "We couldn't look up the card. Try again."
       },
       "scanner": {
         "active": "Camera on",
@@ -287,7 +289,8 @@
         "body": "Their card will stop working at the register. This cannot be undone.",
         "keep": "Go back",
         "confirm": "Cancel membership",
-        "confirming": "Cancelling…"
+        "confirming": "Cancelling…",
+        "failed": "We couldn't cancel the membership. Try again."
       },
       "tabsLabel": "Profile sections",
       "tabs": {
@@ -490,7 +493,26 @@
         "label": "Download CSV",
         "preparing": "Preparing…",
         "fileName": "transactions.csv",
-        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}."
+        "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}.",
+        "failed": "We couldn't prepare the file. Try again."
+      }
+    },
+    "logo": {
+      "edit": "Change the business logo",
+      "title": "Business logo",
+      "description": "It shows in your panel, at the register and on your customers' digital card.",
+      "choose": "Choose image",
+      "formats": "JPEG, PNG or WebP, up to 2 MB",
+      "save": "Save logo",
+      "saving": "Saving…",
+      "remove": "Remove logo",
+      "removing": "Removing…",
+      "errors": {
+        "noFile": "Choose an image to continue.",
+        "tooLarge": "The image is larger than 2 MB. Choose a lighter one.",
+        "invalid": "We couldn't read that image. Use a JPEG, PNG or WebP file.",
+        "storageUnavailable": "Image storage isn't available right now. Try again later.",
+        "unavailable": "We couldn't save the logo. Try again."
       }
     }
   },
@@ -512,7 +534,9 @@
     "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
     "membershipRenewed": "Membership renewed.",
     "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
-    "cardEmailRateLimited": "Wait a moment before sending another email."
+    "cardEmailRateLimited": "Wait a moment before sending another email.",
+    "logoSaved": "Logo saved.",
+    "logoRemoved": "Logo removed."
   },
   "system": {
     "notFound": {

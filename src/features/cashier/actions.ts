@@ -4,12 +4,12 @@ import { redirect } from "next/navigation";
 import { findMemberByCode, normalizeMemberCode } from "@/lib/api/members";
 import { registerPurchase } from "@/lib/api/purchases";
 import { parseAmountToCents } from "@/lib/format";
-import { requireSession } from "@/lib/session";
+import { requireActionUser } from "@/lib/session";
 
 export type LookupResult = { ok: true; code: string } | { ok: false; reason: "empty" | "notFound" };
 
 export async function lookupCardAction(rawCode: string): Promise<LookupResult> {
-  await requireSession();
+  await requireActionUser();
 
   const code = normalizeMemberCode(rawCode);
   if (!code) return { ok: false, reason: "empty" };
@@ -29,7 +29,7 @@ export async function registerPurchaseAction(
   _previousState: PurchaseState,
   formData: FormData,
 ): Promise<PurchaseState> {
-  await requireSession();
+  await requireActionUser();
 
   const result = await registerPurchase({
     memberId: Number(formData.get("memberId")),

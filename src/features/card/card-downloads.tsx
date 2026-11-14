@@ -47,8 +47,8 @@ export function CardDownloads({ token, code, captureId, googleWalletEnabled }: C
     if (busy) return;
 
     setBusy("wallet");
-    const result = await googleWalletAction(token);
-    if (result.ok) {
+    const result = await googleWalletAction(token).catch(() => null);
+    if (result?.ok) {
       window.location.assign(result.url);
       window.setTimeout(() => setBusy(null), 1500);
       return;

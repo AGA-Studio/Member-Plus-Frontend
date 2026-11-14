@@ -73,6 +73,7 @@ export type SessionUser = {
   businessId: number | null;
   businessName: string;
   businessInitials: string;
+  businessLogoUrl: string | null;
 };
 
 export type Page<T> = {
