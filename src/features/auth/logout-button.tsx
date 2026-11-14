@@ -3,7 +3,7 @@
 import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { cx } from "@/lib/cx";
@@ -18,25 +18,40 @@ export function LogoutDialog({ open, onClose }: LogoutDialogProps) {
   const t = useTranslations("common.logout");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [leaving, setLeaving] = useState(false);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  useEffect(() => {
+    return () => {
+      setLeaving(false);
+      onCloseRef.current();
+    };
+  }, []);
 
   function confirmLogout() {
+    setLeaving(true);
     startTransition(async () => {
       await logoutFromBackend();
-      onClose();
       router.replace("/login?toast=signedOut");
       router.refresh();
     });
   }
 
+  const busy = pending || leaving;
+
   return (
     <Dialog open={open} onClose={onClose} title={t("title")}>
       <p className="text-base text-muted">{t("body")}</p>
       <div className="flex justify-end gap-3">
-        <Button variant="secondary" onClick={onClose}>
+        <Button variant="secondary" disabled={busy} onClick={onClose}>
           {t("cancel")}
         </Button>
-        <Button loading={pending} onClick={confirmLogout}>
-          {pending ? t("confirming") : t("confirm")}
+        <Button loading={busy} onClick={confirmLogout}>
+          {busy ? t("confirming") : t("confirm")}
         </Button>
       </div>
     </Dialog>
