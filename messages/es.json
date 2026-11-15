@@ -331,8 +331,11 @@
         "description": "Envía a {email} un enlace para guardar su tarjeta en Google Wallet o descargarla como imagen o PDF. El enlace funciona mientras la tarjeta esté vigente.",
         "sendEmail": "Enviar por correo",
         "sending": "Enviando…",
+        "generateLink": "Generar enlace",
+        "generating": "Generando…",
         "copyLink": "Copiar enlace",
-        "copying": "Copiando…"
+        "qrLabel": "Código QR del enlace de la tarjeta",
+        "qrHint": "Pide al cliente que escanee el código con su celular o copia el enlace para enviarlo."
       },
       "payments": {
         "emptyTitle": "Aún no hay pagos",
@@ -555,6 +558,7 @@
     "cardEmailFailed": "No pudimos enviar el correo. Inténtalo de nuevo.",
     "cardLinkCopied": "Enlace copiado.",
     "cardLinkFailed": "No pudimos copiar el enlace. Inténtalo de nuevo.",
+    "cardLinkCreateFailed": "No pudimos generar el enlace. Inténtalo de nuevo.",
     "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
     "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
     "membershipCreatedPhotoFailed": "Membresía creada, pero no pudimos guardar la foto del cliente.",
