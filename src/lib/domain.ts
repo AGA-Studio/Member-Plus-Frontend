@@ -33,6 +33,7 @@ export type Member = {
   points: number;
   cashbackBalanceCents: number;
   lastPurchaseAt: string | null;
+  photoUrl: string | null;
   benefits: TierBenefits;
 };
 
@@ -121,5 +122,6 @@ export type PlatformBusiness = {
   name: string;
   status: BusinessStatus;
   customersCount: number;
+  logoUrl: string | null;
   createdAt: string;
 };

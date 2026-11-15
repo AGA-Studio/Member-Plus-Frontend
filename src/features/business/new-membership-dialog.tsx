@@ -5,6 +5,7 @@ import { useActionState, useId, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { PhotoField } from "@/components/ui/photo-field";
 import { SelectField } from "@/components/ui/select-field";
 import { Switch } from "@/components/ui/switch";
 import { paymentMethods } from "@/lib/domain";
@@ -77,6 +78,7 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptio
             autoComplete="off"
             error={state.errors.phone ? t(`errors.${state.errors.phone}`) : undefined}
           />
+          <PhotoField name="photo" label={t("photo")} optional />
           <SelectField
             name="levelId"
             label={t("tier")}

@@ -11,6 +11,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
+import { useSelectedImage } from "@/lib/use-selected-image";
 import { removeLogoAction, uploadLogoAction, type LogoState } from "./actions";
 
 type LogoDialogProps = {
@@ -30,7 +31,7 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
   const toasts = useTranslations("toasts");
   const { show } = useToast();
   const [open, setOpen] = useState(false);
-  const [fileName, setFileName] = useState("");
+  const { file, previewUrl, select: setFile } = useSelectedImage();
   const [fileTooLarge, setFileTooLarge] = useState(false);
   const [removing, startRemoving] = useTransition();
   const attempt = useAttempt();
@@ -46,7 +47,7 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
 
   function openDialog() {
     setAcknowledgedState(state);
-    setFileName("");
+    setFile(null);
     setFileTooLarge(false);
     setOpen(true);
   }
@@ -114,7 +115,7 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
             <BusinessLogo
               name={businessName}
               initials={initials}
-              logoUrl={logoUrl}
+              logoUrl={previewUrl ?? logoUrl}
               className="size-16"
             />
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -127,17 +128,17 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
                 tabIndex={-1}
                 aria-label={t("choose")}
                 onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  const tooLarge = Boolean(file && file.size > maxLogoBytes);
+                  const selected = event.target.files?.[0];
+                  const tooLarge = Boolean(selected && selected.size > maxLogoBytes);
                   setFileTooLarge(tooLarge);
                   if (tooLarge) event.target.value = "";
-                  setFileName(tooLarge ? "" : (file?.name ?? ""));
+                  setFile(tooLarge ? null : (selected ?? null));
                 }}
               />
               <Button variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
                 {t("choose")}
               </Button>
-              <span className="truncate text-sm text-muted">{fileName || t("formats")}</span>
+              <span className="truncate text-sm text-muted">{file?.name || t("formats")}</span>
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">

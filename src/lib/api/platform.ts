@@ -6,6 +6,7 @@ type BackendBusiness = {
   name: string;
   status: BusinessStatus;
   customers_count: number;
+  logo_url?: string | null;
   created_at: string;
 };
 
@@ -27,6 +28,7 @@ export async function listBusinesses({ query, status, page }: BusinessFilters): 
     name: business.name,
     status: business.status,
     customersCount: business.customers_count,
+    logoUrl: business.logo_url ?? null,
     createdAt: business.created_at,
   }));
 }

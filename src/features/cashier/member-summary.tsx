@@ -44,7 +44,7 @@ export async function MemberSummary({ member, businessName }: MemberSummaryProps
       />
       <section className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-6">
         <div className="flex items-center gap-4">
-          <Avatar name={member.fullName} className="size-14 text-base lg:hidden" />
+          <Avatar name={member.fullName} photoUrl={member.photoUrl} className="size-14 text-base lg:hidden" />
           <div className="flex min-w-0 flex-col gap-2">
             <h2 className="text-heading text-foreground">{member.fullName}</h2>
             <div className="flex flex-wrap items-center gap-2">

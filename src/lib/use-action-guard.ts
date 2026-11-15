@@ -1,5 +1,6 @@
 "use client";
 
+import { unstable_rethrow } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast-provider";
 
@@ -22,7 +23,8 @@ export function useGuardedAction<State, Payload>(
   return async (previousState, payload) => {
     try {
       return await action(previousState, payload);
-    } catch {
+    } catch (error) {
+      unstable_rethrow(error);
       showFailure(failureMessage);
       return previousState;
     }
@@ -35,7 +37,8 @@ export function useAttempt(): <Result>(run: () => Promise<Result>, failureMessag
   return async (run, failureMessage) => {
     try {
       return await run();
-    } catch {
+    } catch (error) {
+      unstable_rethrow(error);
       showFailure(failureMessage);
       return undefined;
     }

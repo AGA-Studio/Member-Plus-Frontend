@@ -31,6 +31,14 @@
         "en": "English"
       }
     },
+    "photoField": {
+      "choose": "Take or choose a photo",
+      "change": "Change photo",
+      "remove": "Remove photo",
+      "preparing": "Preparing…",
+      "hint": "It is resized automatically to stay light",
+      "invalid": "We couldn't read that image. Try another photo."
+    },
     "dismissToast": "Dismiss notice",
     "toastRegion": "Notices",
     "offline": "No connection. Check your internet and try again."
@@ -399,6 +407,7 @@
         "emailPlaceholder": "customer@email.com",
         "phone": "Phone",
         "phonePlaceholder": "664 000 0000",
+        "photo": "Customer photo",
         "tier": "Starting level",
         "submit": "Create membership",
         "creating": "Creating…",
@@ -552,6 +561,7 @@
     "cardLinkCreateFailed": "We couldn't generate the link. Try again.",
     "membershipCreatedSent": "Membership created. We emailed the card.",
     "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
+    "membershipCreatedPhotoFailed": "Membership created, but we couldn't save the customer's photo.",
     "membershipRenewed": "Membership renewed.",
     "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
     "cardEmailRateLimited": "Wait a moment before sending another email.",
