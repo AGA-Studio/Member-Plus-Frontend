@@ -323,8 +323,11 @@
         "description": "Send {email} a link to save their card to Google Wallet or download it as an image or PDF. The link works while the card is valid.",
         "sendEmail": "Send by email",
         "sending": "Sending…",
+        "generateLink": "Generate link",
+        "generating": "Generating…",
         "copyLink": "Copy link",
-        "copying": "Copying…"
+        "qrLabel": "QR code for the card link",
+        "qrHint": "Ask the customer to scan the code with their phone, or copy the link to send it."
       },
       "payments": {
         "emptyTitle": "No payments yet",
@@ -546,6 +549,7 @@
     "cardEmailFailed": "We couldn't send the email. Try again.",
     "cardLinkCopied": "Link copied.",
     "cardLinkFailed": "We couldn't copy the link. Try again.",
+    "cardLinkCreateFailed": "We couldn't generate the link. Try again.",
     "membershipCreatedSent": "Membership created. We emailed the card.",
     "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
     "membershipRenewed": "Membership renewed.",
