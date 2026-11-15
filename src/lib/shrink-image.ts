@@ -12,7 +12,7 @@ export async function shrinkImage(file: File): Promise<File | null> {
     const context = canvas.getContext("2d");
     if (!context) return null;
 
-    context.fillStyle = "#ffffff";
+    context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     bitmap.close();
