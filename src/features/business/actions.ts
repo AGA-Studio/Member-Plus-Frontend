@@ -6,6 +6,7 @@ import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
 import { updateLevel } from "@/lib/api/levels";
 import { removeLogo, uploadLogo } from "@/lib/api/logo";
 import { cancelMember, createMember, renewMember, updateMember, type CustomerWriteFailure } from "@/lib/api/members";
+import { uploadMemberPhoto } from "@/lib/api/member-photo";
 import { exportMovementsCsv, type MovementPeriod } from "@/lib/api/purchases";
 import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
@@ -102,6 +103,10 @@ export async function createMembershipAction(
   });
   if (!result.ok) return { values, errors: toFieldErrors(result.reason) };
 
+  const photo = formData.get("photo");
+  const photoSaved =
+    photo instanceof File && photo.size > 0 ? (await uploadMemberPhoto(result.id, photo)).ok : true;
+
   revalidatePath("/", "layout");
   const toastByEmailStatus = {
     sent: "membershipCreatedSent",
@@ -110,7 +115,9 @@ export async function createMembershipAction(
     skipped: "membershipCreated",
   } as const;
 
-  redirect(`/clientes/${encodeURIComponent(result.code)}?toast=${toastByEmailStatus[result.cardEmail]}`);
+  const toast = photoSaved ? toastByEmailStatus[result.cardEmail] : "membershipCreatedPhotoFailed";
+
+  redirect(`/clientes/${encodeURIComponent(result.code)}?toast=${toast}`);
 }
 
 export type SendCardEmailState = { ok: true } | { ok: false; reason: "rateLimited" | "failed" };

@@ -5,6 +5,7 @@ export const toastTones = {
   membershipCreatedSent: "success",
   membershipCreatedPending: "info",
   membershipCreatedEmailFailed: "info",
+  membershipCreatedPhotoFailed: "info",
   purchaseRegistered: "success",
   customerUpdated: "success",
   membershipCancelled: "success",

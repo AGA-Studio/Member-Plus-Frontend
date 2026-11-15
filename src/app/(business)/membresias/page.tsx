@@ -140,7 +140,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                     <tr key={member.code} className="border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted">
                       <td className="px-6 py-3">
                         <Link href={`/clientes/${encodeURIComponent(member.code)}`} className="flex items-center gap-3 rounded-sm text-base font-medium text-foreground">
-                          <Avatar name={member.fullName} />
+                          <Avatar name={member.fullName} photoUrl={member.photoUrl} />
                           {member.fullName}
                         </Link>
                       </td>
@@ -164,7 +164,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                       href={`/clientes/${encodeURIComponent(member.code)}`}
                       className="flex items-center justify-between gap-3 px-4 py-3 transition-colors duration-150 ease-out hover:bg-surface-muted"
                     >
-                      <Avatar name={member.fullName} />
+                      <Avatar name={member.fullName} photoUrl={member.photoUrl} />
                       <span className="flex min-w-0 flex-1 flex-col">
                         <span className="truncate text-base font-medium text-foreground">{member.fullName}</span>
                         <span className="flex items-center gap-2 text-sm text-muted">

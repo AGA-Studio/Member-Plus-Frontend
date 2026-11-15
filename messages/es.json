@@ -31,6 +31,14 @@
         "en": "English"
       }
     },
+    "photoField": {
+      "choose": "Tomar o elegir foto",
+      "change": "Cambiar foto",
+      "remove": "Quitar foto",
+      "preparing": "Preparando…",
+      "hint": "Se ajusta sola para que pese poco",
+      "invalid": "No pudimos leer esa imagen. Prueba con otra foto."
+    },
     "dismissToast": "Cerrar aviso",
     "toastRegion": "Avisos",
     "offline": "Sin conexión. Revisa tu internet e inténtalo de nuevo."
@@ -396,6 +404,7 @@
         "emailPlaceholder": "cliente@correo.com",
         "phone": "Teléfono",
         "phonePlaceholder": "664 000 0000",
+        "photo": "Foto del cliente",
         "tier": "Nivel inicial",
         "submit": "Crear membresía",
         "creating": "Creando…",
@@ -548,6 +557,7 @@
     "cardLinkFailed": "No pudimos copiar el enlace. Inténtalo de nuevo.",
     "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
     "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
+    "membershipCreatedPhotoFailed": "Membresía creada, pero no pudimos guardar la foto del cliente.",
     "membershipRenewed": "Membresía renovada.",
     "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
     "cardEmailRateLimited": "Espera un momento antes de enviar otro correo.",

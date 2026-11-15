@@ -22,6 +22,7 @@ export type BackendCustomer = {
   cashback_balance_cents: number;
   benefits: { discount_percent: number; points_per_ten: number; cashback_percent: number };
   last_purchase_at: string | null;
+  photo_url?: string | null;
 };
 
 export function toMember(customer: BackendCustomer): Member {
@@ -41,6 +42,7 @@ export function toMember(customer: BackendCustomer): Member {
     points: customer.points_balance,
     cashbackBalanceCents: customer.cashback_balance_cents,
     lastPurchaseAt: customer.last_purchase_at,
+    photoUrl: customer.photo_url ?? null,
     benefits: {
       discountPercent: customer.benefits.discount_percent,
       pointsPerTenPesos: customer.benefits.points_per_ten,

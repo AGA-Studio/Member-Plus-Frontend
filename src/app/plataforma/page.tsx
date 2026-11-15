@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Building2 } from "lucide-react";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Avatar } from "@/components/ui/avatar";
+import { getInitials } from "@/components/ui/avatar";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
+import { BusinessLogo } from "@/components/ui/business-logo";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { Reveal } from "@/components/ui/reveal";
@@ -99,7 +100,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                     <tr key={business.id} className="border-t border-border">
                       <td className="px-6 py-3">
                         <span className="flex items-center gap-3">
-                          <Avatar name={business.name} />
+                          <BusinessLogo name={business.name} initials={getInitials(business.name)} logoUrl={business.logoUrl} />
                           <span className="text-base font-medium text-foreground">{business.name}</span>
                         </span>
                       </td>
@@ -117,7 +118,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
               <ul className="sm:hidden">
                 {result.items.map((business) => (
                   <li key={business.id} className="flex items-center gap-3 border-t border-border px-4 py-3 first:border-t-0">
-                    <Avatar name={business.name} />
+                    <BusinessLogo name={business.name} initials={getInitials(business.name)} logoUrl={business.logoUrl} />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-base font-medium text-foreground">{business.name}</span>
                       <span className="text-sm text-muted">
