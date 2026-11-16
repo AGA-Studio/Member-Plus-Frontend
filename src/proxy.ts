@@ -3,8 +3,22 @@ import { sessionCookieName } from "@/lib/session-cookie";
 
 const protectedPrefixes = ["/caja", "/clientes", "/membresias", "/niveles", "/movimientos", "/plataforma"];
 
+const defaultBackendUrl = "http://127.0.0.1:8000";
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // El API se resuelve en tiempo de ejecución: una sola imagen sirve para
+  // producción y para el compose local. Reenviar no es una ruta de API: no hay
+  // lógica aquí, solo el cambio de destino, y la cookie sigue siendo de
+  // primera parte porque el navegador nunca sale de este origen.
+  if (pathname === "/api" || pathname.startsWith("/api/")) {
+    const backend = process.env.API_INTERNAL_URL ?? defaultBackendUrl;
+    const destination = new URL(`${backend}${pathname}${request.nextUrl.search}`);
+
+    return NextResponse.rewrite(destination, { request: { headers: request.headers } });
+  }
+
   const hasSession = request.cookies.has(sessionCookieName);
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
 
@@ -17,6 +31,8 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/api",
+    "/api/:path*",
     "/caja/:path*",
     "/clientes/:path*",
     "/membresias/:path*",
