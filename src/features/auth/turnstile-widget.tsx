@@ -1,8 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import Script from "next/script";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cx } from "@/lib/cx";
 
 export type TurnstileStatus = "pending" | "ready" | "unavailable";
@@ -15,6 +14,28 @@ type TurnstileWidgetProps = {
 };
 
 const scriptUrl = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+let scriptPromise: Promise<void> | null = null;
+
+function loadTurnstileScript(): Promise<void> {
+  if (window.turnstile) return Promise.resolve();
+  if (scriptPromise) return scriptPromise;
+
+  scriptPromise = new Promise<void>((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = scriptUrl;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => {
+      scriptPromise = null;
+      script.remove();
+      reject(new Error("Turnstile script failed to load"));
+    };
+    document.head.appendChild(script);
+  });
+
+  return scriptPromise;
+}
 
 export function TurnstileWidget({ siteKey, resetCount, onToken, onStatusChange }: TurnstileWidgetProps) {
   const t = useTranslations("auth.login.turnstile");
@@ -30,30 +51,51 @@ export function TurnstileWidget({ siteKey, resetCount, onToken, onStatusChange }
     onStatusRef.current = onStatusChange;
   });
 
-  const renderWidget = useCallback(() => {
-    const container = containerRef.current;
-    if (!container || !window.turnstile || widgetIdRef.current !== null) return;
+  useEffect(() => {
+    let cancelled = false;
 
-    widgetIdRef.current = window.turnstile.render(container, {
-      sitekey: siteKey,
-      theme: "light",
-      size: "flexible",
-      language,
-      callback: (token) => {
-        setFailed(false);
-        onTokenRef.current(token);
-        onStatusRef.current("ready");
-      },
-      "expired-callback": () => {
-        onTokenRef.current(null);
-        onStatusRef.current("pending");
-      },
-      "error-callback": () => {
+    function renderWidget() {
+      const container = containerRef.current;
+      if (cancelled || !container || !window.turnstile) return;
+
+      onTokenRef.current(null);
+      onStatusRef.current("pending");
+      setFailed(false);
+      widgetIdRef.current = window.turnstile.render(container, {
+        sitekey: siteKey,
+        theme: "light",
+        size: "flexible",
+        language,
+        callback: (token) => {
+          setFailed(false);
+          onTokenRef.current(token);
+          onStatusRef.current("ready");
+        },
+        "expired-callback": () => {
+          onTokenRef.current(null);
+          onStatusRef.current("pending");
+        },
+        "error-callback": () => {
+          setFailed(true);
+          onTokenRef.current(null);
+          onStatusRef.current("unavailable");
+        },
+      });
+    }
+
+    loadTurnstileScript()
+      .then(renderWidget)
+      .catch(() => {
+        if (cancelled) return;
         setFailed(true);
-        onTokenRef.current(null);
         onStatusRef.current("unavailable");
-      },
-    });
+      });
+
+    return () => {
+      cancelled = true;
+      if (widgetIdRef.current !== null) window.turnstile?.remove(widgetIdRef.current);
+      widgetIdRef.current = null;
+    };
   }, [siteKey, language]);
 
   useEffect(() => {
@@ -64,25 +106,5 @@ export function TurnstileWidget({ siteKey, resetCount, onToken, onStatusChange }
     window.turnstile?.reset(widgetIdRef.current);
   }, [resetCount]);
 
-  useEffect(() => {
-    return () => {
-      if (widgetIdRef.current !== null) window.turnstile?.remove(widgetIdRef.current);
-      widgetIdRef.current = null;
-    };
-  }, []);
-
-  return (
-    <>
-      <Script
-        src={scriptUrl}
-        strategy="afterInteractive"
-        onReady={renderWidget}
-        onError={() => {
-          setFailed(true);
-          onStatusRef.current("unavailable");
-        }}
-      />
-      <div ref={containerRef} role="group" aria-label={t("label")} className={cx(!failed && "min-h-16")} />
-    </>
-  );
+  return <div ref={containerRef} role="group" aria-label={t("label")} className={cx(!failed && "min-h-16")} />;
 }
