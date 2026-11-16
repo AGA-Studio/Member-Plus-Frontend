@@ -104,10 +104,13 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 
 | Falta | Cuándo |
 |---|---|
-| Tests de componentes | Cuando existan los de la fase A de `BRAND.md` (Vitest + Testing Library) |
+| **Pruebas unitarias de la lógica pura** (`src/lib/pricing.ts`, `src/lib/format.ts`) | **Antes de la demo.** Vitest a secas, sin Testing Library: son funciones puras, y `calculatePurchase` **duplica** la fórmula de `services/pricing_service.py` del backend, así que una divergencia cobra mal en caja |
+| Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
 | Cobertura | Con los primeros tests; no tiene sentido medir cero |
 | Pruebas de extremo a extremo | Después de la demo, con Playwright |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
+
+Cuando entren los primeros tests, el job nuevo va junto a los cuatro actuales y **al ruleset solo si es determinista** (ver sección 10): Vitest lo es; Playwright, no, mientras dependa de la demo desplegada.
 
 El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al webhook de Coolify en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
 
@@ -133,7 +136,7 @@ El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al 
 `review.yml` corre `scripts/review_pr.py`: lee `docs/REVISION.md` y `AGENTS.md`, mira el diff y publica **un** comentario con lo que contradice la documentación o el diseño.
 
 - **No bloquea**: no está en el ruleset. Es un aviso para quien revisa.
-- **Corre una vez por PR**: al abrir, reabrir o salir de borrador. Un push posterior no lo repite; si quieres otra pasada, se relanza desde Actions (`workflow_dispatch`) o se cierra y reabre.
+- **Corre una vez por PR**: al abrir, reabrir o salir de borrador. Un push posterior no lo repite; si quieres otra pasada, se relanza desde Actions (`workflow_dispatch`, pasando el número de PR en el input `pr`) o se cierra y reabre. El re-run **edita el mismo comentario** (`<!-- revisor-frontend -->`), no deja uno nuevo: si no ves otro, mira el `updated_at`.
 - **Solo si el workflow está en la rama base**: un PR que agrega `review.yml` no se auto-revisa.
 - Modelo `deepseek-v4.1-flash`. Presupuesto de 16 k y 24 k tokens con `MODEL_TIMEOUT=300`; el diff se recorta a 20 k caracteres.
 - Necesita el secreto `OPENCODE_API_KEY`. Sin él (PRs desde forks) no hace nada y sale con 0.
