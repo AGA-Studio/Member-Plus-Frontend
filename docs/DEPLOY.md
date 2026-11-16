@@ -93,6 +93,8 @@ Aquí no hay base de datos ni migraciones: el estado vive en el API. El frontend
 
 La cookie de sesión la emite FastAPI en `api-memberplus.neyzt.org` y el navegador la ve como propia de `memberplus.neyzt.org` **porque todo pasa por el rewrite**. No se guarda nada en `localStorage`.
 
+Para desarrollo, el API y su base se levantan desde el repo del backend con el perfil `stack` de su compose (imagen publicada, migraciones y seed incluidos): ver **Backend sin tocarlo** en el [README](../README.md) y `docs/DEPLOY.md`, sección 9, de `Member-Web`.
+
 ## 7. Rollback
 
 1. En Coolify → *Deployments*, o fijando el tag: poner el `sha-<7>` anterior y redesplegar.
