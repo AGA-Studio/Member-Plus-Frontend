@@ -30,13 +30,13 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (webhook al tag `latest`) | `output: "standalone"`; Coolify no construye |
 | Servicios de terceros | Cloudflare Turnstile en el login (encendido en producción), Cloudflare R2 para imágenes, Backblaze B2 para respaldos | Widget en `features/auth/turnstile-widget.tsx`; las llaves viven solo en Coolify, nunca en el repo |
 
-### Desajustes conocidos (15 nov 2026)
+### Violaciones conocidas (15 nov 2026)
 
-Cosas que están en `main` y no cuadran con lo de arriba. Un PR no las reproduce: las arreglan o las documentan.
+Código que está en `main` y contradice una decisión **cerrada**. La decisión no se reabre desde aquí: **se corrige el código**. Si el equipo decide lo contrario, primero se cambia la casilla en el wiki y el punto pasa a la sección 2 de este documento; ningún PR del repo lo decide por su cuenta.
 
-| Qué | Dónde | Estado |
-|-----|-------|--------|
-| Foto de cliente | `components/ui/photo-field.tsx`, `lib/api/member-photo.ts`, `features/business/actions.ts` | Pide `POST /customer/{id}/photo/update` y lee `customer.photo_url`, pero **el backend no tiene ni la columna ni la ruta** y el wiki dice «fotos de clientes, **no**». La subida falla con `unavailable` y el alta muestra `membershipCreatedPhotoFailed`; el avatar siempre cae a las iniciales. Decisión pendiente: se retira la UI o se cambia la decisión con su migración. |
+| Qué | Dónde | Qué se hace |
+|-----|-------|-------------|
+| Foto de cliente | `components/ui/photo-field.tsx`, `lib/api/member-photo.ts`, `features/business/actions.ts` | Contradice «Identidad: **sin reconocimiento facial ni fotos**» (sección 1) y «fotos de clientes» **fuera del alcance** (sección 3) del MVP. **Se retira:** el `photo-field` del alta de membresía, la subida a `POST /customer/{id}/photo/update` —ruta que no existe en el backend— y el `photo_url` de los avatares, que siempre cae a las iniciales. Mientras siga, la subida falla con `unavailable` y el alta muestra `membershipCreatedPhotoFailed`. Reabrir la decisión exige aprobación del equipo, cambio en el wiki y su propia migración |
 
 ## 2. Decisiones abiertas
 
