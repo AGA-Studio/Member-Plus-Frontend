@@ -64,6 +64,34 @@ npm run dev
 Abre <http://localhost:3000>. El API de desarrollo se espera en `http://127.0.0.1:8000`
 (`API_INTERNAL_URL` en `.env.local`); sin él la interfaz carga, pero las llamadas a `/api/*` fallan.
 
+### Backend sin tocarlo
+
+No necesitas Python, `uv` ni correr el API de fuentes: el repo del backend trae un perfil `stack` en su
+`docker-compose.yml` que levanta la **imagen publicada** del API (con migraciones y seed) contra una base
+local. Las imágenes son públicas en GHCR, así que no hace falta `docker login`.
+
+```bash
+git clone https://github.com/AGA-Studio/Member-Web ../Member-Web
+cd ../Member-Web
+cp .env.example .env                  # Windows cmd: copy .env.example .env
+docker compose --profile stack up -d db storage mail api
+docker compose --profile stack exec api python -m scripts.seed
+```
+
+Vuelve a esta carpeta y corre `npm run dev`. Entra con `admin@cafe-aurora.mx` / `demo12345` (o
+`owner@memberplus.mx` para la vista de plataforma). Cuatro detalles:
+
+- **No levantes el servicio `web`** del perfil: publica el puerto 3000 y pelea con `next dev`. Por eso
+  el comando nombra los servicios uno por uno.
+- **`API_IMAGE_TAG` vacío vale `latest`**, el tag que mueve cada push a `main` del backend. Para trabajar
+  contra un API estable, fija un `sha-<7>` en `Member-Web/.env`. Como el perfil usa
+  `pull_policy: missing`, **no** se refresca solo: `docker compose --profile stack pull api`.
+- **En Mac con Apple Silicon** las imágenes son `linux/amd64` y Docker Desktop las emula con Rosetta: el
+  `seed` (Argon2id) tarda decenas de segundos y parece colgado sin estarlo.
+- **No copies ese compose aquí.** Sería una segunda fuente de verdad de `DATABASE_URL`, `SECRET_KEY`,
+  `CORS_ORIGINS`, `SMTP_*` y `S3_*`, y envejecería en silencio. El detalle está en `docs/DEPLOY.md`,
+  sección 9, del repo del backend.
+
 ## Scripts
 
 | Comando | Qué hace |
