@@ -29,7 +29,7 @@ La imagen que corre en producción es la misma que pasó el CI. Coolify no const
 |---|---|
 | `Dockerfile` | Tres etapas: `deps` (`npm ci`), `builder` (`npm run build`) y `runner` (solo `.next/standalone`, `.next/static` y `public`) |
 | `public/healthz.txt` | Healthcheck estático: responde sin renderizar ni leer cookies |
-| `.github/workflows/image.yml` | Construye y publica en GHCR en `main` y en tags `v*` |
+| `.github/workflows/image.yml` | Construye y publica en GHCR en `main` y en tags `v*`; además publica la imagen de respaldo `stack` (API interno) en cada push a `main` |
 | `next.config.ts` | `output: "standalone"` y el `rewrite` de `/api/*` hacia el API |
 
 La imagen final corre como usuario `nextjs` (uid 1001), escucha en `PORT` (3000 por defecto) con `HOSTNAME=0.0.0.0`, y arranca con `node server.js`. No lleva `.env`, ni tests, ni el código fuente completo.
@@ -40,13 +40,15 @@ Tamaño medido: **~321 MB**, de los cuales unos 250 MB son la base `node:22-alpi
 
 | Evento | Tags en GHCR | ¿Despliega? |
 |---|---|---|
-| push a `main` | `sha-<7>`, `main`, `latest` | **Sí**: el paso *Pedir deploy a Coolify* llama al webhook |
+| push a `main` | `sha-<7>`, `main`, `latest` · y en el job `stack`: `stack`, `sha-<7>-stack` | **Sí**: el paso *Pedir deploy a Coolify* llama al webhook |
 | release `v0.1.0` | `sha-<7>`, `0.1.0`, `0.1` | No: marca el hito, no toca producción |
-| `workflow_dispatch` | `sha-<7>` de la rama elegida | Solo si se lanzó desde `main` |
+| `workflow_dispatch` | `sha-<7>` de la rama elegida; con la casilla `stack`, además `stack` y `sha-<7>-stack` | Solo si se lanzó desde `main` |
 
 **El tag de la imagen no lleva la `v`**: `v0.1.0` publica `0.1.0` y `0.1`. Es el comportamiento de `docker/metadata-action` con `pattern={{version}}`.
 
 `latest` (y su gemelo `main`) se mueven en cada push a `main` — **nunca** con un tag `v*` — y es el tag que sirve Coolify: móvil a propósito, es el mecanismo del despliegue automático. `sha-<7>` es inmutable y sirve para rollback.
+
+**La pareja `stack` / `sha-<7>-stack` es la otra cara de lo mismo, para el compose local.** `stack` es móvil y es el default del perfil `stack` del compose del backend, para que `docker compose --profile stack up -d` arranque la app completa sin configurar nada; `sha-<7>-stack` es inmutable y se fija a mano cuando el ensayo de la demo tiene que reproducirse exactamente. La diferencia con `latest` es el build-arg: `latest` hornea `https://api-memberplus.neyzt.org` y `stack` hornea `http://api:8000`, así que **no son intercambiables**.
 
 El paquete es **público**: `docker pull ghcr.io/aga-studio/member-plus-frontend:0.1.0` funciona sin credenciales.
 
