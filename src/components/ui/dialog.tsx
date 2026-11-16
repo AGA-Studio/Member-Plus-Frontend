@@ -46,14 +46,14 @@ export function Dialog({ open, onClose, title, children, variant = "modal" }: Di
         if (event.target === ref.current) onClose();
       }}
       className={cx(
-        "bg-surface p-0 text-foreground shadow-lg opacity-0 open:opacity-100 starting:open:opacity-0",
+        "overflow-hidden bg-surface p-0 text-foreground shadow-lg opacity-0 open:flex open:flex-col open:opacity-100 starting:open:opacity-0",
         "transition-[opacity,scale,translate,display,overlay] duration-200 ease-out transition-discrete",
         "backdrop:bg-foreground/40 backdrop:opacity-0 backdrop:backdrop-blur-md open:backdrop:opacity-100 starting:open:backdrop:opacity-0",
         "backdrop:transition-[opacity,display,overlay] backdrop:duration-200 backdrop:ease-out backdrop:transition-discrete",
         variantClasses[variant],
       )}
     >
-      <div className="flex max-h-dvh flex-col gap-5 overflow-y-auto p-6">
+      <div className="flex min-h-0 flex-col gap-5 overflow-y-auto p-6">
         <div className="flex items-center justify-between gap-3">
           <h2 id={titleId} className="text-subheading text-foreground">
             {title}
