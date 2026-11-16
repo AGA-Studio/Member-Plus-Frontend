@@ -136,7 +136,7 @@ El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al 
 `review.yml` corre `scripts/review_pr.py`: lee `docs/REVISION.md` y `AGENTS.md`, mira el diff y publica **un** comentario con lo que contradice la documentación o el diseño.
 
 - **No bloquea**: no está en el ruleset. Es un aviso para quien revisa.
-- **Corre una vez por PR**: al abrir, reabrir o salir de borrador. Un push posterior no lo repite; si quieres otra pasada, se relanza desde Actions (`workflow_dispatch`) o se cierra y reabre.
+- **Corre una vez por PR**: al abrir, reabrir o salir de borrador. Un push posterior no lo repite; si quieres otra pasada, se relanza desde Actions (`workflow_dispatch`, pasando el número de PR en el input `pr`) o se cierra y reabre. El re-run **edita el mismo comentario** (`<!-- revisor-frontend -->`), no deja uno nuevo: si no ves otro, mira el `updated_at`.
 - **Solo si el workflow está en la rama base**: un PR que agrega `review.yml` no se auto-revisa.
 - Modelo `deepseek-v4.1-flash`. Presupuesto de 16 k y 24 k tokens con `MODEL_TIMEOUT=300`; el diff se recorta a 20 k caracteres.
 - Necesita el secreto `OPENCODE_API_KEY`. Sin él (PRs desde forks) no hace nada y sale con 0.
