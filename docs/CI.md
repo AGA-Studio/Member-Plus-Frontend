@@ -107,10 +107,10 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 | **Pruebas unitarias de la lógica pura** (`src/lib/pricing.ts`, `src/lib/format.ts`) | **Antes de la demo.** Vitest a secas, sin Testing Library: son funciones puras, y `calculatePurchase` **duplica** la fórmula de `services/pricing_service.py` del backend, así que una divergencia cobra mal en caja |
 | Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
 | Cobertura | Con los primeros tests; no tiene sentido medir cero |
-| Pruebas de extremo a extremo | Después de la demo, con Playwright |
+| Pruebas de extremo a extremo | Existen las de inicio de sesión (sección 12). Se adelantaron a los tests de `pricing.ts` porque la Etapa 4 las pide con fecha (`REVISION.md`, sección 7); faltan caja, alta de cliente y tarjeta |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
 
-Cuando entren los primeros tests, el job nuevo va junto a los cuatro actuales y **al ruleset solo si es determinista** (ver sección 10): Vitest lo es; Playwright, no, mientras dependa de la demo desplegada.
+Cuando los tests entren al CI, el job nuevo va junto a los cuatro actuales y **al ruleset solo si es determinista** (ver sección 10): Vitest lo es; Playwright, no, mientras dependa de la demo desplegada.
 
 El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al webhook de Coolify en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
 
@@ -152,3 +152,39 @@ OPENCODE_API_KEY=... python3 -m scripts.review_pr --diff-file mi.diff --dry-run
 ```
 
 Si un hallazgo está mal, gana tu criterio; si el error es de la rúbrica, se corrige en `docs/REVISION.md`.
+
+## 12. Pruebas de interfaz (Playwright)
+
+`@playwright/test` está en `devDependencies`, la configuración en `playwright.config.ts` y las pruebas en
+`tests/e2e/`. Cada prueba corre en dos proyectos: **escritorio** (1280×800) y **móvil** (Pixel 7 emulado).
+
+```bash
+npm run test:e2e                                    # todo
+npm run test:e2e:ui                                 # modo interactivo
+npx playwright test tests/e2e/login.spec.ts --project=escritorio
+```
+
+Lo que hace falta en local:
+
+1. El API en `http://127.0.0.1:8000` con los usuarios de demo (`uv run python -m scripts.seed` en Member-Web).
+2. `.env.local` con `API_INTERNAL_URL=http://127.0.0.1:8000`. El login del navegador llama a `/api/v1/...`
+   y ese rewrite solo existe cuando la variable está definida; sin ella todas las pruebas fallan en el login.
+3. Navegadores instalados una vez: `npx playwright install chromium`.
+
+El `webServer` del config levanta `npm run dev` y reutiliza el servidor si ya está corriendo; en CI arranca
+uno propio. Sin `TURNSTILE_SITEKEY` no hay captcha, así que en local no se pelea con Turnstile.
+
+Las pruebas simulan `prefers-reduced-motion: reduce` (`use.reducedMotion`). La app respeta esa preferencia
+en `entry-transition.tsx` (`begin()` devuelve `false`), así que se salta el intro del login y los snapshots
+del trace muestran la pantalla final en lugar de la cortina con el logo. Para probar el intro hace falta la
+excepción explícita, `test.use({ reducedMotion: "no-preference" })` en la prueba que lo cubra.
+
+Cuidado con el bloqueo de login: el API bloquea un correo 15 minutos tras 5 intentos fallidos. La prueba de
+credenciales inválidas usa un correo desechable por ejecución (`e2e-<timestamp>@…`) para no tocar nunca a los
+usuarios de demo.
+
+La prueba que más vale es la de aislamiento: el administrador de Gimnasio Titán no debe ver nada de Café
+Aurora. Si esa falla, el multi-negocio está roto.
+
+Falta llevarlo al CI: el job necesita PostgreSQL y el API levantados, así que va en su propio PR.
+

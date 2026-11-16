@@ -96,4 +96,6 @@ Tocarlos exige decirlo en el cuerpo del PR, porque otra rama en vuelo puede esta
 
 ## 7. Pruebas
 
-El frontend **no tiene runner todavía**: el gate es `lint` + `typecheck` + `messages` + `check:tokens` + `build` (ver `CI.md`). La primera pieza que se va a probar es la lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`—, porque `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Después: componentes, y Playwright al final.
+El frontend ya tiene runner de interfaz: `@playwright/test`, con las pruebas en `tests/e2e/` (ver `CI.md`, sección 12). Eso **cambia el orden de esta lista a propósito**: el E2E entró primero porque la Etapa 4 de la materia lo pide con fecha y necesita evidencia en navegador, no porque se hayan descartado las demás pruebas. Todavía no corre en el CI: el gate sigue siendo `lint` + `typecheck` + `messages` + `check:tokens` + `build`.
+
+Lo que sigue en la lista es la lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`—, porque `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Después: componentes.
