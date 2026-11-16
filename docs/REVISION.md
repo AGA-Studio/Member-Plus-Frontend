@@ -4,7 +4,7 @@ Lo que un cambio no puede romper, en una página.
 
 Este archivo lo lee `scripts/review_pr.py`, que comenta los PRs automáticamente. **No es la fuente de verdad**: manda el wiki (`wiki.neyzt.org`, colección `9no`) y, para diseño, `BRAND.md`. Si aquí dice una cosa y ellos otra, ganan ellos y esto se corrige.
 
-> Última sincronización: **13 de noviembre de 2026**.
+> Última sincronización: **15 de noviembre de 2026**.
 > Fuentes: *Decisiones por validar*, *MVP*, *Pantallas*, `BRAND.md` y `AGENTS.md` de este repositorio.
 
 ## 1. Decisiones cerradas
@@ -28,6 +28,15 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Identidad | **Sin reconocimiento facial ni fotos** | El lector y la webcam solo leen el QR |
 | Hostnames | App en `memberplus.neyzt.org`, API en `api-memberplus.neyzt.org` | `/api/*` reescrito en Next; **guion y no punto** (el SSL de Cloudflare cubre un nivel) |
 | Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (webhook al tag `latest`) | `output: "standalone"`; Coolify no construye |
+| Servicios de terceros | Cloudflare Turnstile en el login (encendido en producción), Cloudflare R2 para imágenes, Backblaze B2 para respaldos | Widget en `features/auth/turnstile-widget.tsx`; las llaves viven solo en Coolify, nunca en el repo |
+
+### Desajustes conocidos (15 nov 2026)
+
+Cosas que están en `main` y no cuadran con lo de arriba. Un PR no las reproduce: las arreglan o las documentan.
+
+| Qué | Dónde | Estado |
+|-----|-------|--------|
+| Foto de cliente | `components/ui/photo-field.tsx`, `lib/api/member-photo.ts`, `features/business/actions.ts` | Pide `POST /customer/{id}/photo/update` y lee `customer.photo_url`, pero **el backend no tiene ni la columna ni la ruta** y el wiki dice «fotos de clientes, **no**». La subida falla con `unavailable` y el alta muestra `membershipCreatedPhotoFailed`; el avatar siempre cae a las iniciales. Decisión pendiente: se retira la UI o se cambia la decisión con su migración. |
 
 ## 2. Decisiones abiertas
 
@@ -84,3 +93,7 @@ Tampoco son tema de este revisor: estilo, formato, nombres de variables, rendimi
 Tocarlos exige decirlo en el cuerpo del PR, porque otra rama en vuelo puede estar en lo mismo:
 
 `next.config.ts` · `package.json` · `package-lock.json` · `.env.example` · `Dockerfile` · `.github/workflows/` · `src/app/globals.css` · `messages/es.json` · `messages/en.json` · `AGENTS.md` · `BRAND.md`
+
+## 7. Pruebas
+
+El frontend **no tiene runner todavía**: el gate es `lint` + `typecheck` + `messages` + `check:tokens` + `build` (ver `CI.md`). La primera pieza que se va a probar es la lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`—, porque `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Después: componentes, y Playwright al final.
