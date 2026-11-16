@@ -74,22 +74,19 @@ El dominio de la app está en uso desde el 13 nov 2026; el del API (`api-memberp
 
 | Variable | Valor | Nota |
 |---|---|---|
-| `API_INTERNAL_URL` | `https://api-memberplus.neyzt.org` | **Se hornea en el build** |
+| `API_INTERNAL_URL` | `https://api-memberplus.neyzt.org` | **Se lee en runtime** |
 | `PORT` | `3000` | Coincide con el puerto del healthcheck |
 | `NODE_ENV` | `production` | Ya viene en la imagen |
 
-**La trampa del rewrite.** Los `rewrites` de Next se resuelven al construir y quedan escritos en `.next/routes-manifest.json`. Comprobado:
+**El proxy se resuelve en runtime.** El navegador pide `/api/*` a este mismo origen —así la cookie httpOnly sigue siendo de primera parte— y `src/proxy.ts` reenvía la petición a `${API_INTERNAL_URL}`. El destino se calcula al atender la petición, no en `next build`: comprobado, `.next/routes-manifest.json` sale con `afterFiles: []` y el valor vive en el entorno del contenedor, no en la imagen. Cambiar la URL es cambiar la variable en Coolify y **redesplegar** (el contenedor tiene que recrearse para tomar el entorno nuevo), nunca reconstruir la imagen.
 
-- sin `API_INTERNAL_URL` → `afterFiles: []`
-- con la variable → `afterFiles: [{source: '/api/:path*', destination: 'https://api-memberplus.neyzt.org/api/:path*'}]`
-
-Por eso la URL entra como `--build-arg` en `image.yml`, y **cambiarla exige reconstruir la imagen**, no solo tocar la variable en Coolify. Si algún día hay que cambiarla sin rebuild, la salida sería un proxy en tiempo de ejecución, que hoy no existe.
+**El default es la trampa.** Si `API_INTERNAL_URL` falta, el proxy cae en `http://127.0.0.1:8000` y toda llamada del navegador muere: el panel carga y no funciona nada. Es el único síntoma que hay que revisar primero cuando "la interfaz abre pero no entra".
 
 ## 6. Datos y migraciones
 
 Aquí no hay base de datos ni migraciones: el estado vive en el API. El frontend solo sirve HTML, assets y el proxy de `/api/*`.
 
-La cookie de sesión la emite FastAPI en `api-memberplus.neyzt.org` y el navegador la ve como propia de `memberplus.neyzt.org` **porque todo pasa por el rewrite**. No se guarda nada en `localStorage`.
+La cookie de sesión la emite FastAPI en `api-memberplus.neyzt.org` y el navegador la ve como propia de `memberplus.neyzt.org` **porque todo pasa por el proxy**. No se guarda nada en `localStorage`.
 
 Para desarrollo, el API y su base se levantan desde el repo del backend con el perfil `stack` de su compose (imagen publicada, migraciones y seed incluidos): ver **Backend sin tocarlo** en el [README](../README.md) y `docs/DEPLOY.md`, sección 9, de `Member-Web`.
 
@@ -103,14 +100,16 @@ No hace falta reconstruir ni volver a mergear: la imagen anterior sigue en GHCR.
 ## 8. Probar la imagen en local
 
 ```bash
-docker run -d --name web -p 3011:3000 ghcr.io/aga-studio/member-plus-frontend:main
+docker run -d --name web -p 3011:3000 \
+  -e API_INTERNAL_URL=https://api-memberplus.neyzt.org \
+  ghcr.io/aga-studio/member-plus-frontend:main
 curl -s -o /dev/null -w '%{http_code}\n' localhost:3011/          # 200
 curl -s localhost:3011/healthz.txt                                # ok
 curl -s -i localhost:3011/api/v1/health | head -1                 # 404 con JSON de FastAPI
 docker inspect --format '{{.Config.User}}' web                    # nextjs
 ```
 
-El `404` de `/api/v1/health` es **buena señal**: significa que la petición salió por el rewrite y la contestó el API. Si devolviera el HTML de Next, el rewrite no está horneado.
+El `404` de `/api/v1/health` es **buena señal**: significa que la petición salió por el proxy y la contestó el API. Si devolviera el HTML de Next, la petición no llegó al backend. Sin `-e API_INTERNAL_URL` el proxy cae en `127.0.0.1:8000` y la llamada muere dentro del contenedor.
 
 Para construirla en este servidor hay una trampa conocida: `docker build` necesita `--network=host` porque el resolver de BuildKit no usa el `nameserver fe80::1%2` del host y `npm ci` muere. En GitHub Actions no hace falta.
 
@@ -122,8 +121,8 @@ Para construirla en este servidor hay una trampa conocida: `docker build` necesi
 | El contenedor queda `unhealthy` | `PORT` no coincide con el del healthcheck |
 | `/healthz.txt` da 404 | La etapa `runner` no copió `public/` |
 | Faltan las fuentes y el build falló sin decirlo | `next/font/google` descarga en el build: sin red, falla. Se construye en CI |
-| La app arranca y todo da error de conexión | `API_INTERNAL_URL` mal horneada: revisa el build-arg y reconstruye |
-| Cambiaste `API_INTERNAL_URL` en Coolify y no pasa nada | Es de build, no de runtime |
+| La app arranca y todo da error de conexión | `API_INTERNAL_URL` vacía o mal: el proxy cae en `127.0.0.1:8000`. Ponla en Coolify y **redespliega** para que el contenedor tome el entorno |
+| Cambiaste `API_INTERNAL_URL` en Coolify y no pasa nada | Falta redesplegar: la variable se lee en runtime, pero el contenedor necesita recrearse |
 
 ## 10. Enlaces
 
