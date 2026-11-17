@@ -31,6 +31,32 @@ export async function awaitSession(page: Page) {
 }
 
 /**
+ * Cadena aleatoria de puras letras. El nombre del cliente pasa por `PersonName`
+ * en el API (solo letras, espacios, guiones y apóstrofos), así que no puede
+ * llevar dígitos: de ahí este generador en vez de un timestamp.
+ */
+export function randomLetters(length = 6) {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+  let word = "";
+
+  for (let index = 0; index < length; index += 1) {
+    word += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  return word;
+}
+
+/**
+ * Nombre y correo únicos por ejecución. El nombre es solo de letras; el correo
+ * se deriva de la misma palabra para que se lea de qué corrida viene.
+ */
+export function randomCustomer() {
+  const word = randomLetters(6);
+
+  return { name: `Cliente ${word}`, email: `e2e-${word}@cafe-aurora.mx` };
+}
+
+/**
  * Correo único por ejecución para las pruebas de credenciales inválidas: el API
  * bloquea un correo 15 minutos después de 5 intentos fallidos, así que nunca se
  * usa aquí un correo de demo.
