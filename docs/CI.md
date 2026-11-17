@@ -15,10 +15,12 @@ Qué corre en cada PR, por qué y cómo reproducirlo. Guía del despliegue en [D
 9. [Problemas comunes](#9-problemas-comunes)
 10. [Reglas](#10-reglas)
 11. [Revisor automático de PRs](#11-revisor-automático-de-prs)
+12. [Pruebas de interfaz (Playwright)](#12-pruebas-de-interfaz-playwright)
+13. [Pruebas unitarias (Vitest)](#13-pruebas-unitarias-vitest)
 
 ## 1. Por qué
 
-Antes de esto, un PR se mergeaba con lo que el autor recordara correr. El CI pone cuatro verificaciones **deterministas** — mismo commit, mismo resultado, sin depender de nada externo — y las marca como obligatorias en el ruleset `protect-main`.
+Antes de esto, un PR se mergeaba con lo que el autor recordara correr. El CI pone cinco verificaciones **deterministas** — mismo commit, mismo resultado, sin depender de nada externo — y las marca como obligatorias en el ruleset `protect-main`.
 
 Aparte va el revisor automático, que opina pero no bloquea.
 
@@ -28,12 +30,13 @@ Aparte va el revisor automático, que opina pero no bloquea.
 |---|---|---|---|
 | `lint` | `npm run lint` y `npm run check:tokens` | Reglas de ESLint y convenciones de diseño | 34 s |
 | `typecheck` | `npm run typecheck` | Errores de tipos en todo el proyecto | 50 s |
+| `test` | `npm run test:coverage` | Fórmula de caja y formato de dinero desalineados con el backend | 32 s |
 | `messages` | `npm run messages:check` | Claves de traducción que faltan en algún idioma | 43 s |
 | `build` | `npm run build` | Que Next compile, incluidas las fuentes y los tokens | 62 s |
 
-Los cuatro son required checks: sin ellos en verde, el PR no se puede mergear.
+Los cinco son required checks: sin ellos en verde, el PR no se puede mergear.
 
-**Los nombres no se cambian.** `lint`, `typecheck`, `messages` y `build` son exactamente lo que el ruleset espera; renombrar un job deja el PR bloqueado esperando un check que ya no existe.
+**Los nombres no se cambian.** `lint`, `typecheck`, `test`, `messages` y `build` son exactamente lo que el ruleset espera; renombrar un job deja el PR bloqueado esperando un check que ya no existe.
 
 ## 3. Cuándo corre
 
@@ -49,6 +52,7 @@ npm ci                    # instala exactamente lo del package-lock
 npm run lint              # ESLint
 npm run check:tokens      # hex sueltos y paleta por defecto de Tailwind
 npm run typecheck         # next typegen && tsc --noEmit
+npm run test              # Vitest: lógica pura (pricing y format)
 npm run messages:check    # es.json contra en.json
 npm run build             # build de producción
 ```
@@ -75,6 +79,8 @@ Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.conf
 | Pieza | Versión | Nota |
 |---|---|---|
 | Node | 22 | Sale de `.nvmrc`; `engines` lo repite en `package.json` |
+| `vitest` y `@vitest/coverage-v8` | `^5.1.0` | Van a la par, versión exacta de la cobertura |
+| `@types/node` | `^22` | Vitest 5 no acepta la `^20` que traía el scaffold |
 | `actions/checkout` | `@v7` | Tag mayor flotante |
 | `actions/setup-node` | `@v7` | Tag mayor flotante, con caché de npm |
 | `docker/setup-buildx-action` | `@v4` | Solo en `image.yml` |
@@ -104,13 +110,11 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 
 | Falta | Cuándo |
 |---|---|
-| **Pruebas unitarias de la lógica pura** (`src/lib/pricing.ts`, `src/lib/format.ts`) | **Antes de la demo.** Vitest a secas, sin Testing Library: son funciones puras, y `calculatePurchase` **duplica** la fórmula de `services/pricing_service.py` del backend, así que una divergencia cobra mal en caja |
 | Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
-| Cobertura | Con los primeros tests; no tiene sentido medir cero |
 | Pruebas de extremo a extremo | Existen las de inicio de sesión (sección 12). Se adelantaron a los tests de `pricing.ts` porque la Etapa 4 las pide con fecha (`REVISION.md`, sección 7); faltan caja, alta de cliente y tarjeta |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
 
-Cuando los tests entren al CI, el job nuevo va junto a los cuatro actuales y **al ruleset solo si es determinista** (ver sección 10): Vitest lo es; Playwright, no, mientras dependa de la demo desplegada.
+La lógica pura ya está cubierta: el job `test` corre `npm run test:coverage` sobre `src/lib/pricing.ts` y `src/lib/format.ts`, con umbral al 100 % (sección 13).
 
 El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al webhook de Coolify en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
 
@@ -124,6 +128,8 @@ El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al 
 | `hex suelto (…)` | Falta usar un token de `globals.css` |
 | `paleta por defecto (bg-blue-500)` | Tailwind 4 tiene la paleta desactivada; usa `bg-primary`, `bg-surface`… |
 | El job quedó **verde** y no hizo nada | Revisa el log: un `continue-on-error` o un `if` que se saltó el paso |
+| Vitest intenta correr `tests/e2e/login.spec.ts` | Falta `test.include` en `vitest.config.mts`: el glob por defecto también agarra los `.spec.ts` de Playwright |
+| Vitest falla por `@types/node` | Vitest 5 pide `^22` o más; el scaffold traía `^20` |
 
 ## 10. Reglas
 
@@ -187,4 +193,33 @@ La prueba que más vale es la de aislamiento: el administrador de Gimnasio Titá
 Aurora. Si esa falla, el multi-negocio está roto.
 
 Falta llevarlo al CI: el job necesita PostgreSQL y el API levantados, así que va en su propio PR.
+
+## 13. Pruebas unitarias (Vitest)
+
+`vitest` y `@vitest/coverage-v8` están en `devDependencies`, la configuración en `vitest.config.mts` y las
+pruebas en `tests/unit/`. Sin Testing Library: se prueban funciones puras.
+
+```bash
+npm run test              # una pasada
+npm run test:watch        # modo interactivo
+npm run test:coverage     # lo que corre el CI, con umbral
+```
+
+| Archivo | Qué fija |
+|---|---|
+| `tests/unit/pricing.test.ts` | `calculatePurchase` con los mismos casos que `tests/unit/test_pricing_service.py` del backend: ejemplo de la rúbrica, cashback ganado antes de restar el usado, tope en la base, saldo negativo, puntos hacia abajo, redondeo a la mitad y nivel sin beneficios |
+| `tests/unit/format.test.ts` | `parseAmountToCents` y sus rarezas a propósito (`1,234.50`, `12.`, `.5`, `1.2.3`, `-5`, `007.5`), más los formatos de dinero y de puntos |
+
+`calculatePurchase` **duplica** la fórmula de `services/pricing_service.py`, así que estos tests son la
+única red que atrapa una divergencia: si el backend cambia el redondeo o el orden de las operaciones, aquí
+se ve antes de que la caja cobre mal.
+
+Dos cosas que no son obvias:
+
+- **`test.include` no es opcional.** El glob por defecto también agarra `tests/e2e/*.spec.ts`, y esos no son
+  tests de Vitest: los `test` y `expect` de Playwright no existen en su contexto.
+- **El alias `@/*`** va en `resolve.alias`; Vite no lee `paths` de `tsconfig.json`.
+
+La cobertura se mide solo sobre los dos archivos de la lógica pura y el umbral es 100 %: son 21 líneas, no
+tiene sentido dejar huecos. Ampliarla a otros módulos es otra tarjeta.
 

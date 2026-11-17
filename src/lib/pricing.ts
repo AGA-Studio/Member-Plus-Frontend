@@ -19,7 +19,7 @@ export function calculatePurchase({
   const discountCents = Math.round((safeAmount * benefits.discountPercent) / 100);
   const discountedCents = safeAmount - discountCents;
   const cashbackAppliedCents = useCashback
-    ? Math.min(cashbackBalanceCents, discountedCents)
+    ? Math.min(Math.max(cashbackBalanceCents, 0), discountedCents)
     : 0;
   const totalCents = discountedCents - cashbackAppliedCents;
   const pointsEarned =

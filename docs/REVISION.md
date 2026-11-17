@@ -83,6 +83,7 @@ Estas reglas se verifican solas en cada PR; repetirlas en un comentario es ruido
 - Hex sueltos y clases de la paleta por defecto de Tailwind (`check:tokens`).
 - Claves de traducción que faltan en algún locale (`messages:check`).
 - Errores de tipos (`next typegen && tsc --noEmit`) y fallos de build.
+- Pruebas unitarias de `src/lib/pricing.ts` y `src/lib/format.ts` (`npm run test:coverage`).
 
 `check:tokens` solo mira `src/`: un hex en Markdown, en un badge de shields.io o en `globals.css` no es hallazgo.
 
@@ -96,6 +97,10 @@ Tocarlos exige decirlo en el cuerpo del PR, porque otra rama en vuelo puede esta
 
 ## 7. Pruebas
 
-El frontend ya tiene runner de interfaz: `@playwright/test`, con las pruebas en `tests/e2e/` (ver `CI.md`, sección 12). Eso **cambia el orden de esta lista a propósito**: el E2E entró primero porque la Etapa 4 de la materia lo pide con fecha y necesita evidencia en navegador, no porque se hayan descartado las demás pruebas. Todavía no corre en el CI: el gate sigue siendo `lint` + `typecheck` + `messages` + `check:tokens` + `build`.
+El frontend ya tiene runner de interfaz: `@playwright/test`, con las pruebas en `tests/e2e/` (ver `CI.md`, sección 12). Eso **cambia el orden de esta lista a propósito**: el E2E entró primero porque la Etapa 4 de la materia lo pide con fecha y necesita evidencia en navegador, no porque se hayan descartado las demás pruebas.
 
-Lo que sigue en la lista es la lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`—, porque `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Después: componentes.
+La lógica pura que **duplica el backend** ya está cubierta con Vitest (`tests/unit/`): `src/lib/pricing.ts` y `format.ts`, porque `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Ahí salió la primera: el frontend restaba un saldo de cashback negativo en vez de ignorarlo. Corre en el CI como job `test` y es required (`CI.md`, secciones 2 y 13).
+
+Después de la demo: componentes, con Testing Library.
+
+El gate es `lint` + `typecheck` + `test` + `messages` + `check:tokens` + `build`. El E2E sigue fuera del gate mientras dependa del API levantado.

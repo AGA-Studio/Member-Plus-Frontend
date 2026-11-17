@@ -1,6 +1,6 @@
 name: CI
 
-# Lint, tipos, paridad de traducciones y build en cada PR y en cada push a main.
+# Lint, tipos, pruebas unitarias, paridad de traducciones y build en cada PR y en cada push a main.
 
 on:
   pull_request:
@@ -43,6 +43,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run test:coverage
 
   messages:
     name: messages
