@@ -85,3 +85,59 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # No es required check: depende de que el Postgres y la imagen del API
+    # arranquen, y un fallo de infraestructura no debe bloquear merges ajenos
+    # al cambio (misma regla que el revisor, sección 10).
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: memberplus
+          POSTGRES_PASSWORD: memberplus
+          POSTGRES_DB: memberplus
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U memberplus"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # El rewrite de /api/* del servidor de Next apunta aquí.
+      API_INTERNAL_URL: http://127.0.0.1:8000
+      DATABASE_URL: postgresql+psycopg://memberplus:memberplus@127.0.0.1:5432/memberplus
+      SECRET_KEY: ci-only-key-not-a-secret
+      ENVIRONMENT: development
+      SEED_PASSWORD: demo12345
+      TURNSTILE_ENABLED: "false"
+      FRONTEND_PUBLIC_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v7
+      - name: API con la imagen publicada
+        run: |
+          docker run -d --name api --network host \
+            -e DATABASE_URL -e SECRET_KEY -e ENVIRONMENT -e SEED_PASSWORD \
+            -e TURNSTILE_ENABLED -e FRONTEND_PUBLIC_URL \
+            ghcr.io/aga-studio/member-web:latest
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8000/health > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          echo "La API no respondió en 90 s"
+          docker logs api
+          exit 1
+      - name: Datos de demo
+        run: docker exec api python -m scripts.seed
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

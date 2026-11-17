@@ -31,6 +31,9 @@ Aparte va el revisor automático, que opina pero no bloquea.
 | `messages` | `npm run messages:check` | Claves de traducción que faltan en algún idioma | 43 s |
 | `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que no queden líneas sin cubrir | 37 s |
 | `build` | `npm run build` | Que Next compile, incluidas las fuentes y los tokens | 62 s |
+| `e2e` | `npm run test:e2e` contra un Postgres efímero y la imagen publicada del API | Que la caja, el aislamiento entre negocios y la tarjeta pública sigan funcionando de punta a punta | 94 s |
+
+`e2e` corre en cada PR pero **no va al ruleset**: depende de que el Postgres y la imagen del API arranquen, así que un fallo de infraestructura no debe bloquear merges ajenos al cambio (sección 10).
 
 Los cinco son required checks: sin ellos en verde, el PR no se puede mergear.
 
@@ -111,10 +114,10 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 | ~~Pruebas unitarias de la lógica pura~~ | **Hechas** (`src/lib/pricing.test.ts`, `src/lib/format.test.ts`, job `test`). Repiten los casos de `tests/unit/test_pricing_service.py` del backend y comparan `calculatePurchase` con aritmética entera exacta; si la fórmula cambia en el backend, hay que cambiarla en `pricing.ts` y en estas pruebas |
 | Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
 | ~~Cobertura~~ | **Hecha** (`npm run test:coverage`): 100 % en `src/lib/pricing.ts` y `format.ts`, con umbral en `vitest.config.mts`. Si se agrega lógica pura nueva, se amplía `coverage.include` |
-| Pruebas de extremo a extremo | Existen las de inicio de sesión (sección 12). Se adelantaron a los tests de `pricing.ts` porque la Etapa 4 las pide con fecha (`REVISION.md`, sección 7); faltan caja, alta de cliente y tarjeta |
+| Pruebas de extremo a extremo | Existen las de inicio de sesión, caja, aislamiento y tarjeta pública (sección 12), y corren en el CI como job `e2e`. Falta el alta de membresía: **está bloqueada por un bug** del formulario, no por falta de pruebas |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
 
-El job `test` (Vitest) ya va junto a los cuatro actuales. Es determinista, así que puede entrar al ruleset (ver sección 10); Playwright no, mientras dependa de la demo desplegada.
+El job `test` (Vitest) ya va junto a los cinco actuales y es required; el de Playwright (`e2e`) también corre en cada PR, pero se queda fuera del ruleset porque depende de que el Postgres y la API arranquen (ver secciones 2 y 10).
 
 El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al webhook de Coolify en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
 
@@ -190,5 +193,35 @@ usuarios de demo.
 La prueba que más vale es la de aislamiento: el administrador de Gimnasio Titán no debe ver nada de Café
 Aurora. Si esa falla, el multi-negocio está roto.
 
-Falta llevarlo al CI: el job necesita PostgreSQL y el API levantados, así que va en su propio PR.
+Archivos y qué cubre cada uno:
+
+| Archivo | Qué prueba |
+|---|---|
+| `login.spec.ts` | Entrada por rol, contraseña incorrecta y aislamiento en el panel |
+| `cashier-checkout.spec.ts` | Compra completa de $1,000 en Oro: resumen (−$150.00, $850.00, +85 puntos, +$25.50 de cashback), comprobante y el formulario deshabilitado sin tarjeta |
+| `cashier-isolation.spec.ts` | El cajero de Café Aurora no encuentra `MP-3GYM4` (Gimnasio Titán) ni por el diálogo ni entrando directo con `?code=` |
+| `public-card.spec.ts` | El enlace de la tarjeta, copiado del diálogo «Entregar tarjeta», abre en un contexto **sin sesión**; un enlace inválido muestra «Este enlace no funciona» |
+| `new-membership.spec.ts` | **En `fixme`**: el alta está rota (ver abajo) |
+
+Las pruebas **escriben datos**: cada corrida registra compras y crea membresías, así que los correos son
+únicos por ejecución y las comprobaciones miran lo que acaba de crear esa corrida, nunca totales del negocio.
+
+### El alta de membresía está rota
+
+El diálogo abre y los campos llegan al cuerpo del envío (`_1_fullName` con el nombre escrito), pero la
+acción de servidor los recibe vacíos y responde «Escribe el nombre del cliente.». Pasa en `/clientes` y en
+`/membresias`, con `npm run dev` y con `next start` sobre el build de producción.
+
+`_1_` es el prefijo que React pone en los formularios con `useActionState`; el servidor lo quita cuando el
+cuerpo lleva su `$ACTION_KEY`. En estas pantallas conviven varios formularios de esos montados a la vez
+—cada fila de la lista trae los diálogos de editar, renovar y cancelar— y el envío sale con el prefijo pero
+sin la clave que le corresponde. Los casos están escritos con la expectativa correcta en
+`tests/e2e/new-membership.spec.ts`: fallan en cuanto se quite el `fixme` después del arreglo.
+
+### En el CI
+
+El job `e2e` levanta un Postgres efímero, arranca el API con la imagen publicada
+(`ghcr.io/aga-studio/member-web:latest`, que migra al arrancar), siembra los datos de demo con
+`python -m scripts.seed` dentro de la misma imagen y corre Playwright con `chromium` instalado. No es
+required check (sección 2).
 
