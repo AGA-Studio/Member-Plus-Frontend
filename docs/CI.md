@@ -29,7 +29,7 @@ Aparte va el revisor automático, que opina pero no bloquea.
 | `lint` | `npm run lint` y `npm run check:tokens` | Reglas de ESLint y convenciones de diseño | 34 s |
 | `typecheck` | `npm run typecheck` | Errores de tipos en todo el proyecto | 50 s |
 | `messages` | `npm run messages:check` | Claves de traducción que faltan en algún idioma | 43 s |
-| `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que no queden líneas sin cubrir | 58 s |
+| `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que no queden líneas sin cubrir | 37 s |
 | `build` | `npm run build` | Que Next compile, incluidas las fuentes y los tokens | 62 s |
 
 Los cinco son required checks: sin ellos en verde, el PR no se puede mergear.
