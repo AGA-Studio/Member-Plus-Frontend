@@ -337,7 +337,11 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
         <div
           ref={overlayRef}
           aria-hidden
+          data-entry-overlay
           className={cx(
+            // Con «reducir movimiento» la cortina no se pinta: no hay animación que
+            // tapar, y el intro la dejaba visible 350 ms antes de retirarla.
+            "motion-reduce:hidden",
             "fixed inset-0 flex items-center justify-center bg-brand",
             !instantCover && "transition-opacity duration-200 ease-out starting:opacity-0",
             phase === "cover" || phase === "closed" ? "z-50" : "z-0",

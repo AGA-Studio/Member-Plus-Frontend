@@ -31,6 +31,32 @@ export async function awaitSession(page: Page) {
 }
 
 /**
+ * Cadena aleatoria de puras letras. El nombre del cliente pasa por `PersonName`
+ * en el API (solo letras, espacios, guiones y apóstrofos), así que no puede
+ * llevar dígitos: de ahí este generador en vez de un timestamp.
+ */
+export function randomLetters(length = 6) {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+  let word = "";
+
+  for (let index = 0; index < length; index += 1) {
+    word += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+
+  return word;
+}
+
+/**
+ * Nombre y correo únicos por ejecución. El nombre es solo de letras; el correo
+ * se deriva de la misma palabra para que se lea de qué corrida viene.
+ */
+export function randomCustomer() {
+  const word = randomLetters(6);
+
+  return { name: `Cliente ${word}`, email: `e2e-${word}@cafe-aurora.mx` };
+}
+
+/**
  * Correo único por ejecución para las pruebas de credenciales inválidas: el API
  * bloquea un correo 15 minutos después de 5 intentos fallidos, así que nunca se
  * usa aquí un correo de demo.
@@ -40,11 +66,24 @@ export function throwawayEmail() {
 }
 
 /**
+ * Navega a una ruta de la app y espera a que se retire la cortina del intro.
+ *
+ * Con sesión, cargar una ruta interna dispara el intro (`playOnLoad` en el
+ * layout). Con «reducir movimiento» la cortina ya no se pinta, pero sin esa
+ * preferencia tapa la pantalla alrededor de un segundo, y las aserciones de
+ * estado —`toBeDisabled`, por ejemplo— se cumplen igual con el contenido debajo.
+ */
+export async function gotoApp(page: Page, path: string) {
+  await page.goto(path);
+  await expect(page.locator("[data-entry-overlay]")).toBeHidden({ timeout: 10_000 });
+}
+
+/**
  * Abre el diálogo de escaneo desde `/caja`: el campo de código no está en la
  * página, vive dentro de ese diálogo.
  */
 export async function openScanDialog(page: Page) {
-  await page.goto("/caja");
+  await gotoApp(page, "/caja");
   await page.getByRole("button", { name: "Escanear tarjeta" }).click();
   await expect(page.getByLabel("Código de la tarjeta")).toBeVisible();
 }

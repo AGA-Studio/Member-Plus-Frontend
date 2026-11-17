@@ -25,12 +25,22 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   projects: [
     {
+      // Guarda las sesiones por rol en tests/e2e/.auth/ antes de las pruebas.
+      // Los demás proyectos dependen de este y `login.spec.ts` lo ignora.
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
       name: "escritorio",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } },
+      dependencies: ["setup"],
+      testIgnore: /auth\.setup\.ts/,
     },
     {
       name: "movil",
       use: { ...devices["Pixel 7"] },
+      dependencies: ["setup"],
+      testIgnore: /auth\.setup\.ts/,
     },
   ],
   webServer: {

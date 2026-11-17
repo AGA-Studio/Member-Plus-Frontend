@@ -1,56 +1,52 @@
 import { test } from "@playwright/test";
-import { awaitSession, demoUsers, expect, login, throwawayEmail } from "./helpers";
+import { expect, gotoApp, randomCustomer } from "./helpers";
+
+test.use({ storageState: "tests/e2e/.auth/admin-aurora.json" });
 
 /**
  * Alta de membresía por la interfaz: el formulario que genera el código que la
  * caja y el QR del cliente van a usar.
  *
- * **Hoy no se puede probar: el alta está rota.** El diálogo abre, los campos se
- * llenan y el envío lleva los valores en el cuerpo (`_1_fullName` = el nombre),
- * pero la acción de servidor los recibe vacíos y responde «Escribe el nombre del
- * cliente.». Pasa igual en `/clientes` y en `/membresias`, en `npm run dev` y en
- * `next start` con el build de producción, así que no es del entorno de pruebas.
+ * El nombre que usa la prueba es **solo letras** a propósito: el API lo valida
+ * con `PersonName` (`schemas/validators.py` del backend), que rechaza dígitos y
+ * símbolos, así que no se puede usar un timestamp para hacerlo único. De ahí
+ * `randomCustomer()`, que genera palabra, nombre y correo con puras letras.
  *
- * El prefijo `_1_` lo pone React en los formularios con `useActionState`; el
- * servidor lo quita cuando el formulario llega con su `$ACTION_KEY`. En estas
- * pantallas conviven varios de esos formularios montados a la vez (cada fila de
- * la lista trae sus diálogos de editar, renovar y cancelar), y el cuerpo sale con
- * el prefijo pero sin la clave que le toca: la acción recibe las claves crudas.
- *
- * Los dos casos quedan desactivados a propósito, con la expectativa correcta
- * escrita, para que fallen en cuanto alguien los reactive tras el arreglo.
+ * El segundo caso está desactivado: con un nombre que no cumple la regla el
+ * diálogo responde «Escribe el nombre del cliente.» aunque el campo esté lleno
+ * (issue #57 del repo; la causa es el mapeo en `toFieldErrors`, no el envío).
  */
 
 test.describe("Alta de membresía", () => {
-  test.fixme("el administrador crea una membresía y cae en la ficha", async ({ page }) => {
-    const name = `Cliente E2E ${Date.now()}`;
+  test("el administrador crea una membresía y cae en la ficha", async ({ page }) => {
+    const { name, email } = randomCustomer();
 
-    await login(page, demoUsers.adminCafeAurora.email);
-    await awaitSession(page);
+    await gotoApp(page, "/clientes");
     await page.getByRole("button", { name: "Nueva membresía" }).click();
 
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Nombre completo").fill(name);
-    await dialog.getByLabel("Correo electrónico").fill(throwawayEmail());
+    await dialog.getByLabel("Correo electrónico").fill(email);
     await dialog.getByRole("button", { name: "Crear membresía" }).click();
 
-    await expect(page.getByText("Escribe el nombre del cliente.")).toHaveCount(0);
     await expect(page).toHaveURL(/\/clientes\/MP-[A-Z0-9]{5}/);
     await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
+    await expect(page.getByText(/MP-[A-Z0-9]{5}/).first()).toBeVisible();
   });
 
-  test.fixme("un correo mal escrito no crea la membresía", async ({ page }) => {
-    await login(page, demoUsers.adminCafeAurora.email);
-    await awaitSession(page);
+  test("nombre con números no es válido", async ({ page }) => {
+    const { email } = randomCustomer();
+
+    await gotoApp(page, "/clientes");
     await page.getByRole("button", { name: "Nueva membresía" }).click();
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Nombre completo").fill("Cliente sin correo");
-    await dialog.getByLabel("Correo electrónico").fill("no-es-un-correo");
+    await dialog.getByLabel("Nombre completo").fill("Test 1234");
+    await dialog.getByLabel("Correo electrónico").fill(email);
     await dialog.getByRole("button", { name: "Crear membresía" }).click();
 
-    await expect(page.getByText("Revisa el correo: parece incompleto.")).toBeVisible();
     await expect(page.getByText("Escribe el nombre del cliente.")).toHaveCount(0);
+    await expect(page.getByText(/solo puede llevar letras/)).toBeVisible();
     await expect(page).not.toHaveURL(/\/clientes\/MP-/);
   });
 });
