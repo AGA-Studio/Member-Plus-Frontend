@@ -9,6 +9,7 @@ import { Logo } from "@/components/ui/logo";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { LogoutButton } from "@/features/auth/logout-button";
+import { ProfileButton } from "@/features/auth/profile-button";
 import { LanguageButton } from "@/features/i18n/language-button";
 import { LogoDialog } from "./logo-dialog";
 import { businessNavItems } from "./nav-items";
@@ -18,6 +19,7 @@ type SidebarProps = {
   businessInitials: string;
   businessLogoUrl: string | null;
   userName: string;
+  userPhotoUrl: string | null;
 };
 
 const settleMilliseconds = 320;
@@ -27,7 +29,7 @@ const indicatorOffsets = ["translate-y-0", "translate-y-13", "translate-y-26", "
 const labelEnter =
   "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";
 
-export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName }: SidebarProps) {
+export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName, userPhotoUrl }: SidebarProps) {
   const t = useTranslations("business");
   const logout = useTranslations("common.logout");
   const language = useTranslations("common.language");
@@ -169,12 +171,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
           </div>
         </nav>
 
-        <div
-          className={cx(
-            "flex shrink-0 border-t border-border pt-2",
-            expanded ? "items-center gap-1" : "flex-col items-center gap-1",
-          )}
-        >
+        <div className="flex shrink-0 flex-col gap-1 border-t border-border pt-2">
           <LogoDialog
             businessName={businessName}
             initials={businessInitials}
@@ -182,21 +179,15 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
             userName={userName}
             compact={!expanded}
           />
-          {expanded ? (
-            <>
+          <div className={cx("flex items-center gap-1", expanded ? "justify-between" : "flex-col")}>
+            {expanded ? <ProfileButton fullName={userName} photoUrl={userPhotoUrl} /> : null}
+            <Tooltip label={language("title")} disabled={expanded}>
               <LanguageButton />
+            </Tooltip>
+            <Tooltip label={logout("title")} disabled={expanded}>
               <LogoutButton />
-            </>
-          ) : (
-            <>
-              <Tooltip label={language("title")}>
-                <LanguageButton />
-              </Tooltip>
-              <Tooltip label={logout("title")}>
-                <LogoutButton />
-              </Tooltip>
-            </>
-          )}
+            </Tooltip>
+          </div>
         </div>
       </aside>
     </div>

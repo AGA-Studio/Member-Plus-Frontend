@@ -34,10 +34,27 @@
     "photoField": {
       "choose": "Tomar o elegir foto",
       "change": "Cambiar foto",
-      "remove": "Quitar foto",
+      "remove": "Descartar",
       "preparing": "Preparando…",
       "hint": "Se ajusta sola para que pese poco",
       "invalid": "No pudimos leer esa imagen. Prueba con otra foto."
+    },
+    "profile": {
+      "edit": "Cambiar tu foto de perfil",
+      "title": "Tu foto de perfil",
+      "description": "Aparece en tu cuenta dentro de Member+.",
+      "photo": "Foto",
+      "save": "Guardar foto",
+      "saving": "Guardando…",
+      "remove": "Quitar foto",
+      "removing": "Quitando…",
+      "errors": {
+        "noFile": "Elige una foto para continuar.",
+        "tooLarge": "La foto pesa más de 2 MB. Elige una más ligera.",
+        "invalid": "No pudimos leer esa imagen. Prueba con otra foto.",
+        "storageUnavailable": "El almacenamiento de imágenes no está disponible por ahora. Inténtalo más tarde.",
+        "unavailable": "No pudimos guardar tu foto. Inténtalo de nuevo."
+      }
     },
     "dismissToast": "Cerrar aviso",
     "toastRegion": "Avisos",
@@ -299,9 +316,15 @@
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
           "unavailable": "No pudimos guardar los datos. Inténtalo de nuevo.",
-          "phoneInvalid": "Revisa el teléfono: usa solo números."
+          "phoneInvalid": "Revisa el teléfono: usa solo números.",
+          "photoFailed": "Guardamos los datos, pero no pudimos guardar la foto. Inténtalo de nuevo.",
+          "photoCancelled": "Esta membresía está cancelada y no admite foto.",
+          "photoRemoveFailed": "No pudimos quitar la foto. Inténtalo de nuevo."
         },
-        "level": "Nivel"
+        "level": "Nivel",
+        "photo": "Foto del cliente",
+        "removePhoto": "Quitar foto actual",
+        "removingPhoto": "Quitando…"
       },
       "cancelDialog": {
         "title": "Cancelar la membresía de {name}",
@@ -562,6 +585,9 @@
     "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
     "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
     "membershipCreatedPhotoFailed": "Membresía creada, pero no pudimos guardar la foto del cliente.",
+    "customerPhotoRemoved": "Foto del cliente quitada.",
+    "profilePhotoSaved": "Foto de perfil guardada.",
+    "profilePhotoRemoved": "Foto de perfil quitada.",
     "membershipRenewed": "Membresía renovada.",
     "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
     "cardEmailRateLimited": "Espera un momento antes de enviar otro correo.",

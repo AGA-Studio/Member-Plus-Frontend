@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Alert } from "@/components/ui/alert";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { buttonStyles } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -149,6 +150,8 @@ export default async function CustomerPage({
       fullName={member.fullName}
       email={member.email}
       phone={member.phone}
+      photoUrl={member.photoUrl}
+      cancelled={isCancelled}
     >
       <Reveal>
         <Link
@@ -161,20 +164,23 @@ export default async function CustomerPage({
       </Reveal>
 
       <Reveal index={1} className="flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
-        <div className="flex min-w-0 flex-col gap-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-title text-foreground">{member.fullName}</h1>
-            <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
+        <div className="flex min-w-0 items-center gap-4">
+          <Avatar name={member.fullName} photoUrl={member.photoUrl} className="size-16 text-base" />
+          <div className="flex min-w-0 flex-col gap-1">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-title text-foreground">{member.fullName}</h1>
+              <Badge tone={statusTones[statusKey]}>{statusLabels(statusKey)}</Badge>
+            </div>
+            <p className="flex flex-wrap items-center gap-2 text-base text-muted">
+              <span>{member.email}</span>
+              {member.phone ? (
+                <>
+                  <span aria-hidden className="size-1 rounded-full bg-border-strong" />
+                  <span>{member.phone}</span>
+                </>
+              ) : null}
+            </p>
           </div>
-          <p className="flex flex-wrap items-center gap-2 text-base text-muted">
-            <span>{member.email}</span>
-            {member.phone ? (
-              <>
-                <span aria-hidden className="size-1 rounded-full bg-border-strong" />
-                <span>{member.phone}</span>
-              </>
-            ) : null}
-          </p>
         </div>
         <div className="hidden flex-wrap items-center gap-3 sm:flex 2xl:justify-end">
           {isCancelled ? null : <CancelMembershipButton />}

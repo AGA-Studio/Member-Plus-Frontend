@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -9,6 +9,7 @@ import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
 import type { Level } from "@/lib/domain";
 import { useGuardedAction } from "@/lib/use-action-guard";
+import { useNotifyOnce } from "@/lib/use-notify-once";
 import { updateLevelAction, type EditLevelState } from "./actions";
 
 type EditLevelDialogProps = {
@@ -35,9 +36,7 @@ export function EditLevelDialog({ level, tierLabel }: EditLevelDialogProps) {
   };
   const guardedUpdate = useGuardedAction(updateLevelAction.bind(null, level.id), t("editDialog.errors.unavailable"));
   const [state, formAction, saving] = useActionState(guardedUpdate, initialState);
-  useEffect(() => {
-    if (state.status === "saved") show("success", toasts("levelSaved"));
-  }, [state, show, toasts]);
+  useNotifyOnce(state, state.status === "saved", () => show("success", toasts("levelSaved")));
 
   const [acknowledgedState, setAcknowledgedState] = useState(state);
   const visible = open && !(state.status === "saved" && state !== acknowledgedState);

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { UserAvatarButton } from "@/features/auth/logout-button";
+import { LogoutButton } from "@/features/auth/logout-button";
+import { ProfileButton } from "@/features/auth/profile-button";
 import { LanguageButton } from "@/features/i18n/language-button";
 import { requireSession } from "@/lib/session";
-import { getInitials } from "./avatar";
 
 type PageHeaderProps = {
   title: string;
@@ -22,7 +22,8 @@ export async function PageHeader({ title, subtitle, actions }: PageHeaderProps) 
         </div>
         <div className="flex items-center gap-1 lg:hidden">
           <LanguageButton />
-          <UserAvatarButton initials={getInitials(user.fullName)} />
+          <ProfileButton fullName={user.fullName} photoUrl={user.photoUrl} entryOrigin />
+          <LogoutButton />
         </div>
       </div>
       {actions ? <div className="flex flex-col gap-3 sm:flex-row">{actions}</div> : null}

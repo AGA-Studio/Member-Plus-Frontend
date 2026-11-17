@@ -84,27 +84,3 @@ export function LogoutButton({ tone = "muted" }: LogoutButtonProps) {
     </>
   );
 }
-
-type UserAvatarButtonProps = {
-  initials: string;
-};
-
-export function UserAvatarButton({ initials }: UserAvatarButtonProps) {
-  const t = useTranslations("common.logout");
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={t("title")}
-        data-entry-target="origin"
-        className="flex size-11 items-center justify-center rounded-full bg-primary-soft text-sm font-medium text-primary-text transition-transform duration-150 ease-out active:scale-97"
-      >
-        {initials}
-      </button>
-      <LogoutDialog open={open} onClose={() => setOpen(false)} />
-    </>
-  );
-}
