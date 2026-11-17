@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { getInitials } from "@/components/ui/avatar";
 import { BusinessLogo } from "@/components/ui/business-logo";
 import { LogoutButton } from "@/features/auth/logout-button";
+import { ProfileButton } from "@/features/auth/profile-button";
 import { LanguageButton } from "@/features/i18n/language-button";
 import { requireSession } from "@/lib/session";
 
@@ -26,12 +26,7 @@ export async function CashierHeader() {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/5 p-1 sm:gap-3">
-          <span
-            aria-hidden
-            className="flex size-9 items-center justify-center rounded-full bg-white/10 text-sm font-medium"
-          >
-            {getInitials(user.fullName)}
-          </span>
+          <ProfileButton fullName={user.fullName} photoUrl={user.photoUrl} tone="inverse" avatarClassName="size-9" />
           <div className="hidden flex-col sm:flex">
             <span className="text-sm font-medium leading-tight">{user.fullName}</span>
             <span className="text-xs leading-tight text-ink-300">{t("role")}</span>

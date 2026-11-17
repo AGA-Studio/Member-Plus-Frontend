@@ -114,7 +114,7 @@ src/app/              rutas, layout raíz y estilos globales
 src/assets/brand/     logos e íconos de la marca
 src/i18n/             configuración de idioma y resolución por cookie o encabezado
 messages/             textos por locale (es.json es la fuente de tipos)
-public/               estáticos y healthz.txt
+public/               estáticos, healthz.txt y brand/ (logo con URL fija para el correo)
 docs/                 CI, despliegue y criterios de revisión
 scripts/              chequeos de convenciones y revisor de PRs
 ```

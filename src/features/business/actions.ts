@@ -6,7 +6,7 @@ import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
 import { updateLevel } from "@/lib/api/levels";
 import { removeLogo, uploadLogo } from "@/lib/api/logo";
 import { cancelMember, createMember, renewMember, updateMember, type CustomerWriteFailure } from "@/lib/api/members";
-import { uploadMemberPhoto } from "@/lib/api/member-photo";
+import { removeMemberPhoto, uploadMemberPhoto } from "@/lib/api/member-photo";
 import { exportMovementsCsv, type MovementPeriod } from "@/lib/api/purchases";
 import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
@@ -179,7 +179,7 @@ export async function renewMembershipAction(
 export type EditCustomerState = {
   status: "idle" | "saved";
   values: { fullName: string; email: string; phone: string; levelId: string };
-  errors: CustomerFieldErrors;
+  errors: Omit<CustomerFieldErrors, "form"> & { form?: "unavailable" | "photoFailed" | "photoCancelled" };
 };
 
 export async function updateCustomerAction(
@@ -208,8 +208,30 @@ export async function updateCustomerAction(
   });
   if (!result.ok) return { status: "idle", values, errors: toFieldErrors(result.reason) };
 
+  const photo = formData.get("photo");
+  if (photo instanceof File && photo.size > 0) {
+    const uploaded = await uploadMemberPhoto(id, photo);
+    if (!uploaded.ok) {
+      revalidatePath("/", "layout");
+      return {
+        status: "idle",
+        values,
+        errors: { form: uploaded.reason === "cancelled" ? "photoCancelled" : "photoFailed" },
+      };
+    }
+  }
+
   revalidatePath("/", "layout");
   return { status: "saved", values, errors: {} };
+}
+
+export async function removeCustomerPhotoAction(id: number): Promise<boolean> {
+  await requireActionUser(["admin"]);
+
+  const removed = await removeMemberPhoto(id);
+  if (removed) revalidatePath("/", "layout");
+
+  return removed;
 }
 
 export async function cancelMembershipAction(id: number): Promise<boolean> {
