@@ -1,5 +1,7 @@
 import { test } from "@playwright/test";
-import { awaitSession, demoUsers, expect, login, throwawayEmail } from "./helpers";
+import { expect, throwawayEmail } from "./helpers";
+
+test.use({ storageState: "tests/e2e/.auth/admin-aurora.json" });
 
 /**
  * Alta de membresía por la interfaz: el formulario que genera el código que la
@@ -25,8 +27,6 @@ test.describe("Alta de membresía", () => {
   test.fixme("el administrador crea una membresía y cae en la ficha", async ({ page }) => {
     const name = `Cliente E2E ${Date.now()}`;
 
-    await login(page, demoUsers.adminCafeAurora.email);
-    await awaitSession(page);
     await page.getByRole("button", { name: "Nueva membresía" }).click();
 
     const dialog = page.getByRole("dialog");
@@ -40,8 +40,6 @@ test.describe("Alta de membresía", () => {
   });
 
   test.fixme("un correo mal escrito no crea la membresía", async ({ page }) => {
-    await login(page, demoUsers.adminCafeAurora.email);
-    await awaitSession(page);
     await page.getByRole("button", { name: "Nueva membresía" }).click();
 
     const dialog = page.getByRole("dialog");

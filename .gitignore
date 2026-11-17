@@ -16,6 +16,7 @@
 # playwright
 /test-results/
 /playwright-report/
+/tests/e2e/.auth/
 /blob-report/
 /.playwright/
 

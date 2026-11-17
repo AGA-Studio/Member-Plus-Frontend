@@ -1,5 +1,7 @@
 import { test } from "@playwright/test";
-import { awaitSession, demoUsers, expect, login, openScanDialog, searchCard, summaryRow } from "./helpers";
+import { expect, openScanDialog, searchCard, summaryRow } from "./helpers";
+
+test.use({ storageState: "tests/e2e/.auth/caja-aurora.json" });
 
 /**
  * La rebanada de la demo, de punta a punta: buscar la tarjeta, teclear el monto,
@@ -13,8 +15,6 @@ import { awaitSession, demoUsers, expect, login, openScanDialog, searchCard, sum
  */
 test.describe("Caja: compra completa", () => {
   test("registra $1,000 en Oro y muestra el comprobante", async ({ page }) => {
-    await login(page, demoUsers.cajaCafeAurora.email);
-    await awaitSession(page);
     await openScanDialog(page);
     await searchCard(page, "MP-4F7K2");
     await expect(page).toHaveURL(/\/caja\?code=MP-4F7K2/);
@@ -39,8 +39,6 @@ test.describe("Caja: compra completa", () => {
   });
 
   test("el monto no se puede registrar sin tarjeta", async ({ page }) => {
-    await login(page, demoUsers.cajaCafeAurora.email);
-    await awaitSession(page);
     await page.goto("/caja");
 
     await expect(page.getByLabel("Monto", { exact: true })).toBeDisabled();

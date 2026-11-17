@@ -131,6 +131,8 @@ El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al 
 | `hex suelto (…)` | Falta usar un token de `globals.css` |
 | `paleta por defecto (bg-blue-500)` | Tailwind 4 tiene la paleta desactivada; usa `bg-primary`, `bg-surface`… |
 | El job quedó **verde** y no hizo nada | Revisa el log: un `continue-on-error` o un `if` que se saltó el paso |
+| Playwright se queda en `/login` en el proyecto `setup` | El API no está arriba (o la base está atrás): sin él la acción de login falla y no hay sesión que guardar |
+| Playwright falla al navegar después de tener sesión | El archivo de `tests/e2e/.auth/` es viejo (la cookie dura 8 h): borra la carpeta y vuelve a correr |
 
 ## 10. Reglas
 
@@ -198,6 +200,7 @@ Archivos y qué cubre cada uno:
 | Archivo | Qué prueba |
 |---|---|
 | `login.spec.ts` | Entrada por rol, contraseña incorrecta y aislamiento en el panel |
+| `auth.setup.ts` | Proyecto `setup`: guarda las tres sesiones en `.auth/` (no es una prueba) |
 | `cashier-checkout.spec.ts` | Compra completa de $1,000 en Oro: resumen (−$150.00, $850.00, +85 puntos, +$25.50 de cashback), comprobante y el formulario deshabilitado sin tarjeta |
 | `cashier-isolation.spec.ts` | El cajero de Café Aurora no encuentra `MP-3GYM4` (Gimnasio Titán) ni por el diálogo ni entrando directo con `?code=` |
 | `public-card.spec.ts` | El enlace de la tarjeta, copiado del diálogo «Entregar tarjeta», abre en un contexto **sin sesión**; un enlace inválido muestra «Este enlace no funciona» |
@@ -205,6 +208,25 @@ Archivos y qué cubre cada uno:
 
 Las pruebas **escriben datos**: cada corrida registra compras y crea membresías, así que los correos son
 únicos por ejecución y las comprobaciones miran lo que acaba de crear esa corrida, nunca totales del negocio.
+
+### Sesiones por rol
+
+Cada prueba arranca ya dentro de la app: el proyecto `setup` (`tests/e2e/auth.setup.ts`) guarda una sesión
+por rol en `tests/e2e/.auth/` y los proyectos `escritorio` y `movil` dependen de él.
+
+| Archivo | Usuario | Lo usan |
+|---|---|---|
+| `admin-aurora.json` | `admin@cafe-aurora.mx` | tarjeta pública (y el alta cuando se reactive) |
+| `caja-aurora.json` | `caja@cafe-aurora.mx` | compra completa y aislamiento en caja |
+| `admin-titan.json` | `admin@gimnasio-titan.mx` | reservado para las pruebas de aislamiento desde el otro negocio |
+
+- **Los archivos no se commitean**: llevan la cookie de sesión y `/tests/e2e/.auth/` está en `.gitignore`.
+- **Se regeneran en cada corrida**, no se reutiliza uno viejo: la cookie dura 8 h
+  (`ACCESS_TOKEN_EXPIRE_MINUTES`) y un archivo vencido se manifiesta como «no redirige», el mismo síntoma
+  mudo que cuando falta `API_INTERNAL_URL`.
+- **`login.spec.ts` no usa estas sesiones a propósito**: es la prueba que verifica el formulario de entrada.
+- Un solo archivo compartido rompería el aislamiento: el rol que abre la sesión es lo que hace que la
+  prueba de Café Aurora contra Gimnasio Titán signifique algo.
 
 ### El alta de membresía está rota
 
