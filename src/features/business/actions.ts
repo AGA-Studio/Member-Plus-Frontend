@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
 import { updateLevel } from "@/lib/api/levels";
 import { removeLogo, uploadLogo } from "@/lib/api/logo";
-import { cancelMember, createMember, renewMember, updateMember, type CustomerWriteFailure } from "@/lib/api/members";
+import { cancelMember, createMember, renewMember, updateMember } from "@/lib/api/members";
 import { removeMemberPhoto, uploadMemberPhoto } from "@/lib/api/member-photo";
+import { toFieldErrors, type CustomerFieldErrors } from "@/lib/customer-errors";
 import { exportMovementsCsv, type MovementPeriod } from "@/lib/api/purchases";
 import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
@@ -36,29 +37,6 @@ function readAmountCents(formData: FormData, name: string): number {
 function readLevelId(formData: FormData): number {
   const levelId = Number(readText(formData, "levelId"));
   return Number.isInteger(levelId) && levelId > 0 ? levelId : Number.NaN;
-}
-
-type CustomerFieldErrors = {
-  fullName?: "fullNameRequired";
-  email?: "emailInvalid" | "emailTaken";
-  phone?: "phoneInvalid";
-  amount?: "amountInvalid";
-  form?: "unavailable";
-};
-
-function toFieldErrors(reason: CustomerWriteFailure | "notFound"): CustomerFieldErrors {
-  switch (reason) {
-    case "emailTaken":
-      return { email: "emailTaken" };
-    case "emailInvalid":
-      return { email: "emailInvalid" };
-    case "fullNameInvalid":
-      return { fullName: "fullNameRequired" };
-    case "phoneInvalid":
-      return { phone: "phoneInvalid" };
-    default:
-      return { form: "unavailable" };
-  }
 }
 
 export type NewMembershipState = {
