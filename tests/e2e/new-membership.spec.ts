@@ -34,7 +34,7 @@ test.describe("Alta de membresía", () => {
     await expect(page.getByText(/MP-[A-Z0-9]{5}/).first()).toBeVisible();
   });
 
-  test.fixme("un nombre con números explica la regla, no pide escribirlo", async ({ page }) => {
+  test("nombre con números no es válido", async ({ page }) => {
     const { email } = randomCustomer();
 
     await gotoApp(page, "/clientes");
