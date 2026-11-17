@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { expect, openScanDialog, searchCard, summaryRow } from "./helpers";
+import { expect, gotoApp, openScanDialog, searchCard, summaryRow } from "./helpers";
 
 test.use({ storageState: "tests/e2e/.auth/caja-aurora.json" });
 
@@ -39,7 +39,7 @@ test.describe("Caja: compra completa", () => {
   });
 
   test("el monto no se puede registrar sin tarjeta", async ({ page }) => {
-    await page.goto("/caja");
+    await gotoApp(page, "/caja");
 
     await expect(page.getByLabel("Monto", { exact: true })).toBeDisabled();
     await expect(page.getByRole("button", { name: "Registrar compra" })).toBeDisabled();

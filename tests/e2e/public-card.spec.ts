@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { expect } from "./helpers";
+import { expect, gotoApp } from "./helpers";
 
 test.use({
   storageState: "tests/e2e/.auth/admin-aurora.json",
@@ -18,7 +18,7 @@ test.use({
 
 test.describe("Tarjeta pública", () => {
   test("el enlace de la tarjeta abre sin sesión y muestra al cliente", async ({ page, browser }) => {
-    await page.goto("/clientes/MP-4F7K2");
+    await gotoApp(page, "/clientes/MP-4F7K2");
 
     await page.getByRole("button", { name: "Entregar tarjeta" }).click();
     await page.getByRole("button", { name: "Generar enlace" }).click();

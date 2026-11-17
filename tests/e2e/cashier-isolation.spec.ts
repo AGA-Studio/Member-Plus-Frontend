@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { expect, openScanDialog, searchCard } from "./helpers";
+import { expect, gotoApp, openScanDialog, searchCard } from "./helpers";
 
 test.use({ storageState: "tests/e2e/.auth/caja-aurora.json" });
 
@@ -23,7 +23,7 @@ test.describe("Caja: aislamiento", () => {
 
   test("entrar directo con el código de otro negocio tampoco lo carga", async ({ page }) => {
 
-    await page.goto("/caja?code=MP-3GYM4");
+    await gotoApp(page, "/caja?code=MP-3GYM4");
 
     await expect(page.getByText("No encontramos esa tarjeta. Escanéala de nuevo.")).toBeVisible();
     await expect(page.getByText("Roberto Díaz")).toHaveCount(0);

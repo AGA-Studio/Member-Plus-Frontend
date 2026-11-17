@@ -188,6 +188,16 @@ en `entry-transition.tsx` (`begin()` devuelve `false`), así que se salta el int
 del trace muestran la pantalla final en lugar de la cortina con el logo. Para probar el intro hace falta la
 excepción explícita, `test.use({ reducedMotion: "no-preference" })` en la prueba que lo cubra.
 
+Al cargar una ruta interna **con sesión** el layout también dispara el intro (`playOnLoad`), y la cortina se
+pintaba aunque hubiera «reducir movimiento»: 350 ms de azul antes de retirarse. Dos cosas lo resuelven, y
+ninguna es opcional:
+
+- La cortina lleva `motion-reduce:hidden`, así que con la preferencia activa no se pinta.
+- Las pruebas navegan con `gotoApp()` en vez de `page.goto()`: navega y espera a que `[data-entry-overlay]`
+  desaparezca. Sin esa espera, un `toBeDisabled()` se cumple con el contenido tapado y el trace enseña el
+  splash: la prueba pasa sin haber comprobado la pantalla. Sin la preferencia, la cortina tarda ~2.5 s en
+  irse (cortina, vuelo del logo y revelado).
+
 Cuidado con el bloqueo de login: el API bloquea un correo 15 minutos tras 5 intentos fallidos. La prueba de
 credenciales inválidas usa un correo desechable por ejecución (`e2e-<timestamp>@…`) para no tocar nunca a los
 usuarios de demo.
