@@ -277,6 +277,12 @@ Reglas: ícono a la izquierda del texto; botón solo con ícono lleva `aria-labe
 ### Tarjetas
 `bg-surface`, `border`, `rounded-lg`, `shadow-sm`. Variantes: **normal**, **interactiva** (se eleva a `shadow-md` en hover) y **destacada** (`bg-brand`, solo en momentos de marca).
 
+### Avatares, fotos y logos
+- **Persona:** círculo (`rounded-full`) con las iniciales sobre `primary-soft` cuando no hay foto. La foto llena el círculo (`object-cover`). Botón de perfil de 44 px.
+- **Negocio:** cuadrado `rounded-md`; el logo va dentro con `p-1`, `rounded-sm` y fondo `surface`, sin recortarlo. Sin logo, iniciales sobre `primary`.
+- **Siempre con respaldo:** si la imagen falla o su URL firmada caduca, se muestran las iniciales (`RemoteImage`). Una imagen rota nunca se deja a la vista.
+- La foto de un cliente es dato personal: solo se muestra, no se usa para nada más.
+
 ### Insignias
 `rounded-full`, `text-xs font-semibold`. Tonos: neutral, azul, éxito, aviso, error (fondo `*-soft`, texto `*-text`). Más las insignias de nivel con acabados metálicos.
 
@@ -293,6 +299,7 @@ Reglas: ícono a la izquierda del texto; botón solo con ícono lleva `aria-labe
 - Campos con etiqueta; errores asociados al campo; íconos útiles con `aria-label`.
 - Respetar "reducir movimiento".
 - `lang` del documento sigue al idioma activo.
+- El idioma se cambia con un control visible y con nombre propio (`Español`, `English`), en el login y dentro de la app; nunca solo con banderas.
 
 ## 14. Estado de implementación
 
@@ -303,7 +310,7 @@ Reglas: ícono a la izquierda del texto; botón solo con ícono lleva `aria-labe
 | Fuentes Montserrat, Geist y Geist Mono | ✅ Cargadas en el layout raíz |
 | Logo, favicon e íconos de app | ✅ En `src/assets/brand/` y `src/app/` |
 | Íconos de interfaz (`lucide-react`) | ✅ Instalada |
-| Componentes (fases A, B, C) | ⏳ Sin construir |
+| Componentes (fases A, B, C) | ✅ Construidos en `src/components/ui/` (botón, campo, selector, diálogo, aviso, tooltip, avatar, logo del negocio, campo de foto, entre otros) |
 | Interruptor de modo oscuro y cookie | ⏳ Sin construir |
 | Color por negocio y validación de contraste | ⏳ Pendiente |
 | Imagen Open Graph | ⏳ Pendiente (requiere dominio) |
