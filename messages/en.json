@@ -34,10 +34,27 @@
     "photoField": {
       "choose": "Take or choose a photo",
       "change": "Change photo",
-      "remove": "Remove photo",
+      "remove": "Discard",
       "preparing": "Preparing…",
       "hint": "It is resized automatically to stay light",
       "invalid": "We couldn't read that image. Try another photo."
+    },
+    "profile": {
+      "edit": "Change your profile photo",
+      "title": "Your profile photo",
+      "description": "It appears on your account inside Member+.",
+      "photo": "Photo",
+      "save": "Save photo",
+      "saving": "Saving…",
+      "remove": "Remove photo",
+      "removing": "Removing…",
+      "errors": {
+        "noFile": "Choose a photo to continue.",
+        "tooLarge": "The photo is larger than 2 MB. Choose a lighter one.",
+        "invalid": "We couldn't read that image. Try another photo.",
+        "storageUnavailable": "Image storage is not available right now. Try again later.",
+        "unavailable": "We couldn't save your photo. Try again."
+      }
     },
     "dismissToast": "Dismiss notice",
     "toastRegion": "Notices",
@@ -299,9 +316,15 @@
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
           "unavailable": "We couldn't save the details. Try again.",
-          "phoneInvalid": "Check the phone number: use digits only."
+          "phoneInvalid": "Check the phone number: use digits only.",
+          "photoFailed": "We saved the details, but we couldn't save the photo. Try again.",
+          "photoCancelled": "This membership is cancelled and does not accept a photo.",
+          "photoRemoveFailed": "We couldn't remove the photo. Try again."
         },
-        "level": "Level"
+        "level": "Level",
+        "photo": "Customer photo",
+        "removePhoto": "Remove current photo",
+        "removingPhoto": "Removing…"
       },
       "cancelDialog": {
         "title": "Cancel {name}'s membership",
@@ -562,6 +585,9 @@
     "membershipCreatedSent": "Membership created. We emailed the card.",
     "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
     "membershipCreatedPhotoFailed": "Membership created, but we couldn't save the customer's photo.",
+    "customerPhotoRemoved": "Customer photo removed.",
+    "profilePhotoSaved": "Profile photo saved.",
+    "profilePhotoRemoved": "Profile photo removed.",
     "membershipRenewed": "Membership renewed.",
     "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
     "cardEmailRateLimited": "Wait a moment before sending another email.",

@@ -6,7 +6,6 @@ import {
   createContext,
   useActionState,
   useContext,
-  useEffect,
   useMemo,
   useState,
   useTransition,
@@ -14,15 +13,19 @@ import {
 } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { getInitials } from "@/components/ui/avatar";
 import { Dialog } from "@/components/ui/dialog";
+import { PhotoField } from "@/components/ui/photo-field";
 import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
 import { paymentMethods } from "@/lib/domain";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
+import { useNotifyOnce } from "@/lib/use-notify-once";
 import { formatPlainPesos } from "@/lib/format";
 import {
   cancelMembershipAction,
+  removeCustomerPhotoAction,
   renewMembershipAction,
   updateCustomerAction,
   type EditCustomerState,
@@ -50,6 +53,8 @@ type CustomerDialogsProviderProps = {
   fullName: string;
   email: string;
   phone: string;
+  photoUrl: string | null;
+  cancelled: boolean;
   children: ReactNode;
 };
 
@@ -60,6 +65,8 @@ export function CustomerDialogsProvider({
   fullName,
   email,
   phone,
+  photoUrl,
+  cancelled,
   children,
 }: CustomerDialogsProviderProps) {
   const t = useTranslations("business.customer");
@@ -68,11 +75,13 @@ export function CustomerDialogsProvider({
   const { show } = useToast();
   const methods = useTranslations("paymentMethods");
   const [editOpen, setEditOpen] = useState(false);
+  const [photoKey, setPhotoKey] = useState(0);
   const [renewOpen, setRenewOpen] = useState(false);
   const currentLevel = levelOptions.find((option) => option.value === String(levelId));
   const [renewAmount, setRenewAmount] = useState(formatPlainPesos(currentLevel?.priceCents ?? 0));
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelling, startCancelling] = useTransition();
+  const [removingPhoto, startRemovingPhoto] = useTransition();
 
   const initialState: EditCustomerState = {
     status: "idle",
@@ -83,9 +92,7 @@ export function CustomerDialogsProvider({
   const guardedUpdate = useGuardedAction(updateCustomerAction.bind(null, id), t("editDialog.errors.unavailable"));
   const [state, formAction, saving] = useActionState(guardedUpdate, initialState);
 
-  useEffect(() => {
-    if (state.status === "saved") show("success", toasts("customerUpdated"));
-  }, [state, show, toasts]);
+  useNotifyOnce(state, state.status === "saved", () => show("success", toasts("customerUpdated")));
 
   const initialRenewState: RenewMembershipState = {
     status: "idle",
@@ -95,9 +102,7 @@ export function CustomerDialogsProvider({
   const guardedRenew = useGuardedAction(renewMembershipAction.bind(null, id), t("renewDialog.errors.unavailable"));
   const [renewState, renewAction, renewing] = useActionState(guardedRenew, initialRenewState);
 
-  useEffect(() => {
-    if (renewState.status === "renewed") show("success", toasts("membershipRenewed"));
-  }, [renewState, show, toasts]);
+  useNotifyOnce(renewState, renewState.status === "renewed", () => show("success", toasts("membershipRenewed")));
 
   const [acknowledgedRenew, setAcknowledgedRenew] = useState(renewState);
   const renewVisible = renewOpen && !(renewState.status === "renewed" && renewState !== acknowledgedRenew);
@@ -109,6 +114,7 @@ export function CustomerDialogsProvider({
     () => ({
       openEdit: () => {
         setAcknowledgedState(state);
+        setPhotoKey((key) => key + 1);
         setEditOpen(true);
       },
       openRenew: () => {
@@ -119,6 +125,18 @@ export function CustomerDialogsProvider({
     }),
     [state, renewState],
   );
+
+  function removePhoto() {
+    startRemovingPhoto(async () => {
+      const removed = await attempt(() => removeCustomerPhotoAction(id), t("editDialog.errors.photoRemoveFailed"));
+      if (removed) {
+        setEditOpen(false);
+        show("success", toasts("customerPhotoRemoved"));
+      } else if (removed === false) {
+        show("danger", t("editDialog.errors.photoRemoveFailed"));
+      }
+    });
+  }
 
   function confirmCancel() {
     startCancelling(async () => {
@@ -175,13 +193,32 @@ export function CustomerDialogsProvider({
             defaultValue={state.values.levelId}
             options={levelOptions}
           />
-          <div className="flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setEditOpen(false)}>
-              {common("cancel")}
-            </Button>
-            <Button type="submit" loading={saving}>
-              {saving ? t("editDialog.saving") : t("editDialog.submit")}
-            </Button>
+          {cancelled ? null : (
+            <PhotoField
+              key={photoKey}
+              name="photo"
+              label={t("editDialog.photo")}
+              optional
+              currentUrl={photoUrl}
+              fallback={<span aria-hidden className="text-base font-medium">{getInitials(fullName)}</span>}
+            />
+          )}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {photoUrl && !cancelled ? (
+              <Button variant="ghost" loading={removingPhoto} onClick={removePhoto}>
+                {removingPhoto ? t("editDialog.removingPhoto") : t("editDialog.removePhoto")}
+              </Button>
+            ) : (
+              <span />
+            )}
+            <div className="flex gap-3">
+              <Button variant="secondary" onClick={() => setEditOpen(false)}>
+                {common("cancel")}
+              </Button>
+              <Button type="submit" loading={saving}>
+                {saving ? t("editDialog.saving") : t("editDialog.submit")}
+              </Button>
+            </div>
           </div>
         </form>
       </Dialog>

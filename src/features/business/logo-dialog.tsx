@@ -2,7 +2,7 @@
 
 import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { useActionState, useRef, useState, useTransition } from "react";
 import { Alert } from "@/components/ui/alert";
 import { BusinessLogo } from "@/components/ui/business-logo";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
+import { useNotifyOnce } from "@/lib/use-notify-once";
 import { useSelectedImage } from "@/lib/use-selected-image";
 import { removeLogoAction, uploadLogoAction, type LogoState } from "./actions";
 
@@ -41,9 +42,7 @@ export function LogoDialog({ businessName, initials, logoUrl, userName, compact 
   const inputRef = useRef<HTMLInputElement>(null);
   const visible = open && !(state.status === "saved" && state !== acknowledgedState);
 
-  useEffect(() => {
-    if (state.status === "saved") show("success", toasts("logoSaved"));
-  }, [state, show, toasts]);
+  useNotifyOnce(state, state.status === "saved", () => show("success", toasts("logoSaved")));
 
   function openDialog() {
     setAcknowledgedState(state);

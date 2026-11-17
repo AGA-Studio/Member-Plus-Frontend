@@ -75,6 +75,7 @@ export type SessionUser = {
   businessName: string;
   businessInitials: string;
   businessLogoUrl: string | null;
+  photoUrl: string | null;
 };
 
 export type Page<T> = {

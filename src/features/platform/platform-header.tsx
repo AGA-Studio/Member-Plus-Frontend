@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { getInitials } from "@/components/ui/avatar";
 import { Logo } from "@/components/ui/logo";
 import { LogoutButton } from "@/features/auth/logout-button";
+import { ProfileButton } from "@/features/auth/profile-button";
 import { LanguageButton } from "@/features/i18n/language-button";
 import { requireSession } from "@/lib/session";
 
@@ -23,12 +23,7 @@ export async function PlatformHeader() {
             <span className="text-sm font-medium text-foreground">{user.fullName}</span>
             <span className="text-xs text-muted">{t("role")}</span>
           </div>
-          <span
-            aria-hidden
-            className="flex size-10 items-center justify-center rounded-full bg-primary-soft text-sm font-medium text-primary-text"
-          >
-            {getInitials(user.fullName)}
-          </span>
+          <ProfileButton fullName={user.fullName} photoUrl={user.photoUrl} />
           <LanguageButton tone="strong" />
           <LogoutButton tone="strong" />
         </div>

@@ -3,7 +3,7 @@
 import { Camera } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { shrinkImage } from "@/lib/shrink-image";
 import { useSelectedImage } from "@/lib/use-selected-image";
@@ -12,9 +12,11 @@ type PhotoFieldProps = {
   name: string;
   label: string;
   optional?: boolean;
+  currentUrl?: string | null;
+  fallback?: ReactNode;
 };
 
-export function PhotoField({ name, label, optional = false }: PhotoFieldProps) {
+export function PhotoField({ name, label, optional = false, currentUrl = null, fallback }: PhotoFieldProps) {
   const t = useTranslations("common.photoField");
   const common = useTranslations("common");
   const labelId = useId();
@@ -82,9 +84,9 @@ export function PhotoField({ name, label, optional = false }: PhotoFieldProps) {
       </span>
       <div className="flex items-center gap-4 rounded-md border border-border p-4">
         <span className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-soft text-primary-text">
-          {preview ? (
+          {preview ?? currentUrl ? (
             <Image
-              src={preview}
+              src={preview ?? currentUrl ?? ""}
               alt=""
               fill
               unoptimized
@@ -92,7 +94,7 @@ export function PhotoField({ name, label, optional = false }: PhotoFieldProps) {
               className="object-cover transition-opacity duration-200 ease-out starting:opacity-0"
             />
           ) : (
-            <Camera aria-hidden strokeWidth={1.75} className="size-6" />
+            (fallback ?? <Camera aria-hidden strokeWidth={1.75} className="size-6" />)
           )}
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -108,7 +110,7 @@ export function PhotoField({ name, label, optional = false }: PhotoFieldProps) {
           />
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" loading={preparing} onClick={() => inputRef.current?.click()}>
-              {preparing ? t("preparing") : file ? t("change") : t("choose")}
+              {preparing ? t("preparing") : file || currentUrl ? t("change") : t("choose")}
             </Button>
             {file ? (
               <Button variant="ghost" size="sm" onClick={clear}>

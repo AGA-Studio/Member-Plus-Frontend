@@ -11,6 +11,7 @@ type BackendUser = {
   email: string;
   role: BackendRole;
   is_active: boolean;
+  photo_url?: string | null;
   business: { id: number; name: string; logo_url: string | null; status: string } | null;
 };
 
@@ -65,6 +66,7 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionLook
       businessName,
       businessInitials: getInitials(businessName),
       businessLogoUrl: user.business?.logo_url ?? null,
+      photoUrl: user.photo_url ?? null,
     },
   };
 }

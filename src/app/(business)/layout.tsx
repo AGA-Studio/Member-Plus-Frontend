@@ -13,6 +13,7 @@ export default async function BusinessLayout({ children }: LayoutProps<"/">) {
         businessInitials={user.businessInitials}
         businessLogoUrl={user.businessLogoUrl}
         userName={user.fullName}
+        userPhotoUrl={user.photoUrl}
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <ScrollArea>
