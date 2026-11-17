@@ -96,6 +96,6 @@ Tocarlos exige decirlo en el cuerpo del PR, porque otra rama en vuelo puede esta
 
 ## 7. Pruebas
 
-El frontend ya tiene runner de interfaz: `@playwright/test`, con las pruebas en `tests/e2e/` (ver `CI.md`, sección 12). Eso **cambia el orden de esta lista a propósito**: el E2E entró primero porque la Etapa 4 de la materia lo pide con fecha y necesita evidencia en navegador, no porque se hayan descartado las demás pruebas. Todavía no corre en el CI: el gate sigue siendo `lint` + `typecheck` + `messages` + `check:tokens` + `build`.
+El frontend ya tiene runner de interfaz: `@playwright/test`, con las pruebas en `tests/e2e/` (ver `CI.md`, sección 12). Eso **cambia el orden de esta lista a propósito**: el E2E entró primero porque la Etapa 4 de la materia lo pide con fecha y necesita evidencia en navegador, no porque se hayan descartado las demás pruebas. El E2E todavía no corre en el CI: el gate es `lint` + `typecheck` + `test` + `messages` + `check:tokens` + `build`.
 
-La lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`— ya tiene pruebas unitarias con Vitest (`npm run test`, job `test` del CI): `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Después: componentes.
+La lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`— ya tiene pruebas unitarias con Vitest (`npm run test`, job `test` del CI): `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Ese job corre con cobertura (`npm run test:coverage`) y umbral al 100 % sobre los dos archivos, así que una rama nueva sin pruebas se ve en el PR. Después: componentes.
