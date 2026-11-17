@@ -29,12 +29,12 @@ Aparte va el revisor automático, que opina pero no bloquea.
 | `lint` | `npm run lint` y `npm run check:tokens` | Reglas de ESLint y convenciones de diseño | 34 s |
 | `typecheck` | `npm run typecheck` | Errores de tipos en todo el proyecto | 50 s |
 | `messages` | `npm run messages:check` | Claves de traducción que faltan en algún idioma | 43 s |
-| `test` | `npm run test` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend | por medir |
+| `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que no queden líneas sin cubrir | 37 s |
 | `build` | `npm run build` | Que Next compile, incluidas las fuentes y los tokens | 62 s |
 
-Los cuatro son required checks: sin ellos en verde, el PR no se puede mergear. `test` corre igual en cada PR, pero no bloquea el merge hasta que se agregue al ruleset `protect-main` en la configuración del repositorio.
+Los cinco son required checks: sin ellos en verde, el PR no se puede mergear.
 
-**Los nombres no se cambian.** `lint`, `typecheck`, `messages` y `build` son exactamente lo que el ruleset espera; renombrar un job deja el PR bloqueado esperando un check que ya no existe.
+**Los nombres no se cambian.** `lint`, `typecheck`, `messages`, `test` y `build` son exactamente lo que el ruleset espera; renombrar un job deja el PR bloqueado esperando un check que ya no existe.
 
 ## 3. Cuándo corre
 
@@ -52,6 +52,7 @@ npm run check:tokens      # hex sueltos y paleta por defecto de Tailwind
 npm run typecheck         # next typegen && tsc --noEmit
 npm run messages:check    # es.json contra en.json
 npm run test              # Vitest: pricing.ts y format.ts
+npm run test:coverage     # lo mismo con cobertura y umbral
 npm run build             # build de producción
 ```
 
@@ -77,6 +78,7 @@ Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.conf
 | Pieza | Versión | Nota |
 |---|---|---|
 | Node | 22 | Sale de `.nvmrc`; `engines` lo repite en `package.json` |
+| `vitest` y `@vitest/coverage-v8` | `^5.1.0` | Van a la par; la cobertura es v8 |
 | `actions/checkout` | `@v7` | Tag mayor flotante |
 | `actions/setup-node` | `@v7` | Tag mayor flotante, con caché de npm |
 | `docker/setup-buildx-action` | `@v4` | Solo en `image.yml` |
@@ -108,7 +110,7 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 |---|---|
 | ~~Pruebas unitarias de la lógica pura~~ | **Hechas** (`src/lib/pricing.test.ts`, `src/lib/format.test.ts`, job `test`). Repiten los casos de `tests/unit/test_pricing_service.py` del backend y comparan `calculatePurchase` con aritmética entera exacta; si la fórmula cambia en el backend, hay que cambiarla en `pricing.ts` y en estas pruebas |
 | Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
-| Cobertura | Con los primeros tests; no tiene sentido medir cero |
+| ~~Cobertura~~ | **Hecha** (`npm run test:coverage`): 100 % en `src/lib/pricing.ts` y `format.ts`, con umbral en `vitest.config.mts`. Si se agrega lógica pura nueva, se amplía `coverage.include` |
 | Pruebas de extremo a extremo | Existen las de inicio de sesión (sección 12). Se adelantaron a los tests de `pricing.ts` porque la Etapa 4 las pide con fecha (`REVISION.md`, sección 7); faltan caja, alta de cliente y tarjeta |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
 
