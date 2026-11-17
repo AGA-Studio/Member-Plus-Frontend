@@ -1,5 +1,10 @@
 import { test } from "@playwright/test";
-import { awaitSession, demoUsers, expect, login } from "./helpers";
+import { expect, gotoApp } from "./helpers";
+
+test.use({
+  storageState: "tests/e2e/.auth/admin-aurora.json",
+  permissions: ["clipboard-read", "clipboard-write"],
+});
 
 /**
  * La tarjeta pública es la única pantalla que abre sin sesión, y es lo que el
@@ -10,13 +15,10 @@ import { awaitSession, demoUsers, expect, login } from "./helpers";
  * que se copia con el botón «Copiar enlace»; después se abre en un contexto
  * nuevo, sin cookies de sesión, que es lo que hace el cliente.
  */
-test.use({ permissions: ["clipboard-read", "clipboard-write"] });
 
 test.describe("Tarjeta pública", () => {
   test("el enlace de la tarjeta abre sin sesión y muestra al cliente", async ({ page, browser }) => {
-    await login(page, demoUsers.adminCafeAurora.email);
-    await awaitSession(page);
-    await page.goto("/clientes/MP-4F7K2");
+    await gotoApp(page, "/clientes/MP-4F7K2");
 
     await page.getByRole("button", { name: "Entregar tarjeta" }).click();
     await page.getByRole("button", { name: "Generar enlace" }).click();

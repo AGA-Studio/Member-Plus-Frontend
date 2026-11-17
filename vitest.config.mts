@@ -6,7 +6,7 @@ export default defineConfig({
     include: ["src/**/*.test.ts"],
     coverage: {
       provider: "v8",
-      include: ["src/lib/pricing.ts", "src/lib/format.ts"],
+      include: ["src/lib/pricing.ts", "src/lib/format.ts", "src/lib/customer-errors.ts"],
       thresholds: {
         lines: 100,
         functions: 100,

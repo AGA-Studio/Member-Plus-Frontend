@@ -31,7 +31,7 @@ Aparte va el revisor automático, que opina pero no bloquea.
 | `messages` | `npm run messages:check` | Claves de traducción que faltan en algún idioma | 43 s |
 | `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que no queden líneas sin cubrir | 37 s |
 | `build` | `npm run build` | Que Next compile, incluidas las fuentes y los tokens | 62 s |
-| `e2e` | `npm run test:e2e` contra un Postgres efímero y la imagen publicada del API | Que la caja, el aislamiento entre negocios y la tarjeta pública sigan funcionando de punta a punta | 94 s |
+| `e2e` | `npm run test:e2e` contra un Postgres efímero y la imagen publicada del API | Que la caja, el aislamiento entre negocios y la tarjeta pública sigan funcionando de punta a punta | 91 s |
 
 `e2e` corre en cada PR pero **no va al ruleset**: depende de que el Postgres y la imagen del API arranquen, así que un fallo de infraestructura no debe bloquear merges ajenos al cambio (sección 10).
 
@@ -131,6 +131,8 @@ El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al 
 | `hex suelto (…)` | Falta usar un token de `globals.css` |
 | `paleta por defecto (bg-blue-500)` | Tailwind 4 tiene la paleta desactivada; usa `bg-primary`, `bg-surface`… |
 | El job quedó **verde** y no hizo nada | Revisa el log: un `continue-on-error` o un `if` que se saltó el paso |
+| Playwright se queda en `/login` en el proyecto `setup` | El API no está arriba (o la base está atrás): sin él la acción de login falla y no hay sesión que guardar |
+| Playwright falla al navegar después de tener sesión | El archivo de `tests/e2e/.auth/` es viejo (la cookie dura 8 h): borra la carpeta y vuelve a correr |
 
 ## 10. Reglas
 
@@ -191,6 +193,16 @@ en `entry-transition.tsx` (`begin()` devuelve `false`), así que se salta el int
 del trace muestran la pantalla final en lugar de la cortina con el logo. Para probar el intro hace falta la
 excepción explícita, `test.use({ reducedMotion: "no-preference" })` en la prueba que lo cubra.
 
+Al cargar una ruta interna **con sesión** el layout también dispara el intro (`playOnLoad`), y la cortina se
+pintaba aunque hubiera «reducir movimiento»: 350 ms de azul antes de retirarse. Dos cosas lo resuelven, y
+ninguna es opcional:
+
+- La cortina lleva `motion-reduce:hidden`, así que con la preferencia activa no se pinta.
+- Las pruebas navegan con `gotoApp()` en vez de `page.goto()`: navega y espera a que `[data-entry-overlay]`
+  desaparezca. Sin esa espera, un `toBeDisabled()` se cumple con el contenido tapado y el trace enseña el
+  splash: la prueba pasa sin haber comprobado la pantalla. Sin la preferencia, la cortina tarda ~2.5 s en
+  irse (cortina, vuelo del logo y revelado).
+
 Cuidado con el bloqueo de login: el API bloquea un correo 15 minutos tras 5 intentos fallidos. La prueba de
 credenciales inválidas usa un correo desechable por ejecución (`e2e-<timestamp>@…`) para no tocar nunca a los
 usuarios de demo.
@@ -203,25 +215,47 @@ Archivos y qué cubre cada uno:
 | Archivo | Qué prueba |
 |---|---|
 | `login.spec.ts` | Entrada por rol, contraseña incorrecta y aislamiento en el panel |
+| `auth.setup.ts` | Proyecto `setup`: guarda las tres sesiones en `.auth/` (no es una prueba) |
 | `cashier-checkout.spec.ts` | Compra completa de $1,000 en Oro: resumen (−$150.00, $850.00, +85 puntos, +$25.50 de cashback), comprobante y el formulario deshabilitado sin tarjeta |
 | `cashier-isolation.spec.ts` | El cajero de Café Aurora no encuentra `MP-3GYM4` (Gimnasio Titán) ni por el diálogo ni entrando directo con `?code=` |
 | `public-card.spec.ts` | El enlace de la tarjeta, copiado del diálogo «Entregar tarjeta», abre en un contexto **sin sesión**; un enlace inválido muestra «Este enlace no funciona» |
-| `new-membership.spec.ts` | **En `fixme`**: el alta está rota (ver abajo) |
+| `new-membership.spec.ts` | Alta completa (nombre válido, cae en la ficha) y, desactivado, el aviso cuando el nombre no cumple la regla (issue #57) |
 
 Las pruebas **escriben datos**: cada corrida registra compras y crea membresías, así que los correos son
 únicos por ejecución y las comprobaciones miran lo que acaba de crear esa corrida, nunca totales del negocio.
 
-### El alta de membresía está rota
+### Sesiones por rol
 
-El diálogo abre y los campos llegan al cuerpo del envío (`_1_fullName` con el nombre escrito), pero la
-acción de servidor los recibe vacíos y responde «Escribe el nombre del cliente.». Pasa en `/clientes` y en
-`/membresias`, con `npm run dev` y con `next start` sobre el build de producción.
+Cada prueba arranca ya dentro de la app: el proyecto `setup` (`tests/e2e/auth.setup.ts`) guarda una sesión
+por rol en `tests/e2e/.auth/` y los proyectos `escritorio` y `movil` dependen de él.
 
-`_1_` es el prefijo que React pone en los formularios con `useActionState`; el servidor lo quita cuando el
-cuerpo lleva su `$ACTION_KEY`. En estas pantallas conviven varios formularios de esos montados a la vez
-—cada fila de la lista trae los diálogos de editar, renovar y cancelar— y el envío sale con el prefijo pero
-sin la clave que le corresponde. Los casos están escritos con la expectativa correcta en
-`tests/e2e/new-membership.spec.ts`: fallan en cuanto se quite el `fixme` después del arreglo.
+| Archivo | Usuario | Lo usan |
+|---|---|---|
+| `admin-aurora.json` | `admin@cafe-aurora.mx` | tarjeta pública y alta de membresía |
+| `caja-aurora.json` | `caja@cafe-aurora.mx` | compra completa y aislamiento en caja |
+| `admin-titan.json` | `admin@gimnasio-titan.mx` | reservado para las pruebas de aislamiento desde el otro negocio |
+
+- **Los archivos no se commitean**: llevan la cookie de sesión y `/tests/e2e/.auth/` está en `.gitignore`.
+- **Se regeneran en cada corrida**, no se reutiliza uno viejo: la cookie dura 8 h
+  (`ACCESS_TOKEN_EXPIRE_MINUTES`) y un archivo vencido se manifiesta como «no redirige», el mismo síntoma
+  mudo que cuando falta `API_INTERNAL_URL`.
+- **`login.spec.ts` no usa estas sesiones a propósito**: es la prueba que verifica el formulario de entrada.
+- Un solo archivo compartido rompería el aislamiento: el rol que abre la sesión es lo que hace que la
+  prueba de Café Aurora contra Gimnasio Titán signifique algo.
+
+### El aviso del alta cuando el nombre no cumple la regla
+
+El alta funciona. Lo que falla es el mensaje cuando el nombre no cumple la validación del API: el campo se
+marca en rojo y el diálogo responde «Escribe el nombre del cliente.» con el campo lleno.
+
+`PersonName` (`schemas/validators.py` del backend) solo acepta letras, espacios, guiones y apóstrofos, con al
+menos dos letras; un 422 con `loc: ["body", "full_name"]`. El frontend detecta bien el campo
+(`members.ts`), pero `toFieldErrors` (`src/features/business/actions.ts`) lo traduce a `fullNameRequired`,
+que es la clave de «campo vacío». Afecta a crear y a Editar datos.
+
+Por eso las pruebas usan un nombre **solo de letras** y el caso del aviso está desactivado: es el issue
+[#57](https://github.com/AGA-Studio/Member-Plus-Frontend/issues/57) y, cuando se arregle, el caso se activa
+quitándole el marcador.
 
 ### En el CI
 

@@ -313,6 +313,7 @@
         "saving": "Guardando…",
         "errors": {
           "fullNameRequired": "Escribe el nombre del cliente.",
+          "fullNameInvalid": "El nombre solo puede llevar letras, espacios, guiones y apóstrofos.",
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
           "unavailable": "No pudimos guardar los datos. Inténtalo de nuevo.",
@@ -436,6 +437,7 @@
         "creating": "Creando…",
         "errors": {
           "fullNameRequired": "Escribe el nombre del cliente.",
+          "fullNameInvalid": "El nombre solo puede llevar letras, espacios, guiones y apóstrofos.",
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
           "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo.",
