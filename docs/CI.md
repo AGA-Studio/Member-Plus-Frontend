@@ -169,7 +169,12 @@ Si un hallazgo está mal, gana tu criterio; si el error es de la rúbrica, se co
 npm run test:e2e                                    # todo
 npm run test:e2e:ui                                 # modo interactivo
 npx playwright test tests/e2e/login.spec.ts --project=escritorio
+PW_VIDEO=1 npx playwright test tests/e2e/cashier-checkout.spec.ts   # con vídeo
 ```
+
+Con `PW_VIDEO=1` se graba **un vídeo por prueba** en `test-results/<prueba>/video.webm`; sin la variable, el
+vídeo solo se guarda cuando la prueba falla (`retain-on-failure`). Para compartirlo hay que pasarlo a mp4
+(`ffmpeg -i video.webm -c:v libx264 salida.mp4`): `test-results/` está en `.gitignore` y no se commitea.
 
 Lo que hace falta en local:
 

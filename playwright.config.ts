@@ -20,7 +20,9 @@ export default defineConfig({
     reducedMotion: "reduce",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    // Graba siempre solo cuando se pide: `PW_VIDEO=1 npm run test:e2e`. Sin la
+    // variable, el vídeo se queda en los fallos (queda en test-results/*/video.webm).
+    video: process.env.PW_VIDEO === "1" ? "on" : "retain-on-failure",
   },
   expect: { timeout: 10_000 },
   projects: [
