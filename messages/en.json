@@ -313,6 +313,7 @@
         "saving": "Saving…",
         "errors": {
           "fullNameRequired": "Enter the customer's name.",
+          "fullNameInvalid": "The name can only contain letters, spaces, hyphens and apostrophes.",
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
           "unavailable": "We couldn't save the details. Try again.",
@@ -436,6 +437,7 @@
         "creating": "Creating…",
         "errors": {
           "fullNameRequired": "Enter the customer's name.",
+          "fullNameInvalid": "The name can only contain letters, spaces, hyphens and apostrophes.",
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
           "unavailable": "We couldn't create the membership. Try again.",
