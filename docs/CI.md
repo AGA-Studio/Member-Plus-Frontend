@@ -214,7 +214,7 @@ Archivos y qué cubre cada uno:
 | `cashier-checkout.spec.ts` | Compra completa de $1,000 en Oro: resumen (−$150.00, $850.00, +85 puntos, +$25.50 de cashback), comprobante y el formulario deshabilitado sin tarjeta |
 | `cashier-isolation.spec.ts` | El cajero de Café Aurora no encuentra `MP-3GYM4` (Gimnasio Titán) ni por el diálogo ni entrando directo con `?code=` |
 | `public-card.spec.ts` | El enlace de la tarjeta, copiado del diálogo «Entregar tarjeta», abre en un contexto **sin sesión**; un enlace inválido muestra «Este enlace no funciona» |
-| `new-membership.spec.ts` | **En `fixme`**: el alta está rota (ver abajo) |
+| `new-membership.spec.ts` | Alta completa (nombre válido, cae en la ficha) y, desactivado, el aviso cuando el nombre no cumple la regla (issue #57) |
 
 Las pruebas **escriben datos**: cada corrida registra compras y crea membresías, así que los correos son
 únicos por ejecución y las comprobaciones miran lo que acaba de crear esa corrida, nunca totales del negocio.
@@ -226,7 +226,7 @@ por rol en `tests/e2e/.auth/` y los proyectos `escritorio` y `movil` dependen de
 
 | Archivo | Usuario | Lo usan |
 |---|---|---|
-| `admin-aurora.json` | `admin@cafe-aurora.mx` | tarjeta pública (y el alta cuando se reactive) |
+| `admin-aurora.json` | `admin@cafe-aurora.mx` | tarjeta pública y alta de membresía |
 | `caja-aurora.json` | `caja@cafe-aurora.mx` | compra completa y aislamiento en caja |
 | `admin-titan.json` | `admin@gimnasio-titan.mx` | reservado para las pruebas de aislamiento desde el otro negocio |
 
@@ -238,17 +238,19 @@ por rol en `tests/e2e/.auth/` y los proyectos `escritorio` y `movil` dependen de
 - Un solo archivo compartido rompería el aislamiento: el rol que abre la sesión es lo que hace que la
   prueba de Café Aurora contra Gimnasio Titán signifique algo.
 
-### El alta de membresía está rota
+### El aviso del alta cuando el nombre no cumple la regla
 
-El diálogo abre y los campos llegan al cuerpo del envío (`_1_fullName` con el nombre escrito), pero la
-acción de servidor los recibe vacíos y responde «Escribe el nombre del cliente.». Pasa en `/clientes` y en
-`/membresias`, con `npm run dev` y con `next start` sobre el build de producción.
+El alta funciona. Lo que falla es el mensaje cuando el nombre no cumple la validación del API: el campo se
+marca en rojo y el diálogo responde «Escribe el nombre del cliente.» con el campo lleno.
 
-`_1_` es el prefijo que React pone en los formularios con `useActionState`; el servidor lo quita cuando el
-cuerpo lleva su `$ACTION_KEY`. En estas pantallas conviven varios formularios de esos montados a la vez
-—cada fila de la lista trae los diálogos de editar, renovar y cancelar— y el envío sale con el prefijo pero
-sin la clave que le corresponde. Los casos están escritos con la expectativa correcta en
-`tests/e2e/new-membership.spec.ts`: fallan en cuanto se quite el `fixme` después del arreglo.
+`PersonName` (`schemas/validators.py` del backend) solo acepta letras, espacios, guiones y apóstrofos, con al
+menos dos letras; un 422 con `loc: ["body", "full_name"]`. El frontend detecta bien el campo
+(`members.ts`), pero `toFieldErrors` (`src/features/business/actions.ts`) lo traduce a `fullNameRequired`,
+que es la clave de «campo vacío». Afecta a crear y a Editar datos.
+
+Por eso las pruebas usan un nombre **solo de letras** y el caso del aviso está desactivado: es el issue
+[#57](https://github.com/AGA-Studio/Member-Plus-Frontend/issues/57) y, cuando se arregle, el caso se activa
+quitándole el marcador.
 
 ### En el CI
 
