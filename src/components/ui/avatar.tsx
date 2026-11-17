@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { cx } from "@/lib/cx";
+import { RemoteImage } from "./remote-image";
 
 type AvatarProps = {
   name: string;
@@ -27,7 +27,13 @@ export function Avatar({ name, photoUrl, className }: AvatarProps) {
       )}
     >
       {photoUrl ? (
-        <Image src={photoUrl} alt="" fill unoptimized sizes="56px" className="object-cover" />
+        <RemoteImage
+          src={photoUrl}
+          alt=""
+          sizes="56px"
+          className="object-cover"
+          fallback={getInitials(name)}
+        />
       ) : (
         getInitials(name)
       )}

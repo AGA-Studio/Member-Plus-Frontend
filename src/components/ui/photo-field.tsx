@@ -1,11 +1,11 @@
 "use client";
 
 import { Camera } from "lucide-react";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { shrinkImage } from "@/lib/shrink-image";
+import { RemoteImage } from "./remote-image";
 import { useSelectedImage } from "@/lib/use-selected-image";
 
 type PhotoFieldProps = {
@@ -76,6 +76,8 @@ export function PhotoField({ name, label, optional = false, currentUrl = null, f
     setInvalid(false);
   }
 
+  const emptyPreview = fallback ?? <Camera aria-hidden strokeWidth={1.75} className="size-6" />;
+
   return (
     <div className="flex flex-col gap-1.5">
       <span id={labelId} className="text-sm font-medium text-foreground">
@@ -85,16 +87,15 @@ export function PhotoField({ name, label, optional = false, currentUrl = null, f
       <div className="flex items-center gap-4 rounded-md border border-border p-4">
         <span className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-soft text-primary-text">
           {preview ?? currentUrl ? (
-            <Image
+            <RemoteImage
               src={preview ?? currentUrl ?? ""}
               alt=""
-              fill
-              unoptimized
               sizes="64px"
               className="object-cover transition-opacity duration-200 ease-out starting:opacity-0"
+              fallback={emptyPreview}
             />
           ) : (
-            (fallback ?? <Camera aria-hidden strokeWidth={1.75} className="size-6" />)
+            emptyPreview
           )}
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-2">

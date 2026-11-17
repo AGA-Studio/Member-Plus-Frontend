@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { cx } from "@/lib/cx";
+import { RemoteImage } from "./remote-image";
 
 type BusinessLogoProps = {
   name: string;
@@ -20,7 +20,17 @@ export function BusinessLogo({ name, initials, logoUrl, className, entryOrigin =
       )}
     >
       {logoUrl ? (
-        <Image src={logoUrl} alt={name} fill unoptimized sizes="48px" className="rounded-sm bg-surface object-contain p-1" />
+        <RemoteImage
+          src={logoUrl}
+          alt={name}
+          sizes="48px"
+          className="rounded-sm bg-surface object-contain p-1"
+          fallback={
+            <span aria-hidden className="absolute inset-0 flex items-center justify-center bg-primary">
+              {initials}
+            </span>
+          }
+        />
       ) : (
         <span aria-hidden>{initials}</span>
       )}
