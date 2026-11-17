@@ -61,8 +61,10 @@ npm ci
 npm run dev
 ```
 
-Abre <http://localhost:3000>. El API de desarrollo se espera en `http://127.0.0.1:8000`
-(`API_INTERNAL_URL` en `.env.local`); sin él la interfaz carga, pero las llamadas a `/api/*` fallan.
+Abre <http://localhost:3000>. El navegador nunca llama al API directo: pide `/api/*` a este mismo origen
+y `src/proxy.ts` lo reenvía a `API_INTERNAL_URL` (`.env.local`; por defecto `http://127.0.0.1:8000`). El
+destino se resuelve en runtime, así que la misma imagen sirve para producción y para el compose local del
+backend.
 
 ### Backend sin tocarlo
 
