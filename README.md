@@ -134,4 +134,7 @@ despliega**: la imagen se publica en GHCR y el workflow llama al deploy webhook 
 tag móvil `latest`.
 
 El código va en inglés; todo el texto que ve el usuario pasa por `messages/`. Las reglas para agentes e
-integrantes están en [AGENTS.md](AGENTS.md).
+integrantes están en `PROJECT_MEMORY.md` (sección 15) y `BRAND.md`; `AGENTS.md` solo trae el bloque de
+Next que reescribe `next dev`.
+
+¿Encontraste un bug o tienes una idea? → [Issues de este repo](https://github.com/AGA-Studio/Member-Plus-Frontend/issues/new/choose). El trabajo planificado por hitos vive en el [tablero Final 9no](https://kan.neyzt.org/member-plus/final-9no) y las decisiones, en la [wiki](https://wiki.neyzt.org).

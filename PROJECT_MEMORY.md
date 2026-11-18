@@ -274,3 +274,5 @@ Hay un MCP de Outline disponible (`mcp__outline__*`) para leer el wiki directame
 - Movimiento: animaciones y transiciones cortas (menos de 300 ms), con las curvas de Emil Kowalski definidas en `globals.css`, siempre (regla 9). En caja solo pulsado y cambios de estado.
 - Después de codificar una pantalla o componente, **compáralo con Figma** (capturas con Playwright contra `get_screenshot`) y corrige las diferencias (regla 10).
 - Si el wiki cambia, actualiza este archivo.
+- Bugs y mejoras → **GitHub Issues** del repo donde cae el cambio (`Member-Plus-Frontend` si es UI, `Member-Web` si es del API). Busca duplicados con `gh issue list -R … --search`, crea con `gh issue create -R … --label bug|enhancement|documentation|deuda`, y cierra desde el PR con `Closes #N` o como *not planned* con motivo.
+- Un hallazgo fuera del alcance de la tarea se registra como issue y se sigue. `docs/` describe lo implementado y la wiki decide requisitos: ninguno acumula listas de pendientes. Un ítem, un hogar.
