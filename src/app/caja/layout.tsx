@@ -1,12 +1,14 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TenantTheme } from "@/components/ui/tenant-theme";
 import { CashierHeader } from "@/features/cashier/cashier-header";
 import { requireUser } from "@/lib/session";
 
 export default async function CashierLayout({ children }: LayoutProps<"/caja">) {
-  await requireUser(["cashier"]);
+  const user = await requireUser(["cashier"]);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
+      <TenantTheme color={user.businessPrimaryColor} foreground={user.businessPrimaryForeground} />
       <CashierHeader />
       <ScrollArea>
         <div className="flex min-h-full flex-col px-4 py-8 sm:px-6 lg:px-8 lg:py-12">{children}</div>

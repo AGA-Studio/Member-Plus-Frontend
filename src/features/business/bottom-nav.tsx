@@ -16,7 +16,7 @@ export function BottomNav() {
       className="shrink-0 border-t border-border bg-surface lg:hidden"
     >
       <ul className="flex">
-        {businessNavItems.map(({ href, key, icon: Icon }) => {
+        {businessNavItems.filter((item) => item.onBottomBar).map(({ href, key, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
 
           return (

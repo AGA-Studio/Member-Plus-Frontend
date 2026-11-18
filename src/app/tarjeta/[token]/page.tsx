@@ -7,6 +7,7 @@ import { BusinessLogo } from "@/components/ui/business-logo";
 import { Logo } from "@/components/ui/logo";
 import { getInitials } from "@/components/ui/avatar";
 import { MembershipCard } from "@/components/ui/membership-card";
+import { TenantTheme } from "@/components/ui/tenant-theme";
 import { CardDownloads } from "@/features/card/card-downloads";
 import { getPublicCard } from "@/lib/api/card-delivery";
 import { cx } from "@/lib/cx";
@@ -44,6 +45,7 @@ export default async function PublicCardPage({ params }: PageProps<"/tarjeta/[to
 
   return (
     <main className="flex min-h-dvh flex-col bg-brand">
+      <TenantTheme color={card.businessPrimaryColor} foreground={card.businessPrimaryForeground} />
       <div className="mx-auto flex w-full max-w-form flex-col items-center gap-6 px-6 pb-6 pt-8 text-center text-white">
         <Logo surface="dark" className={cx(revealClasses(0), "h-8 w-auto")} />
         {card.businessLogoUrl ? (

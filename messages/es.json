@@ -221,6 +221,7 @@
       "memberships": "Membresías",
       "levels": "Niveles",
       "movements": "Movimientos",
+      "settings": "Configuración",
       "section": "Operación"
     },
     "signOut": "Cerrar sesión",
@@ -261,6 +262,47 @@
         "empty": "Ninguna membresía vence pronto.",
         "viewAll": "Ver todas"
       }
+    },
+    "settings": {
+      "metaTitle": "Configuración · Member+",
+      "title": "Configuración",
+      "subtitle": "Ajusta los datos y la imagen de tu negocio.",
+      "business": {
+        "title": "Datos del negocio",
+        "name": "Nombre del negocio",
+        "validity": "Vigencia de las membresías (meses)",
+        "validityHint": "Se aplica a las membresías que emitas o renueves desde ahora. Las que ya existen conservan su fecha."
+      },
+      "color": {
+        "title": "Color principal",
+        "description": "Se usa en los botones, enlaces y selecciones de tu panel, de la caja y de la tarjeta que reciben tus clientes.",
+        "picker": "Elegir un color",
+        "hex": "Color en formato #rrggbb",
+        "reset": "Usar el azul de Member+",
+        "defaultHint": "Sin color propio, se usa el azul de Member+.",
+        "preview": {
+          "title": "Vista previa",
+          "button": "Guardar cambios",
+          "badge": "Membresía activa",
+          "link": "Ver tarjeta",
+          "navItem": "Panel",
+          "secondary": "Cancelar"
+        }
+      },
+      "other": {
+        "title": "Precios y logo",
+        "description": "El precio de cada membresía se edita en Niveles. El logo se cambia desde la tarjeta de tu negocio, abajo en el menú lateral.",
+        "levels": "Ir a Niveles"
+      },
+      "submit": "Guardar cambios",
+      "saving": "Guardando…",
+      "errors": {
+        "nameInvalid": "Escribe un nombre de 2 a 120 caracteres.",
+        "validityInvalid": "Escribe un número de meses entre 1 y 60.",
+        "colorInvalid": "Escribe un color con formato #rrggbb, por ejemplo #b91c1c.",
+        "unavailable": "No pudimos guardar los cambios. Inténtalo de nuevo."
+      },
+      "footerHint": "Los cambios se ven al instante en tu panel, en la caja y en la tarjeta de tus clientes."
     },
     "customers": {
       "metaTitle": "Clientes · Member+",
@@ -623,6 +665,7 @@
     "customerPhotoRemoved": "Foto del cliente quitada.",
     "profilePhotoSaved": "Foto de perfil guardada.",
     "profilePhotoRemoved": "Foto de perfil quitada.",
+    "settingsSaved": "Configuración guardada.",
     "membershipRenewed": "Membresía renovada.",
     "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
     "cardEmailRateLimited": "Espera un momento antes de enviar otro correo.",

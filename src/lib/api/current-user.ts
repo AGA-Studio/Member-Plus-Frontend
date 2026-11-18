@@ -12,7 +12,15 @@ type BackendUser = {
   role: BackendRole;
   is_active: boolean;
   photo_url?: string | null;
-  business: { id: number; name: string; logo_url: string | null; status: string } | null;
+  business: {
+    id: number;
+    name: string;
+    logo_url: string | null;
+    status: string;
+    validity_months?: number;
+    primary_color?: string | null;
+    primary_foreground?: string | null;
+  } | null;
 };
 
 const fallbackBusinessName = "Member+";
@@ -66,6 +74,9 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionLook
       businessName,
       businessInitials: getInitials(businessName),
       businessLogoUrl: user.business?.logo_url ?? null,
+      businessValidityMonths: user.business?.validity_months ?? null,
+      businessPrimaryColor: user.business?.primary_color ?? null,
+      businessPrimaryForeground: user.business?.primary_foreground ?? null,
       photoUrl: user.photo_url ?? null,
     },
   };

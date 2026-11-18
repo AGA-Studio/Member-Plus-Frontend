@@ -75,6 +75,9 @@ export type SessionUser = {
   businessName: string;
   businessInitials: string;
   businessLogoUrl: string | null;
+  businessValidityMonths: number | null;
+  businessPrimaryColor: string | null;
+  businessPrimaryForeground: string | null;
   photoUrl: string | null;
 };
 
@@ -89,6 +92,8 @@ export type Page<T> = {
 export type PublicCard = {
   businessName: string;
   businessLogoUrl: string | null;
+  businessPrimaryColor: string | null;
+  businessPrimaryForeground: string | null;
   fullName: string;
   code: string;
   tier: Tier;
