@@ -171,6 +171,7 @@
         "points": "Puntos",
         "cashback": "Cashback",
         "validity": "Vigencia",
+        "redeemPoints": "Canjear puntos",
         "status": {
           "active": "Activa",
           "expired": "Vencida",

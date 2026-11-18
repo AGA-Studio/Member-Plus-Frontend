@@ -171,6 +171,7 @@
         "points": "Points",
         "cashback": "Cashback",
         "validity": "Valid until",
+        "redeemPoints": "Redeem points",
         "status": {
           "active": "Active",
           "expired": "Expired",
