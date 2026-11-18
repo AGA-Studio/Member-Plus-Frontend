@@ -13,7 +13,7 @@ export type BadgeTone =
   | "onyx";
 
 const toneClasses: Record<BadgeTone, string> = {
-  neutral: "bg-surface-muted text-muted",
+  neutral: "bg-[#eef2f8] text-[#5a6881]",
   primary: "bg-primary-soft text-primary-text",
   success: "bg-success-soft text-success-text",
   warning: "bg-warning-soft text-warning-text",
