@@ -216,6 +216,7 @@
   "business": {
     "nav": {
       "label": "Main navigation",
+      "dashboard": "Dashboard",
       "customers": "Customers",
       "memberships": "Memberships",
       "levels": "Levels",
@@ -228,6 +229,38 @@
     },
     "pagination": {
       "range": "{from}–{to} of {total}"
+    },
+    "dashboard": {
+      "metaTitle": "Dashboard · Member+",
+      "title": "Dashboard",
+      "subtitle": "How {business} is doing in the last 30 days.",
+      "collected": {
+        "label": "Collected in the last 30 days",
+        "purchases": "{count, plural, =0 {No purchases yet} one {# purchase} other {# purchases}}",
+        "discounts": "Discounts given",
+        "cashbackUsed": "Cashback used"
+      },
+      "memberships": {
+        "title": "Memberships",
+        "total": "{count, plural, one {# customer in total} other {# customers in total}}",
+        "active": "Active",
+        "expiring": "Expiring soon",
+        "expired": "Expired",
+        "cancelled": "Cancelled",
+        "viewAll": "View memberships"
+      },
+      "recent": {
+        "title": "Recent purchases",
+        "emptyTitle": "No purchases yet",
+        "emptyDescription": "When you charge at the counter, the purchases will show up here.",
+        "viewAll": "View movements"
+      },
+      "expiring": {
+        "title": "Expiring soon",
+        "validUntil": "Expires on {date}",
+        "empty": "No membership expires soon.",
+        "viewAll": "View all"
+      }
     },
     "customers": {
       "metaTitle": "Customers · Member+",
@@ -645,6 +678,14 @@
     "metaTitle": "Businesses · Member+",
     "title": "Businesses",
     "subtitle": "{count, plural, one {# business} other {# businesses}} on the platform",
+    "summary": {
+      "businesses": "Businesses",
+      "active": "Active",
+      "trial": "On trial",
+      "suspended": "Suspended",
+      "customers": "Customers",
+      "users": "Users"
+    },
     "searchLabel": "Search businesses",
     "searchPlaceholder": "Search by name",
     "filters": {

@@ -14,7 +14,7 @@ const enterClasses =
 
 const roleHomePaths: Record<LoginRole, string> = {
   cashier: "/caja",
-  admin: "/clientes",
+  admin: "/panel",
   platform: "/plataforma",
 };
 

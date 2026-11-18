@@ -169,6 +169,7 @@ export type MovementFilters = {
   query?: string;
   period?: MovementPeriod;
   page: number;
+  pageSize?: number;
 };
 
 export type MovementSummary = {
@@ -178,7 +179,7 @@ export type MovementSummary = {
   cashbackUsedCents: number;
 };
 
-export async function listMovements({ query, period = defaultMovementPeriod, page }: MovementFilters): Promise<{
+export async function listMovements({ query, period = defaultMovementPeriod, page, pageSize }: MovementFilters): Promise<{
   page: Page<Purchase>;
   summary: MovementSummary;
 }> {
@@ -186,6 +187,7 @@ export async function listMovements({ query, period = defaultMovementPeriod, pag
     q: query,
     from: periodStart(period),
     page,
+    page_size: pageSize,
   });
 
   return {

@@ -1,6 +1,37 @@
 import type { BusinessStatus, Page, PlatformBusiness } from "@/lib/domain";
 import { backendGet, toPage, type BackendPage } from "./backend";
 
+export type PlatformSummary = {
+  all: number;
+  trial: number;
+  active: number;
+  suspended: number;
+  customersCount: number;
+  usersCount: number;
+};
+
+type BackendPlatformSummary = {
+  all: number;
+  trial: number;
+  active: number;
+  suspended: number;
+  customers_count: number;
+  users_count: number;
+};
+
+export async function getPlatformSummary(): Promise<PlatformSummary> {
+  const summary = await backendGet<BackendPlatformSummary>("/platform/business/summary");
+
+  return {
+    all: summary.all,
+    trial: summary.trial,
+    active: summary.active,
+    suspended: summary.suspended,
+    customersCount: summary.customers_count,
+    usersCount: summary.users_count,
+  };
+}
+
 type BackendBusiness = {
   id: number;
   name: string;
