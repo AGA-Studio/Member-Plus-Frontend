@@ -24,7 +24,7 @@ Aparte va el revisor automático, que opina pero no bloquea.
 
 ## 2. Los jobs
 
-| Job | Qué corre | Qué atrapa | Tiempo medido |
+| Job | Qué corre | Qué atrapa | Tiempo de referencia |
 |---|---|---|---|
 | `lint` | `npm run lint` y `npm run check:tokens` | Reglas de ESLint y convenciones de diseño | 34 s |
 | `typecheck` | `npm run typecheck` | Errores de tipos en todo el proyecto | 50 s |
