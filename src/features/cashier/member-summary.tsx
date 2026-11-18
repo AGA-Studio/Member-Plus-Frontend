@@ -5,6 +5,7 @@ import { cx } from "@/lib/cx";
 import { Badge } from "@/components/ui/badge";
 import { MembershipCard } from "@/components/ui/membership-card";
 import { formatMoney, formatPoints } from "@/lib/format";
+import { RedeemPointsButton } from "./redeem-points-button";
 import type { Member } from "@/lib/domain";
 
 type MemberSummaryProps = {
@@ -71,6 +72,7 @@ export async function MemberSummary({ member, businessName }: MemberSummaryProps
             </div>
           ))}
         </dl>
+        <RedeemPointsButton points={member.points} />
       </section>
     </div>
   );
