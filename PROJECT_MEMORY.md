@@ -78,6 +78,7 @@ La rebanada del MVP está completa en `main` y consume el API real de `Member-We
 - **Imágenes:** logo del negocio, foto del cliente y foto de perfil con URLs firmadas que caducan en 1 h; `Avatar` y `BusinessLogo` caen a las iniciales cuando la imagen falla (`src/components/ui/remote-image.tsx`).
 - **Estados y errores:** `not-found.tsx`, `error.tsx`, `global-error.tsx`, `/sin-conexion`, esqueletos por ruta y toasts para sesión vencida o sin permiso.
 - **Pruebas:** Vitest para `src/lib/pricing.ts` y `format.ts` (comparados con `services/pricing_service.py` del backend) y Playwright E2E para login, caja, aislamiento entre negocios, tarjeta pública y alta de membresía. El CI corre `lint` (+`check:tokens`), `typecheck`, `messages`, `test` y `build` como obligatorios, y `e2e` aparte (no required).
+- **Excepciones de movimiento:** la animación de entrada al login (`src/features/auth/entry-transition.tsx`, ~2 s) y el sidebar tipo píldora que anima el ancho (300 ms) son excepciones deliberadas a la regla de < 300 ms y de solo transform/opacity; están registradas en `docs/REVISION.md` §1 y no se eliminan mientras el código las tenga.
 - **Flujo de git:** `main` es la única rama; `feature/*`, `fix/*` o `docs/*` efímeras, todo por PR. Un merge a `main` despliega.
 - **Dependencias que importan:** `next-intl` (i18n), `qrcode.react`, `jsqr`, `html-to-image`, `vitest` y `@playwright/test`. `@types/node` en 22, igual que `.nvmrc`.
 

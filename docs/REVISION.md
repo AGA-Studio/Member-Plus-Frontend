@@ -33,7 +33,14 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 
 ### Violaciones conocidas
 
-Ninguna al 17 de noviembre de 2026. La foto del cliente dejó de serlo cuando la decisión cambió el 16 nov 2026: se guarda solo para mostrarse, no es biométrica y se borra al cancelar la membresía.
+Excepciones deliberadas que siguen en el código; no se «arreglan» sin cambiar la decisión:
+
+| Qué | Dónde | Por qué se acepta |
+|-----|-------|-------------------|
+| Animación de entrada y salida al iniciar sesión (~2 s al entrar, ~1.4 s al salir) | `src/features/auth/entry-transition.tsx` | Animación de marca de una sola vez, no una transición de interfaz; el resto de la app cumple < 300 ms |
+| Sidebar tipo píldora que anima el ancho al expandirse (300 ms) | `src/features/business/sidebar.tsx` | No hay otra forma de expandir el panel; el resto de las transiciones usa solo transform y opacity |
+
+La foto del cliente ya no es una violación: la decisión del 16 nov 2026 la permite solo para mostrarse y se borra al cancelar la membresía. Fuera de estas dos excepciones, ninguna al 17 de noviembre de 2026.
 
 ## 2. Decisiones abiertas
 
