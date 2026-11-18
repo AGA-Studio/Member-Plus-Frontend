@@ -25,6 +25,7 @@ export function QrScanner({ paused, found, onDetect, onDenied }: QrScannerProps)
   const onDeniedRef = useRef(onDenied);
   const pausedRef = useRef(paused);
   const [status, setStatus] = useState<"starting" | "scanning" | "denied">("starting");
+  const [mirrored, setMirrored] = useState(false);
 
   useEffect(() => {
     onDetectRef.current = onDetect;
@@ -56,6 +57,8 @@ export function QrScanner({ paused, found, onDetect, onDenied }: QrScannerProps)
         return;
       }
 
+      const facingMode = stream.getVideoTracks()[0]?.getSettings().facingMode;
+      setMirrored(facingMode !== "environment");
       videoRef.current.srcObject = stream;
       await videoRef.current.play().catch(() => undefined);
       setStatus("scanning");
@@ -102,6 +105,7 @@ export function QrScanner({ paused, found, onDetect, onDenied }: QrScannerProps)
         aria-hidden
         className={cx(
           "absolute inset-0 size-full object-cover transition-opacity duration-150 ease-out",
+          mirrored && "-scale-x-100",
           status === "scanning" ? "opacity-100" : "opacity-0",
         )}
       />
