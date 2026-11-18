@@ -2,7 +2,12 @@ import type { MemberStatus, PublicCard, Tier } from "@/lib/domain";
 import { backendCall } from "./backend";
 
 type BackendPublicCard = {
-  business: { name: string; logo_url: string | null };
+  business: {
+    name: string;
+    logo_url: string | null;
+    primary_color?: string | null;
+    primary_foreground?: string | null;
+  };
   full_name: string;
   code: string;
   level: { name: string; finish: Tier };
@@ -19,6 +24,8 @@ export async function getPublicCard(token: string): Promise<PublicCard | null> {
     return {
       businessName: card.business.name,
       businessLogoUrl: card.business.logo_url,
+      businessPrimaryColor: card.business.primary_color ?? null,
+      businessPrimaryForeground: card.business.primary_foreground ?? null,
       fullName: card.full_name,
       code: card.code,
       tier: card.level.finish,

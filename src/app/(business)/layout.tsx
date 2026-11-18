@@ -1,4 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TenantTheme } from "@/components/ui/tenant-theme";
 import { BottomNav } from "@/features/business/bottom-nav";
 import { Sidebar } from "@/features/business/sidebar";
 import { requireUser } from "@/lib/session";
@@ -8,6 +9,7 @@ export default async function BusinessLayout({ children }: LayoutProps<"/">) {
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background">
+      <TenantTheme color={user.businessPrimaryColor} foreground={user.businessPrimaryForeground} />
       <Sidebar
         businessName={user.businessName}
         businessInitials={user.businessInitials}

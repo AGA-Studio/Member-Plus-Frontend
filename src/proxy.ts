@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { sessionCookieName } from "@/lib/session-cookie";
 
-const protectedPrefixes = ["/caja", "/panel", "/clientes", "/membresias", "/niveles", "/movimientos", "/plataforma"];
+const protectedPrefixes = ["/caja", "/panel", "/clientes", "/membresias", "/niveles", "/movimientos", "/configuracion", "/plataforma"];
 
 const defaultBackendUrl = "http://127.0.0.1:8000";
 
@@ -39,6 +39,7 @@ export const config = {
     "/membresias/:path*",
     "/niveles/:path*",
     "/movimientos/:path*",
+    "/configuracion/:path*",
     "/plataforma/:path*",
   ],
 };

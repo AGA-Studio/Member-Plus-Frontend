@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
+import { PageHeader } from "@/components/ui/page-header";
+import { Reveal } from "@/components/ui/reveal";
+import { SettingsForm } from "@/features/business/settings-form";
+import { requireSession } from "@/lib/session";
+
+export const instant = false;
+
+const defaultValidityMonths = 12;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("business.settings");
+
+  return { title: t("metaTitle") };
+}
+
+export default async function SettingsPage() {
+  await connection();
+  const user = await requireSession();
+  const t = await getTranslations("business.settings");
+
+  return (
+    <>
+      <Reveal>
+        <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      </Reveal>
+      <SettingsForm
+        businessInitials={user.businessInitials}
+        initialValues={{
+          name: user.businessName,
+          validityMonths: String(user.businessValidityMonths ?? defaultValidityMonths),
+          primaryColor: user.businessPrimaryColor ?? "",
+        }}
+      />
+    </>
+  );
+}

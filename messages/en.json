@@ -221,6 +221,7 @@
       "memberships": "Memberships",
       "levels": "Levels",
       "movements": "Transactions",
+      "settings": "Settings",
       "section": "Operations"
     },
     "signOut": "Sign out",
@@ -261,6 +262,47 @@
         "empty": "No membership expires soon.",
         "viewAll": "View all"
       }
+    },
+    "settings": {
+      "metaTitle": "Settings · Member+",
+      "title": "Settings",
+      "subtitle": "Adjust the details and the look of your business.",
+      "business": {
+        "title": "Business details",
+        "name": "Business name",
+        "validity": "Membership validity (months)",
+        "validityHint": "It applies to the memberships you issue or renew from now on. The ones that already exist keep their date."
+      },
+      "color": {
+        "title": "Main color",
+        "description": "It is used in the buttons, links and selections of your panel, the counter and the card your customers receive.",
+        "picker": "Choose a color",
+        "hex": "Color in #rrggbb format",
+        "reset": "Use the Member+ blue",
+        "defaultHint": "Without a color of its own, the Member+ blue is used.",
+        "preview": {
+          "title": "Preview",
+          "button": "Save changes",
+          "badge": "Active membership",
+          "link": "View card",
+          "navItem": "Dashboard",
+          "secondary": "Cancel"
+        }
+      },
+      "other": {
+        "title": "Prices and logo",
+        "description": "The price of each membership is edited in Levels. The logo is changed from your business card, at the bottom of the side menu.",
+        "levels": "Go to Levels"
+      },
+      "submit": "Save changes",
+      "saving": "Saving…",
+      "errors": {
+        "nameInvalid": "Write a name of 2 to 120 characters.",
+        "validityInvalid": "Write a number of months between 1 and 60.",
+        "colorInvalid": "Write a color in #rrggbb format, for example #b91c1c.",
+        "unavailable": "We couldn't save the changes. Try again."
+      },
+      "footerHint": "The changes show up right away in your panel, at the counter and on your customers' card."
     },
     "customers": {
       "metaTitle": "Customers · Member+",
@@ -623,6 +665,7 @@
     "customerPhotoRemoved": "Customer photo removed.",
     "profilePhotoSaved": "Profile photo saved.",
     "profilePhotoRemoved": "Profile photo removed.",
+    "settingsSaved": "Settings saved.",
     "membershipRenewed": "Membership renewed.",
     "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
     "cardEmailRateLimited": "Wait a moment before sending another email.",
