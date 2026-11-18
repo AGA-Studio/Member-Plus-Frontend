@@ -11,7 +11,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { FilterBar } from "@/features/business/filter-bar";
 import { readParam } from "@/features/business/member-status";
 import { parsePage } from "@/lib/api/paginate";
-import { listBusinesses } from "@/lib/api/platform";
+import { getPlatformSummary, listBusinesses } from "@/lib/api/platform";
 import { businessStatuses, type BusinessStatus } from "@/lib/domain";
 
 export const instant = false;
@@ -38,7 +38,19 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
   const t = await getTranslations("platform");
   const statusLabels = await getTranslations("platform.status");
   const format = await getFormatter();
-  const result = await listBusinesses({ query, status, page: requestedPage });
+  const [result, summary] = await Promise.all([
+    listBusinesses({ query, status, page: requestedPage }),
+    getPlatformSummary(),
+  ]);
+  const summaryT = await getTranslations("platform.summary");
+  const stats = [
+    { label: summaryT("businesses"), value: summary.all },
+    { label: summaryT("active"), value: summary.active },
+    { label: summaryT("trial"), value: summary.trial },
+    { label: summaryT("suspended"), value: summary.suspended },
+    { label: summaryT("customers"), value: summary.customersCount },
+    { label: summaryT("users"), value: summary.usersCount },
+  ];
   const filtered = Boolean(query || status);
   const from = (result.page - 1) * result.pageSize + 1;
   const to = from + result.items.length - 1;
@@ -63,6 +75,18 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
         <p className="text-base text-muted">{t("subtitle", { count: result.total })}</p>
       </Reveal>
       <Reveal index={1}>
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:grid-cols-3 lg:grid-cols-6">
+          {stats.map((stat) => (
+            <div key={stat.label} className="flex flex-col gap-1">
+              <dt className="text-sm text-muted">{stat.label}</dt>
+              <dd className="font-display text-subheading font-semibold tabular-nums text-foreground">
+                {format.number(stat.value)}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+      <Reveal index={2}>
         <FilterBar
           searchLabel={t("searchLabel")}
           searchPlaceholder={t("searchPlaceholder")}
@@ -76,7 +100,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
           ]}
         />
       </Reveal>
-      <Reveal index={2}>
+      <Reveal index={3}>
         <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0 max-sm:shadow-none">
           {result.items.length === 0 ? (
             <EmptyState

@@ -71,26 +71,30 @@ export type MemberFilters = {
   levelId?: number;
   status?: MemberStatus | "expiring";
   page: number;
+  pageSize?: number;
 };
 
-export async function listMembers({ query, levelId, status, page }: MemberFilters): Promise<Page<Member>> {
+export async function listMembers({ query, levelId, status, page, pageSize }: MemberFilters): Promise<Page<Member>> {
   const result = await backendGet<BackendPage<BackendCustomer>>("/customer/list", {
     q: query,
     level_id: levelId,
     status,
     page,
+    page_size: pageSize,
   });
 
   return toPage(result, toMember);
 }
 
-export async function countMembers(): Promise<{
+export type MemberCounts = {
   all: number;
   active: number;
   expiring: number;
   expired: number;
   cancelled: number;
-}> {
+};
+
+export async function countMembers(): Promise<MemberCounts> {
   return backendGet("/customer/summary");
 }
 

@@ -7,7 +7,7 @@ import { sessionCookieName } from "./session-cookie";
 
 export const roleHomePaths: Record<UserRole, string> = {
   cashier: "/caja",
-  admin: "/clientes",
+  admin: "/panel",
   platform: "/plataforma",
 };
 
