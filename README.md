@@ -16,7 +16,7 @@
 <p align="center">
   <a href="https://github.com/AGA-Studio/Member-Plus-Frontend/actions/workflows/ci.yml"><img src="https://github.com/AGA-Studio/Member-Plus-Frontend/actions/workflows/ci.yml/badge.svg?branch=main" alt="Estado del CI"></a>
   <a href="docs/DEPLOY.md"><img src="https://img.shields.io/badge/imagen-ghcr.io-2496ED?logo=docker&logoColor=white" alt="Imagen en GHCR"></a>
-  <a href="docs/CI.md"><img src="https://img.shields.io/badge/checks-4%20obligatorios-0062f2" alt="Cuatro checks obligatorios"></a>
+  <a href="docs/CI.md"><img src="https://img.shields.io/badge/checks-5%20obligatorios-0062f2" alt="Cinco checks obligatorios"></a>
   <img src="https://img.shields.io/badge/i18n-es%20%7C%20en-5a6881" alt="Idiomas: español e inglés">
   <br>
   <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.4.6-000000?logo=nextdotjs&logoColor=white" alt="Next.js 16.4.6"></a>
@@ -105,7 +105,7 @@ Vuelve a esta carpeta y corre `npm run dev`. Entra con `admin@cafe-aurora.mx` / 
 | `npm run typecheck` | `next typegen && tsc --noEmit` |
 | `npm run messages:check` | Compara las claves de `es.json` y `en.json` |
 
-Los seis corren en el CI en cada PR; `lint`, `typecheck`, `messages` y `build` son obligatorios para mergear.
+Los seis corren en el CI en cada PR; `lint`, `typecheck`, `messages`, `test` y `build` son obligatorios para mergear.
 
 ## Estructura
 
