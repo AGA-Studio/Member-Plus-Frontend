@@ -461,6 +461,58 @@
   [data-inview="false"] .chart-spread > * {
     scale: 0 1;
   }
+
+  .tier-shine-bronze,
+  .tier-shine-silver,
+  .tier-shine-gold,
+  .tier-shine-onyx {
+    position: relative;
+  }
+
+  .tier-shine-bronze::after,
+  .tier-shine-silver::after,
+  .tier-shine-gold::after,
+  .tier-shine-onyx::after {
+    content: attr(data-text);
+    content: attr(data-text) / "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-size: 300% 100%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: tier-shine 4.5s ease-in-out infinite;
+  }
+
+  .tier-shine-bronze::after {
+    background-image: linear-gradient(105deg, transparent 40%, rgb(255 236 214 / 0.7) 50%, transparent 60%);
+  }
+
+  .tier-shine-silver::after {
+    background-image: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.85) 50%, transparent 60%);
+  }
+
+  .tier-shine-gold::after {
+    background-image: linear-gradient(105deg, transparent 40%, rgb(255 247 194 / 0.8) 50%, transparent 60%);
+  }
+
+  .tier-shine-onyx::after {
+    background-image: linear-gradient(105deg, transparent 40%, rgb(1 190 254 / 0.9) 50%, transparent 60%);
+  }
+}
+
+@keyframes tier-shine {
+  0% {
+    background-position: 100% 0;
+  }
+
+  60%,
+  100% {
+    background-position: 0% 0;
+  }
 }
 
 @layer base {
