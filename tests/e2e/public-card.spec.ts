@@ -17,8 +17,22 @@ test.use({
  */
 
 test.describe("Tarjeta pública", () => {
+  /**
+   * Cada proyecto usa un cliente distinto del seed. Generar un enlace revoca el
+   * anterior del mismo cliente, así que si `escritorio` y `movil` corren a la
+   * vez —dos workers en CI— y comparten cliente, una prueba revoca el enlace de
+   * la otra y falla de forma intermitente.
+   */
+  function customerFor(project: string) {
+    return project === "movil"
+      ? { code: "MP-7H3QX", name: "Carlos Ramírez" }
+      : { code: "MP-4F7K2", name: "Laura Méndez" };
+  }
+
   test("el enlace de la tarjeta abre sin sesión y muestra al cliente", async ({ page, browser }) => {
-    await gotoApp(page, "/clientes/MP-4F7K2");
+    const customer = customerFor(test.info().project.name);
+
+    await gotoApp(page, `/clientes/${customer.code}`);
 
     await page.getByRole("button", { name: "Entregar tarjeta" }).click();
     await page.getByRole("button", { name: "Generar enlace" }).click();
@@ -35,8 +49,8 @@ test.describe("Tarjeta pública", () => {
     await card.goto(cardUrl);
 
     await expect(card.getByRole("heading", { name: "Tu tarjeta de Café Aurora" })).toBeVisible();
-    await expect(card.getByText("Laura Méndez")).toBeVisible();
-    await expect(card.getByText(/MP-4F7K2/)).toBeVisible();
+    await expect(card.getByText(customer.name)).toBeVisible();
+    await expect(card.getByText(new RegExp(customer.code))).toBeVisible();
     await expect(card.getByText(/Vigente hasta/)).toBeVisible();
     await expect(card.getByRole("button", { name: "Descargar imagen" })).toBeVisible();
     await expect(card.getByRole("button", { name: "Descargar PDF" })).toBeVisible();

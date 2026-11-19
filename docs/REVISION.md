@@ -4,8 +4,8 @@ Lo que un cambio no puede romper, en una página.
 
 Este archivo lo lee `scripts/review_pr.py`, que comenta los PRs automáticamente. **No es la fuente de verdad**: manda el wiki (`wiki.neyzt.org`, colección `9no`) y, para diseño, `BRAND.md`. Si aquí dice una cosa y ellos otra, ganan ellos y esto se corrige.
 
-> Última sincronización: **17 de noviembre de 2026**.
-> Cambios que refleja: la foto del cliente dejó de ser una violación —16 nov 2026, solo para mostrarse y se borra al cancelar—, el job `test` entró al ruleset y el E2E corre en el CI como job `e2e` (no required).
+> Última sincronización: **18 de noviembre de 2026**.
+> Cambios que refleja: la foto del cliente dejó de ser una violación —16 nov 2026, solo para mostrarse y se borra al cancelar—, el job `test` entró al ruleset y el E2E corre en el CI como job `e2e` (no required). El 18 nov 2026 el umbral del 100 % pasó de dos a **cuatro** módulos de `src/lib/` (`tenant-theme.ts` y `customer-errors.ts` ya tenían pruebas y no estaban en `coverage.include`) y el E2E pasó a **dos workers** en CI; el orden de la sección 7 no cambia.
 > Fuentes: *Decisiones por validar*, *MVP*, *Pantallas*, `BRAND.md` y `AGENTS.md` de este repositorio.
 
 ## 1. Decisiones cerradas
@@ -101,6 +101,6 @@ Tocarlos exige decirlo en el cuerpo del PR, porque otra rama en vuelo puede esta
 
 El frontend ya tiene runner de interfaz: `@playwright/test`, con las pruebas en `tests/e2e/` (ver `CI.md`, sección 12). Eso **cambia el orden de esta lista a propósito**: el E2E entró primero porque la Etapa 4 de la materia lo pide con fecha y necesita evidencia en navegador, no porque se hayan descartado las demás pruebas. El gate del PR es `lint` + `typecheck` + `test` + `messages` + `check:tokens` + `build`; el E2E corre aparte.
 
-La lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`— ya tiene pruebas unitarias con Vitest (`npm run test`, job `test` del CI): `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Ese job corre con cobertura (`npm run test:coverage`) y umbral al 100 % sobre los dos archivos, así que una rama nueva sin pruebas se ve en el PR. Después: componentes.
+La lógica pura que **duplica el backend** —`src/lib/pricing.ts` y `format.ts`— ya tiene pruebas unitarias con Vitest (`npm run test`, job `test` del CI): `calculatePurchase` repite la fórmula de `services/pricing_service.py` y una divergencia se cobra mal en caja. Ese job corre con cobertura (`npm run test:coverage`) y umbral al 100 % sobre los cuatro módulos de `src/lib/` que tienen pruebas (`pricing`, `format`, `customer-errors` y `tenant-theme`), así que una rama nueva sin pruebas se ve en el PR. Después: componentes.
 
 El E2E cubre inicio de sesión, compra completa en caja, aislamiento entre negocios, tarjeta pública y el alta de membresía, y corre en el CI como job `e2e` (no required: depende de que el Postgres y el API arranquen).
