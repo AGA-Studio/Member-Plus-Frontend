@@ -274,7 +274,7 @@ export default async function DashboardPage() {
             title={t("memberships.title")}
             subtitle={t("memberships.total", { count: counts.all })}
             action={
-              <Link href="/membresias" className={viewAllClasses}>
+              <Link href="/clientes" className={viewAllClasses}>
                 {t("memberships.viewAll")}
               </Link>
             }
@@ -414,7 +414,7 @@ export default async function DashboardPage() {
           <ListCard
             title={t("expiring.title")}
             action={
-              <Link href="/membresias?tab=expiring" className={viewAllClasses}>
+              <Link href="/clientes?status=expiring" className={viewAllClasses}>
                 {t("expiring.viewAll")}
               </Link>
             }

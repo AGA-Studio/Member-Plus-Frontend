@@ -64,11 +64,16 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
           title={t("title")}
           subtitle={t("subtitle", { count: result.total })}
           actions={
-            <NewMembershipDialog
-              triggerLabel={t("newMembership")}
-              triggerClassName={buttonStyles({ size: "md" })}
-              levelOptions={levelPrices}
-            />
+            <>
+              <Link href="/imprimir" className={buttonStyles({ variant: "outline" })}>
+                {t("printSheet")}
+              </Link>
+              <NewMembershipDialog
+                triggerLabel={t("newMembership")}
+                triggerClassName={buttonStyles({ size: "md" })}
+                levelOptions={levelPrices}
+              />
+            </>
           }
         />
       </Reveal>
@@ -120,12 +125,15 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                   const lastPurchase = member.lastPurchaseAt;
 
                   return (
-                    <tr key={member.code} className="border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted">
+                    <tr
+                      key={member.code}
+                      className="relative cursor-pointer border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted"
+                    >
                       <td className="px-6 py-3">
                         <Link
                           href={`/clientes/${encodeURIComponent(member.code)}`}
                           aria-label={t("openCustomer", { name: member.fullName })}
-                          className="flex items-center gap-3 rounded-sm"
+                          className="flex items-center gap-3 rounded-sm after:absolute after:inset-0"
                         >
                           <Avatar name={member.fullName} photoUrl={member.photoUrl} />
                           <span className="flex flex-col">

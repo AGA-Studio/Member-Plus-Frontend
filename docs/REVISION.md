@@ -58,7 +58,7 @@ Un PR no las resuelve: si el cambio las toca, se pide la decisión y no se asume
 
 Pantallas **2** (registro de negocio), **4** (detalle del negocio), **5** (planes), **11** (usuarios), **12** (dispositivos), **13** (configuración) y **14** (plan y uso) · catálogo, artículos o inventario · canje de puntos · portal del cliente · sucursales · app móvil · reportes · reconocimiento facial · fotos de clientes.
 
-Las pantallas del MVP son: **1** login, **7** clientes, **8** ficha del cliente, **9** membresías con QR, **10** niveles, **15** movimientos, **16** caja, **17** registrar compra y **18** comprobante, más **3** (negocios) en solo lectura para la plataforma.
+Las pantallas del MVP son: **1** login, **7** clientes, **8** ficha del cliente (la alta de membresía y la hoja de tarjetas con QR viven en clientes; la pantalla **9** de membresías se eliminó), **10** niveles, **15** movimientos, **16** caja, **17** registrar compra y **18** comprobante, más **3** (negocios) en solo lectura para la plataforma.
 
 ## 4. Reglas con número
 

@@ -133,7 +133,7 @@ export default async function CustomerPage({
 
   const printLink = (className: string) => (
     <Link
-      href={`/membresias/imprimir?code=${encodeURIComponent(member.code)}`}
+      href={`/imprimir?code=${encodeURIComponent(member.code)}`}
       className={buttonStyles({ variant: "outline", className })}
     >
       {t("actions.printCard")}

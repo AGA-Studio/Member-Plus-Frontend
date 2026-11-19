@@ -17,7 +17,7 @@ type SidebarProps = {
   businessLogoUrl: string | null;
 };
 
-const indicatorOffsets = ["translate-y-0", "translate-y-13", "translate-y-26", "translate-y-39", "translate-y-52", "translate-y-65", "translate-y-78"] as const;
+const indicatorOffsets = ["translate-y-0", "translate-y-13", "translate-y-26", "translate-y-39", "translate-y-52", "translate-y-65"] as const;
 
 const labelEnter =
   "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";

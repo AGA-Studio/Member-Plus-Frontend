@@ -251,13 +251,12 @@ export function CustomerDialogsProvider({
               options={paymentMethods.map((method) => ({ value: method, label: methods(method) }))}
             />
             <TextField
-              name="amount"
               label={t("renewDialog.amount")}
-              inputMode="decimal"
+              hint={t("renewDialog.amountHint")}
               value={renewAmount}
-              onChange={(event) => setRenewAmount(event.target.value)}
+              readOnly
+              tabIndex={-1}
               autoComplete="off"
-              error={renewState.errors.amount ? t(`renewDialog.errors.${renewState.errors.amount}`) : undefined}
             />
           </div>
           <div className="flex justify-end gap-3">

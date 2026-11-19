@@ -33,8 +33,8 @@ export function useEntryTransition(): EntryTransitionValue {
 
 type Phase = "idle" | "cover" | "reveal" | "closing" | "closed";
 
-const appRoutePrefixes = ["/caja", "/clientes", "/membresias", "/niveles", "/movimientos", "/plataforma"];
-const excludedRoutes = ["/membresias/imprimir"];
+const appRoutePrefixes = ["/caja", "/clientes", "/niveles", "/movimientos", "/plataforma"];
+const excludedRoutes = ["/imprimir"];
 
 function isAppRoute(pathname: string): boolean {
   if (excludedRoutes.some((route) => pathname.startsWith(route))) return false;
