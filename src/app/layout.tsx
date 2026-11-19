@@ -8,6 +8,7 @@ import { EntryTransitionProvider } from "@/features/auth/entry-transition";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { getLocale, getTranslations } from "next-intl/server";
 import { sessionCookieName } from "@/lib/session-cookie";
+import { parseTheme, themeCookieName } from "@/lib/theme";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,13 +39,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
-  const hasSession = (await cookies()).has(sessionCookieName);
+  const cookieStore = await cookies();
+  const hasSession = cookieStore.has(sessionCookieName);
+  const theme = parseTheme(cookieStore.get(themeCookieName)?.value);
   const cacheControl = (await headers()).get("cache-control") ?? "";
   const isReload = /max-age=0|no-cache/.test(cacheControl);
 
   return (
     <html
       lang={locale}
+      data-theme={theme === "dark" ? "dark" : undefined}
       className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

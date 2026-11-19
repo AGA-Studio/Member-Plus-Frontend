@@ -58,7 +58,12 @@
     },
     "dismissToast": "Dismiss notice",
     "toastRegion": "Notices",
-    "offline": "No connection. Check your internet and try again."
+    "offline": "No connection. Check your internet and try again.",
+    "role": {
+      "admin": "Administrator",
+      "cashier": "Cashier",
+      "platform": "Platform"
+    }
   },
   "auth": {
     "login": {
@@ -713,6 +718,42 @@
     "sidebar": {
       "open": "Open the side menu",
       "close": "Close the side menu"
+    },
+    "topbar": {
+      "label": "Top bar",
+      "search": {
+        "label": "Search Member+",
+        "placeholder": "Search customers, memberships, users…",
+        "clear": "Clear search",
+        "suggestions": "Go to",
+        "loading": "Searching…",
+        "empty": "No results for “{query}”",
+        "emptyHint": "Try another name, code or email.",
+        "error": "We couldn't load the data to search.",
+        "retry": "Try again",
+        "count": "{count, plural, one {# result} other {# results}}",
+        "page": "Screen",
+        "inactive": "Inactive",
+        "validUntil": "expires {date}",
+        "customersCount": "{count, plural, one {# customer} other {# customers}}",
+        "groups": {
+          "pages": "Screens",
+          "customers": "Customers",
+          "memberships": "Memberships",
+          "users": "Users",
+          "levels": "Levels",
+          "movements": "Movements"
+        }
+      },
+      "account": {
+        "label": "Account and preferences",
+        "editPhoto": "Change profile photo",
+        "language": "Language",
+        "darkMode": "Dark mode",
+        "settings": "Settings",
+        "users": "Users",
+        "signOut": "Sign out"
+      }
     }
   },
   "toasts": {

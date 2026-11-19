@@ -8,9 +8,6 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Logo } from "@/components/ui/logo";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
-import { LogoutButton } from "@/features/auth/logout-button";
-import { ProfileButton } from "@/features/auth/profile-button";
-import { LanguageButton } from "@/features/i18n/language-button";
 import { LogoDialog } from "./logo-dialog";
 import { businessNavItems } from "./nav-items";
 
@@ -18,21 +15,15 @@ type SidebarProps = {
   businessName: string;
   businessInitials: string;
   businessLogoUrl: string | null;
-  userName: string;
-  userPhotoUrl: string | null;
 };
-
-const settleMilliseconds = 320;
 
 const indicatorOffsets = ["translate-y-0", "translate-y-13", "translate-y-26", "translate-y-39", "translate-y-52", "translate-y-65", "translate-y-78"] as const;
 
 const labelEnter =
   "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";
 
-export function Sidebar({ businessName, businessInitials, businessLogoUrl, userName, userPhotoUrl }: SidebarProps) {
+export function Sidebar({ businessName, businessInitials, businessLogoUrl }: SidebarProps) {
   const t = useTranslations("business");
-  const logout = useTranslations("common.logout");
-  const language = useTranslations("common.language");
   const pathname = usePathname();
   const panelId = useId();
   const panelRef = useRef<HTMLElement>(null);
@@ -40,24 +31,14 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
   const activeIndex = businessNavItems.findIndex(
     ({ href }) => pathname === href || pathname.startsWith(`${href}/`),
   );
-  const [isPill, setIsPill] = useState(true);
 
   function expand() {
-    setIsPill(false);
     setExpanded(true);
   }
 
   function collapse() {
     setExpanded(false);
   }
-
-  useEffect(() => {
-    if (expanded) return;
-
-    const timer = window.setTimeout(() => setIsPill(true), settleMilliseconds);
-
-    return () => window.clearTimeout(timer);
-  }, [expanded]);
 
   useEffect(() => {
     if (!expanded) return;
@@ -86,7 +67,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
           "absolute inset-y-3 left-3 z-30 flex flex-col gap-2 overflow-hidden border border-border bg-surface p-2",
           "transition-[width,box-shadow] duration-300 ease-in-out",
           expanded ? "w-64 shadow-md" : "w-16 shadow-md",
-          isPill ? "rounded-full" : "rounded-xl",
+          "rounded-xl",
         )}
       >
         <div className="flex h-12 shrink-0 items-center justify-between">
@@ -99,7 +80,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
                 aria-label={t("sidebar.close")}
                 aria-expanded
                 aria-controls={panelId}
-                className="flex size-12 shrink-0 items-center justify-center rounded-full text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97"
+                className="flex size-12 shrink-0 items-center justify-center rounded-lg text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97"
               >
                 <PanelLeftClose aria-hidden strokeWidth={1.75} className="size-5" />
               </button>
@@ -113,7 +94,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
                 aria-expanded={false}
                 aria-controls={panelId}
                 data-entry-target="origin"
-                className="group relative flex size-12 shrink-0 items-center justify-center rounded-full transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97"
+                className="group relative flex size-12 shrink-0 items-center justify-center rounded-lg transition-[background-color,transform] duration-150 ease-out hover:bg-surface-muted active:scale-97"
               >
                 <Logo
                   variant="icon"
@@ -139,7 +120,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
             <span
               aria-hidden
               className={cx(
-                "absolute inset-x-0 top-0 h-12 rounded-full bg-primary-soft transition-[translate,opacity] duration-300 ease-in-out",
+                "absolute inset-x-0 top-0 h-12 rounded-lg bg-primary-soft transition-[translate,opacity] duration-300 ease-in-out",
                 activeIndex === -1 ? "opacity-0" : indicatorOffsets[activeIndex],
               )}
             />
@@ -154,7 +135,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
                   aria-current={active ? "page" : undefined}
                   aria-label={label}
                   className={cx(
-                    "relative flex h-12 items-center rounded-full text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
+                    "relative flex h-12 items-center rounded-lg text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
                     active
                       ? "font-semibold text-primary-text"
                       : "text-foreground hover:bg-surface-muted",
@@ -171,23 +152,13 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl, userN
           </div>
         </nav>
 
-        <div className="flex shrink-0 flex-col gap-1 border-t border-border pt-2">
+        <div className="flex shrink-0 flex-col border-t border-border pt-2">
           <LogoDialog
             businessName={businessName}
             initials={businessInitials}
             logoUrl={businessLogoUrl}
-            userName={userName}
             compact={!expanded}
           />
-          <div className={cx("flex items-center gap-1", expanded ? "justify-between" : "flex-col")}>
-            {expanded ? <ProfileButton fullName={userName} photoUrl={userPhotoUrl} /> : null}
-            <Tooltip label={language("title")} disabled={expanded}>
-              <LanguageButton />
-            </Tooltip>
-            <Tooltip label={logout("title")} disabled={expanded}>
-              <LogoutButton />
-            </Tooltip>
-          </div>
         </div>
       </aside>
     </div>
