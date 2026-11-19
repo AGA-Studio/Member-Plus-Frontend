@@ -165,6 +165,10 @@ function periodStart(period: MovementPeriod): string | undefined {
   return new Date(Date.now() - periodDays[period] * dayInMilliseconds).toISOString();
 }
 
+export function periodLength(period: MovementPeriod): number | null {
+  return period === "all" ? null : periodDays[period];
+}
+
 export type MovementFilters = {
   query?: string;
   period?: MovementPeriod;
@@ -198,6 +202,29 @@ export async function listMovements({ query, period = defaultMovementPeriod, pag
       discountCents: result.summary.discount_cents,
       cashbackUsedCents: result.summary.cashback_used_cents,
     },
+  };
+}
+
+type PreviousWindow = {
+  query?: string;
+  days: number;
+};
+
+export async function summarizePreviousPeriod({ query, days }: PreviousWindow): Promise<MovementSummary> {
+  const now = Date.now();
+  const result = await backendGet<BackendMovementPage>("/movement/list", {
+    q: query,
+    from: new Date(now - days * 2 * dayInMilliseconds).toISOString(),
+    to: new Date(now - days * dayInMilliseconds).toISOString(),
+    page: 1,
+    page_size: 1,
+  });
+
+  return {
+    count: result.summary.count,
+    collectedCents: result.summary.collected_cents,
+    discountCents: result.summary.discount_cents,
+    cashbackUsedCents: result.summary.cashback_used_cents,
   };
 }
 

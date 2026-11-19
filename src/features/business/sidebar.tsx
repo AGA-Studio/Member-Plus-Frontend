@@ -4,20 +4,18 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Logo } from "@/components/ui/logo";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { LogoDialog } from "./logo-dialog";
-import { businessNavItems } from "./nav-items";
+import { businessNavItems, navSections } from "./nav-items";
 
 type SidebarProps = {
   businessName: string;
   businessInitials: string;
   businessLogoUrl: string | null;
 };
-
-const indicatorOffsets = ["translate-y-0", "translate-y-13", "translate-y-26", "translate-y-39", "translate-y-52", "translate-y-65"] as const;
 
 const labelEnter =
   "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";
@@ -27,10 +25,21 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl }: Sid
   const pathname = usePathname();
   const panelId = useId();
   const panelRef = useRef<HTMLElement>(null);
+  const indicatorRef = useRef<HTMLSpanElement>(null);
+  const linkRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const [expanded, setExpanded] = useState(false);
   const activeIndex = businessNavItems.findIndex(
     ({ href }) => pathname === href || pathname.startsWith(`${href}/`),
   );
+
+  useLayoutEffect(() => {
+    const indicator = indicatorRef.current;
+    if (!indicator) return;
+
+    const link = linkRefs.current[activeIndex];
+    indicator.style.opacity = link ? "1" : "0";
+    if (link) indicator.style.translate = `0 ${link.offsetTop}px`;
+  }, [activeIndex, expanded, pathname]);
 
   function expand() {
     setExpanded(true);
@@ -110,45 +119,58 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl }: Sid
           )}
         </div>
 
-        <nav aria-label={t("nav.label")} className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden">
-          {expanded ? (
-            <p className={cx("px-4 pb-1 pt-2 text-xs font-medium text-muted", labelEnter)}>{t("nav.section")}</p>
-          ) : (
-            <span aria-hidden className="mx-3 my-2 h-px bg-border" />
-          )}
-          <div className="relative flex flex-col gap-1">
+        <nav aria-label={t("nav.label")} className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <div className="relative flex flex-col">
             <span
+              ref={indicatorRef}
               aria-hidden
-              className={cx(
-                "absolute inset-x-0 top-0 h-12 rounded-lg bg-primary-soft transition-[translate,opacity] duration-300 ease-in-out",
-                activeIndex === -1 ? "opacity-0" : indicatorOffsets[activeIndex],
-              )}
+              className="absolute inset-x-0 top-0 h-12 rounded-lg bg-primary-soft opacity-0 transition-[translate,opacity] duration-300 ease-in-out"
             />
-          {businessNavItems.map(({ href, key, icon: Icon }) => {
-            const active = pathname === href || pathname.startsWith(`${href}/`);
-            const label = t(`nav.${key}`);
+            {navSections.map((section) => {
+              const title = t(`nav.sections.${section}`);
 
-            return (
-              <Tooltip key={href} label={label} disabled={expanded} className="w-full shrink-0">
-                <Link
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  aria-label={label}
-                  className={cx(
-                    "relative flex h-12 items-center rounded-lg text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
-                    active
-                      ? "font-semibold text-primary-text"
-                      : "text-foreground hover:bg-surface-muted",
+              return (
+                <div key={section} role="group" aria-label={title} className="flex flex-col gap-1">
+                  {expanded ? (
+                    <p className={cx("px-4 pb-1 pt-3 text-xs font-medium text-muted", labelEnter)}>{title}</p>
+                  ) : (
+                    <span aria-hidden className="mx-3 my-2 h-px bg-border" />
                   )}
-                >
-                  <span className="flex size-12 shrink-0 items-center justify-center">
-                    <Icon aria-hidden strokeWidth={1.75} className={cx("size-5", active ? "text-primary-text" : "text-muted")} />
-                  </span>
-                  {expanded ? <span className={cx("truncate pr-4", labelEnter)}>{label}</span> : null}
-                </Link>
-              </Tooltip>
-            );
-          })}
+                  {businessNavItems.map(({ href, key, icon: Icon, section: itemSection }, index) => {
+                    if (itemSection !== section) return null;
+
+                    const active = index === activeIndex;
+                    const label = t(`nav.${key}`);
+
+                    return (
+                      <Tooltip key={href} label={label} disabled={expanded} className="w-full shrink-0">
+                        <Link
+                          ref={(element) => {
+                            linkRefs.current[index] = element;
+                          }}
+                          href={href}
+                          aria-current={active ? "page" : undefined}
+                          aria-label={label}
+                          className={cx(
+                            "relative flex h-12 items-center rounded-lg text-base transition-[background-color,color,transform] duration-150 ease-out active:scale-97",
+                            active ? "font-semibold text-primary-text" : "text-foreground hover:bg-surface-muted",
+                          )}
+                        >
+                          <span className="flex size-12 shrink-0 items-center justify-center">
+                            <Icon
+                              aria-hidden
+                              strokeWidth={1.75}
+                              className={cx("size-5", active ? "text-primary-text" : "text-muted")}
+                            />
+                          </span>
+                          {expanded ? <span className={cx("truncate pr-4", labelEnter)}>{label}</span> : null}
+                        </Link>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         </nav>
 

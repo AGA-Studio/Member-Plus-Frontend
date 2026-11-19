@@ -227,7 +227,11 @@
       "movements": "Movimientos",
       "users": "Usuarios",
       "settings": "Configuración",
-      "section": "Operación"
+      "sections": {
+        "general": "General",
+        "operation": "Operación",
+        "management": "Administración"
+      }
     },
     "signOut": "Cerrar sesión",
     "roles": {
@@ -501,7 +505,27 @@
         "amount": "Precio (MXN)",
         "amountHint": "Precio fijo del nivel elegido. No se puede cambiar."
       },
-      "printSheet": "Imprimir hoja de tarjetas"
+      "printSheet": "Imprimir hoja de tarjetas",
+      "kpi": {
+        "vsPrevious": "Frente a los 30 días anteriores",
+        "total": {
+          "label": "Clientes",
+          "hint": "{count, plural, =0 {Sin altas nuevas en 30 días} one {# alta nueva en 30 días} other {# altas nuevas en 30 días}}"
+        },
+        "active": {
+          "label": "Activas",
+          "hint": "{percent}% del total"
+        },
+        "expiring": {
+          "label": "Por vencer",
+          "hint": "{expired, plural, =0 {Ninguna vencida} one {# vencida} other {# vencidas}} · {cancelled, plural, =0 {ninguna cancelada} one {# cancelada} other {# canceladas}}"
+        },
+        "topLevel": {
+          "label": "Nivel principal",
+          "hint": "{count, plural, one {# cliente} other {# clientes}} · {percent}%",
+          "none": "Sin clientes"
+        }
+      }
     },
     "customer": {
       "metaTitle": "Ficha del cliente · Member+",
@@ -687,7 +711,12 @@
         "purchases": "Compras",
         "collected": "Cobrado",
         "discounts": "Descuentos",
-        "cashbackUsed": "Cashback usado"
+        "cashbackUsed": "Cashback usado",
+        "ticket": "Ticket promedio",
+        "ticketHint": "Por compra",
+        "benefits": "Beneficios otorgados",
+        "benefitsHint": "{percent}% de las ventas antes de beneficios",
+        "purchasesHint": "{count, plural, =0 {Sin compras} one {# compra} other {# compras}}"
       },
       "columns": {
         "date": "Fecha",
@@ -723,7 +752,8 @@
         "fileName": "movimientos.csv",
         "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}.",
         "failed": "No pudimos preparar el archivo. Inténtalo de nuevo."
-      }
+      },
+      "vsPrevious": "Frente al periodo anterior"
     },
     "logo": {
       "edit": "Cambiar el logo del negocio",

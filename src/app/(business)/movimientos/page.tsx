@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, Banknote, Gift, ShoppingBag, Tag } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { AnimatedNumber } from "@/components/charts/animated-number";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Reveal } from "@/components/ui/reveal";
+import { KpiGrid, type KpiItem } from "@/features/business/dashboard-parts";
 import { ExportCsvButton } from "@/features/business/export-csv-button";
 import { FilterBar } from "@/features/business/filter-bar";
 import { readParam } from "@/features/business/member-status";
@@ -15,7 +17,10 @@ import {
   defaultMovementPeriod,
   listMovements,
   movementPeriods,
+  periodLength,
+  summarizePreviousPeriod,
 } from "@/lib/api/purchases";
+import { averageTicket, percentChange } from "@/lib/dashboard";
 import type { Purchase } from "@/lib/domain";
 import {
   formatDiscount,
@@ -25,6 +30,7 @@ import {
 } from "@/lib/format";
 
 export const instant = false;
+
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("business.movements");
@@ -41,16 +47,65 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
 
   const t = await getTranslations("business.movements");
   const format = await getFormatter();
-  const { page, summary } = await listMovements({ query, period, page: requestedPage });
+  const days = periodLength(period);
+  const [{ page, summary }, previous] = await Promise.all([
+    listMovements({ query, period, page: requestedPage }),
+    days === null ? Promise.resolve(null) : summarizePreviousPeriod({ query, days }),
+  ]);
   const filtered = Boolean(query || period !== defaultMovementPeriod);
   const from = (page.page - 1) * page.pageSize + 1;
   const to = from + page.items.length - 1;
 
-  const stats = [
-    { label: t("summary.purchases"), value: format.number(summary.count) },
-    { label: t("summary.collected"), value: formatMoney(format, summary.collectedCents) },
-    { label: t("summary.discounts"), value: formatMoney(format, summary.discountCents) },
-    { label: t("summary.cashbackUsed"), value: formatMoney(format, summary.cashbackUsedCents) },
+  const moneyOptions = { style: "currency", currency: "MXN", currencyDisplay: "narrowSymbol" } as const;
+  const benefitsCents = summary.discountCents + summary.cashbackUsedCents;
+  const previousBenefitsCents = previous ? previous.discountCents + previous.cashbackUsedCents : 0;
+  const ticket = averageTicket(summary.collectedCents, summary.count);
+  const previousTicket = previous ? averageTicket(previous.collectedCents, previous.count) : 0;
+  const grossCents = summary.collectedCents + benefitsCents;
+  const trend = (current: number, before: number | undefined) => {
+    const percent = previous && before !== undefined ? percentChange(current, before) : null;
+
+    return {
+      percent,
+      label: percent === null ? "" : format.number(percent / 100, { style: "percent", maximumFractionDigits: 0, signDisplay: "exceptZero" }),
+      hint: t("vsPrevious"),
+    };
+  };
+
+  const kpis: KpiItem[] = [
+    {
+      key: "collected",
+      icon: Banknote,
+      label: t("summary.collected"),
+      value: <AnimatedNumber value={summary.collectedCents} divisor={100} options={moneyOptions} />,
+      hint: t(`periods.${period}`),
+      trend: trend(summary.collectedCents, previous?.collectedCents),
+    },
+    {
+      key: "purchases",
+      icon: ShoppingBag,
+      label: t("summary.purchases"),
+      value: <AnimatedNumber value={summary.count} />,
+      hint: t("summary.purchasesHint", { count: summary.count }),
+      trend: trend(summary.count, previous?.count),
+    },
+    {
+      key: "ticket",
+      icon: Tag,
+      label: t("summary.ticket"),
+      value: <AnimatedNumber value={ticket} divisor={100} options={moneyOptions} />,
+      hint: t("summary.ticketHint"),
+      trend: trend(ticket, previous ? previousTicket : undefined),
+    },
+    {
+      key: "benefits",
+      icon: Gift,
+      tone: "warning",
+      label: t("summary.benefits"),
+      value: <AnimatedNumber value={benefitsCents} divisor={100} options={moneyOptions} />,
+      hint: t("summary.benefitsHint", { percent: grossCents === 0 ? 0 : Math.round((benefitsCents / grossCents) * 100) }),
+      trend: trend(benefitsCents, previous ? previousBenefitsCents : undefined),
+    },
   ];
 
   const formatDateTime = (iso: string) =>
@@ -100,7 +155,8 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
           actions={<ExportCsvButton query={query} period={period} />}
         />
       </Reveal>
-      <Reveal variant="entrance" index={2}>
+      <KpiGrid items={kpis} />
+      <Reveal variant="entrance" index={5}>
         <FilterBar
           searchLabel={t("searchLabel")}
           searchPlaceholder={t("searchPlaceholder")}
@@ -114,17 +170,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
           ]}
         />
       </Reveal>
-      <Reveal variant="entrance" index={3}>
-        <dl className="grid grid-cols-2 gap-4 rounded-lg border border-border bg-surface p-5 shadow-sm lg:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col gap-1">
-              <dt className="text-sm text-muted">{stat.label}</dt>
-              <dd className="font-display text-subheading font-semibold tabular-nums text-foreground">{stat.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Reveal>
-      <Reveal variant="entrance" index={4} className="flex flex-col gap-6">
+      <Reveal variant="entrance" index={6} className="flex flex-col gap-6">
         {page.items.length === 0 ? (
           <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
             <EmptyState
