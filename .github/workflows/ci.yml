@@ -27,7 +27,18 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # `npm ci` tarda ~50 s y en los seis jobs instala exactamente lo mismo. La
+      # llave es el hash del lock: un cambio de dependencias la invalida y el job
+      # cae al `npm ci` de siempre. `--no-audit --no-fund` quita la consulta al
+      # registro, que no aporta nada al gate.
+      - name: Caché de node_modules
+        id: node-modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
       - run: npm run lint
       - run: npm run check:tokens
 
@@ -41,7 +52,18 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # `npm ci` tarda ~50 s y en los seis jobs instala exactamente lo mismo. La
+      # llave es el hash del lock: un cambio de dependencias la invalida y el job
+      # cae al `npm ci` de siempre. `--no-audit --no-fund` quita la consulta al
+      # registro, que no aporta nada al gate.
+      - name: Caché de node_modules
+        id: node-modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
       - run: npm run typecheck
 
   messages:
@@ -54,7 +76,18 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # `npm ci` tarda ~50 s y en los seis jobs instala exactamente lo mismo. La
+      # llave es el hash del lock: un cambio de dependencias la invalida y el job
+      # cae al `npm ci` de siempre. `--no-audit --no-fund` quita la consulta al
+      # registro, que no aporta nada al gate.
+      - name: Caché de node_modules
+        id: node-modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
       - run: npm run messages:check
 
   test:
@@ -67,7 +100,18 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # `npm ci` tarda ~50 s y en los seis jobs instala exactamente lo mismo. La
+      # llave es el hash del lock: un cambio de dependencias la invalida y el job
+      # cae al `npm ci` de siempre. `--no-audit --no-fund` quita la consulta al
+      # registro, que no aporta nada al gate.
+      - name: Caché de node_modules
+        id: node-modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
       - run: npm run test:coverage
 
   build:
@@ -83,7 +127,18 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # `npm ci` tarda ~50 s y en los seis jobs instala exactamente lo mismo. La
+      # llave es el hash del lock: un cambio de dependencias la invalida y el job
+      # cae al `npm ci` de siempre. `--no-audit --no-fund` quita la consulta al
+      # registro, que no aporta nada al gate.
+      - name: Caché de node_modules
+        id: node-modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
       - run: npm run build
 
   e2e:
@@ -119,25 +174,57 @@ jobs:
       FRONTEND_PUBLIC_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v7
-      - name: API con la imagen publicada
+      # El contenedor arranca primero y sin esperar: mientras baja la imagen y
+      # corre las migraciones, el job restaura dependencias y el navegador. La
+      # espera de `/health` era tiempo muerto antes de empezar a instalar.
+      - name: API con la imagen publicada (en segundo plano)
         run: |
           docker run -d --name api --network host \
             -e DATABASE_URL -e SECRET_KEY -e ENVIRONMENT -e SEED_PASSWORD \
             -e TURNSTILE_ENABLED -e FRONTEND_PUBLIC_URL \
             ghcr.io/aga-studio/member-web:latest
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # `npm ci` tarda ~50 s y en los seis jobs instala exactamente lo mismo. La
+      # llave es el hash del lock: un cambio de dependencias la invalida y el job
+      # cae al `npm ci` de siempre. `--no-audit --no-fund` quita la consulta al
+      # registro, que no aporta nada al gate.
+      - name: Caché de node_modules
+        id: node-modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
+      # El binario pesa ~150 MB y solo cambia al subir `@playwright/test`: la
+      # llave sale del lock, así que esa subida lo invalida sola.
+      - name: Caché de Chromium
+        id: chromium
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Instalar Chromium
+        run: |
+          if [ "${{ steps.chromium.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium
+          else
+            npx playwright install --with-deps chromium
+          fi
+      # La espera va aquí, cuando el contenedor ya lleva un rato arrancando.
+      - name: Esperar al API y sembrar datos de demo
+        run: |
           for attempt in $(seq 1 45); do
-            if curl -fsS http://127.0.0.1:8000/health > /dev/null; then exit 0; fi
+            if curl -fsS http://127.0.0.1:8000/health > /dev/null; then
+              docker exec api python -m scripts.seed
+              exit 0
+            fi
             sleep 2
           done
           echo "La API no respondió en 90 s"
           docker logs api
           exit 1
-      - name: Datos de demo
-        run: docker exec api python -m scripts.seed
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

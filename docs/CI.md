@@ -29,7 +29,7 @@ Aparte va el revisor automático, que opina pero no bloquea.
 | `lint` | `npm run lint` y `npm run check:tokens` | Reglas de ESLint y convenciones de diseño | 34 s |
 | `typecheck` | `npm run typecheck` | Errores de tipos en todo el proyecto | 50 s |
 | `messages` | `npm run messages:check` | Claves de traducción que faltan en algún idioma | 43 s |
-| `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que no queden líneas sin cubrir | 37 s |
+| `test` | `npm run test:coverage` | Que `src/lib/pricing.ts` y `format.ts` sigan calculando como el backend, y que el tema del negocio y el mapeo de errores no queden sin cubrir | 37 s |
 | `build` | `npm run build` | Que Next compile, incluidas las fuentes y los tokens | 62 s |
 | `e2e` | `npm run test:e2e` contra un Postgres efímero y la imagen publicada del API | Que la caja, el aislamiento entre negocios y la tarjeta pública sigan funcionando de punta a punta | 91 s |
 
@@ -54,12 +54,16 @@ npm run lint              # ESLint
 npm run check:tokens      # hex sueltos y paleta por defecto de Tailwind
 npm run typecheck         # next typegen && tsc --noEmit
 npm run messages:check    # es.json contra en.json
-npm run test              # Vitest: pricing.ts y format.ts
+npm run test              # Vitest: pricing, format, customer-errors y tenant-theme
 npm run test:coverage     # lo mismo con cobertura y umbral
 npm run build             # build de producción
 ```
 
 `npm ci` borra `node_modules` y reinstala desde el lock. Si en el CI falla y en local pasa, casi siempre es `package-lock.json` desincronizado: corre `npm install` y commitea el lock.
+
+En el CI ese paso casi no se paga: los seis jobs restauran `node_modules` de `actions/cache` con el hash del
+lock como llave, así que solo instalan cuando las dependencias cambian. `node_modules` está en `.gitignore`,
+pero el caché se guarda aparte y nunca entra al repo.
 
 ## 5. Qué vigila cada chequeo de convenciones
 
@@ -84,6 +88,7 @@ Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.conf
 | `vitest` y `@vitest/coverage-v8` | `^5.1.0` | Van a la par; la cobertura es v8 |
 | `actions/checkout` | `@v7` | Tag mayor flotante |
 | `actions/setup-node` | `@v7` | Tag mayor flotante, con caché de npm |
+| `actions/cache` | `@v6` | Tag mayor flotante; cachea `node_modules` y `~/.cache/ms-playwright` |
 | `docker/setup-buildx-action` | `@v4` | Solo en `image.yml` |
 | `docker/build-push-action` | `@v7` | Solo en `image.yml` |
 | `docker/login-action` | `@v4` | Solo en `image.yml` |
@@ -111,9 +116,9 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 
 | Falta | Cuándo |
 |---|---|
-| ~~Pruebas unitarias de la lógica pura~~ | **Hechas** (`src/lib/pricing.test.ts`, `src/lib/format.test.ts`, job `test`). Repiten los casos de `tests/unit/test_pricing_service.py` del backend y comparan `calculatePurchase` con aritmética entera exacta; si la fórmula cambia en el backend, hay que cambiarla en `pricing.ts` y en estas pruebas |
+| ~~Pruebas unitarias de la lógica pura~~ | **Hechas** (`src/lib/*.test.ts`, job `test`). `pricing.test.ts` repite los casos de `tests/unit/test_pricing_service.py` del backend y compara `calculatePurchase` con aritmética entera exacta: si la fórmula cambia en el backend, hay que cambiarla en `pricing.ts` y en estas pruebas. `format`, `customer-errors` y `tenant-theme` cubren formato de dinero, el mapeo de errores del API y el contraste del color del negocio |
 | Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
-| ~~Cobertura~~ | **Hecha** (`npm run test:coverage`): 100 % en `src/lib/pricing.ts` y `format.ts`, con umbral en `vitest.config.mts`. Si se agrega lógica pura nueva, se amplía `coverage.include` |
+| ~~Cobertura~~ | **Hecha** (`npm run test:coverage`): 100 % en los cuatro módulos de `src/lib/` (`pricing.ts`, `format.ts`, `customer-errors.ts`, `tenant-theme.ts`), con umbral en `vitest.config.mts`. Si se agrega lógica pura nueva, se amplía `coverage.include` |
 | Pruebas de extremo a extremo | Existen las de inicio de sesión, caja, aislamiento y tarjeta pública (sección 12), y corren en el CI como job `e2e`. Falta el alta de membresía: **está bloqueada por un bug** del formulario, no por falta de pruebas |
 | Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
 
@@ -259,8 +264,17 @@ quitándole el marcador.
 
 ### En el CI
 
+En CI las pruebas corren con **dos workers** (`workers: 2` en la config): el runner tiene 4 vCPU y con uno
+solo las 24 pruebas van en fila. Cada prueba escribe datos únicos por corrida, y la de la tarjeta pública
+usa un cliente distinto en cada proyecto porque generar un enlace revoca el anterior del mismo cliente.
+
 El job `e2e` levanta un Postgres efímero, arranca el API con la imagen publicada
 (`ghcr.io/aga-studio/member-web:latest`, que migra al arrancar), siembra los datos de demo con
 `python -m scripts.seed` dentro de la misma imagen y corre Playwright con `chromium` instalado. No es
 required check (sección 2).
+
+El contenedor del API arranca **antes** de instalar nada y sin esperar: baja la imagen y corre las
+migraciones mientras el job restaura `node_modules` y Chromium, y la espera de `/health` (con su
+`docker exec … scripts.seed`) queda justo antes de lanzar Playwright. El binario de Chromium se cachea con
+el hash del lock, así que solo se descarga cuando cambia `@playwright/test`.
 
