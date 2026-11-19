@@ -32,6 +32,17 @@ export function AnimatedNumber({ value, divisor = 1, options, className }: Anima
   const shown = useRef(0);
 
   useEffect(() => {
+    if (visible) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      shown.current = 0;
+      setDisplayed(0);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [visible]);
+
+  useEffect(() => {
     if (!visible) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
