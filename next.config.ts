@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
       dynamic: 30,
     },
   },
+  async redirects() {
+    return [
+      { source: "/membresias", destination: "/clientes", permanent: false },
+      { source: "/membresias/imprimir", destination: "/imprimir", permanent: false },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {

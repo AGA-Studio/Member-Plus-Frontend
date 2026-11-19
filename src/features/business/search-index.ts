@@ -77,7 +77,7 @@ export function buildSearchEntries(source: SearchSource | null, labels: SearchLa
       group: "memberships",
       title: member.code,
       subtitle: `${member.tierName} · ${statusLabel(member.status)} · ${labels.validUntil(member.validUntil)}`,
-      href: `/membresias?q=${encodeURIComponent(member.code)}`,
+      href: `/clientes/${encodeURIComponent(member.code)}`,
       fields: [
         member.tierName,
         ...tierNames[member.tier],

@@ -21,7 +21,7 @@ type NewMembershipDialogProps = {
 };
 
 export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptions }: NewMembershipDialogProps) {
-  const t = useTranslations("business.memberships.newDialog");
+  const t = useTranslations("business.customers.newDialog");
   const methods = useTranslations("paymentMethods");
   const common = useTranslations("common");
   const initialState: NewMembershipState = {
@@ -97,13 +97,12 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptio
               options={paymentMethods.map((method) => ({ value: method, label: methods(method) }))}
             />
             <TextField
-              name="amount"
               label={t("amount")}
-              inputMode="decimal"
+              hint={t("amountHint")}
               value={amount}
-              onChange={(event) => setAmount(event.target.value)}
+              readOnly
+              tabIndex={-1}
               autoComplete="off"
-              error={state.errors.amount ? t(`errors.${state.errors.amount}`) : undefined}
             />
           </div>
           <input type="hidden" name="sendCardEmail" value={sendCard ? "on" : ""} />

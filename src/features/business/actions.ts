@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createCardLink, sendCardEmail } from "@/lib/api/card-delivery";
-import { updateLevel } from "@/lib/api/levels";
+import { listLevels, updateLevel } from "@/lib/api/levels";
 import { removeLogo, uploadLogo } from "@/lib/api/logo";
 import { cancelMember, createMember, renewMember, updateMember } from "@/lib/api/members";
 import { removeMemberPhoto, uploadMemberPhoto } from "@/lib/api/member-photo";
@@ -28,10 +28,12 @@ function isPaymentMethod(value: string): value is PaymentMethod {
   return paymentMethods.some((method) => method === value);
 }
 
-function readAmountCents(formData: FormData, name: string): number {
-  const raw = readText(formData, name).replace(/,/g, "");
+async function findLevelPrice(levelId: number): Promise<number | null> {
+  if (Number.isNaN(levelId)) return null;
 
-  return /^\d{1,7}(\.\d{1,2})?$/.test(raw) ? parseAmountToCents(raw) : Number.NaN;
+  const levels = await listLevels();
+
+  return levels.find((level) => level.id === levelId)?.priceCents ?? null;
 }
 
 function readLevelId(formData: FormData): number {
@@ -59,14 +61,13 @@ export async function createMembershipAction(
     amount: readText(formData, "amount"),
   };
   const levelId = readLevelId(formData);
-  const amountCents = readAmountCents(formData, "amount");
+  const levelPrice = await findLevelPrice(levelId);
   const errors: CustomerFieldErrors = {};
 
   if (!values.fullName) errors.fullName = "fullNameRequired";
   if (!emailPattern.test(values.email)) errors.email = "emailInvalid";
-  if (Number.isNaN(amountCents)) errors.amount = "amountInvalid";
-  if (Number.isNaN(levelId) || !isPaymentMethod(values.paymentMethod)) errors.form = "unavailable";
-  if (errors.fullName || errors.email || errors.amount || errors.form || !isPaymentMethod(values.paymentMethod)) {
+  if (levelPrice === null || !isPaymentMethod(values.paymentMethod)) errors.form = "unavailable";
+  if (errors.fullName || errors.email || errors.form || levelPrice === null || !isPaymentMethod(values.paymentMethod)) {
     return { values, errors };
   }
 
@@ -77,7 +78,7 @@ export async function createMembershipAction(
     levelId,
     sendCardEmail: formData.get("sendCardEmail") === "on",
     paymentMethod: values.paymentMethod,
-    amountCents,
+    amountCents: levelPrice,
   });
   if (!result.ok) return { values, errors: toFieldErrors(result.reason) };
 
@@ -138,14 +139,13 @@ export async function renewMembershipAction(
     amount: readText(formData, "amount"),
   };
   const levelId = readLevelId(formData);
-  const amountCents = readAmountCents(formData, "amount");
+  const levelPrice = await findLevelPrice(levelId);
 
-  if (Number.isNaN(amountCents)) return { status: "idle", values, errors: { amount: "amountInvalid" } };
-  if (Number.isNaN(levelId) || !isPaymentMethod(values.paymentMethod)) {
+  if (levelPrice === null || !isPaymentMethod(values.paymentMethod)) {
     return { status: "idle", values, errors: { form: "unavailable" } };
   }
 
-  const result = await renewMember(id, { levelId, paymentMethod: values.paymentMethod, amountCents });
+  const result = await renewMember(id, { levelId, paymentMethod: values.paymentMethod, amountCents: levelPrice });
   if (!result.ok) {
     return { status: "idle", values, errors: { form: result.reason === "cancelled" ? "cancelled" : "unavailable" } };
   }

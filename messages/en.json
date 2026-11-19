@@ -223,7 +223,6 @@
       "label": "Main navigation",
       "dashboard": "Dashboard",
       "customers": "Customers",
-      "memberships": "Memberships",
       "levels": "Levels",
       "movements": "Transactions",
       "users": "Users",
@@ -475,7 +474,34 @@
         "title": "We couldn't find customers",
         "description": "Check the name or code, or try other filters."
       },
-      "range": "{from}–{to} of {total} customers"
+      "range": "{from}–{to} of {total} customers",
+      "newDialog": {
+        "title": "New membership",
+        "fullName": "Full name",
+        "fullNamePlaceholder": "First and last name",
+        "email": "Email",
+        "emailPlaceholder": "customer@email.com",
+        "phone": "Phone",
+        "phonePlaceholder": "664 000 0000",
+        "photo": "Customer photo",
+        "tier": "Starting level",
+        "submit": "Create membership",
+        "creating": "Creating…",
+        "errors": {
+          "fullNameRequired": "Enter the customer's name.",
+          "fullNameInvalid": "The name can only contain letters, spaces, hyphens and apostrophes.",
+          "emailInvalid": "Check the email: it looks incomplete.",
+          "emailTaken": "This email already has a membership in your business.",
+          "unavailable": "We couldn't create the membership. Try again.",
+          "phoneInvalid": "Check the phone number: use digits only."
+        },
+        "sendCard": "Email the card",
+        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it.",
+        "paymentMethod": "Payment method",
+        "amount": "Price (MXN)",
+        "amountHint": "Fixed price of the chosen level. It can't be changed."
+      },
+      "printSheet": "Print card sheet"
     },
     "customer": {
       "metaTitle": "Customer profile · Member+",
@@ -598,83 +624,22 @@
         "description": "Adds a validity period and records the payment. If the card is still valid, the new period starts when the current one ends.",
         "level": "Level",
         "method": "Payment method",
-        "amount": "Amount charged (MXN)",
+        "amount": "Price (MXN)",
         "submit": "Renew membership",
         "renewing": "Renewing…",
         "errors": {
-          "amountInvalid": "Enter an amount of 0 or more.",
           "unavailable": "We couldn't renew the membership. Try again.",
           "cancelled": "This membership is cancelled and can't be renewed."
-        }
-      }
-    },
-    "memberships": {
-      "metaTitle": "Memberships · Member+",
-      "title": "Memberships",
-      "subtitle": "Issue, print and manage your customers' cards",
-      "printSheet": "Print card sheet",
-      "newMembership": "New membership",
-      "tabsLabel": "Filter memberships",
-      "tabs": {
-        "all": "All · {count}",
-        "active": "Active · {count}",
-        "expiring": "Expiring · {count}",
-        "cancelled": "Cancelled · {count}"
-      },
-      "columns": {
-        "customer": "Customer",
-        "code": "Code",
-        "level": "Level",
-        "issued": "Issued",
-        "expires": "Expires",
-        "status": "Status"
-      },
-      "empty": {
-        "title": "No memberships yet",
-        "description": "Create the first one so your customer has their card."
-      },
-      "noResults": {
-        "title": "We couldn't find memberships",
-        "description": "Check the name or code, or try other filters."
-      },
-      "range": "{from}–{to} of {total} memberships",
-      "newDialog": {
-        "title": "New membership",
-        "fullName": "Full name",
-        "fullNamePlaceholder": "First and last name",
-        "email": "Email",
-        "emailPlaceholder": "customer@email.com",
-        "phone": "Phone",
-        "phonePlaceholder": "664 000 0000",
-        "photo": "Customer photo",
-        "tier": "Starting level",
-        "submit": "Create membership",
-        "creating": "Creating…",
-        "errors": {
-          "fullNameRequired": "Enter the customer's name.",
-          "fullNameInvalid": "The name can only contain letters, spaces, hyphens and apostrophes.",
-          "emailInvalid": "Check the email: it looks incomplete.",
-          "emailTaken": "This email already has a membership in your business.",
-          "unavailable": "We couldn't create the membership. Try again.",
-          "phoneInvalid": "Check the phone number: use digits only.",
-          "amountInvalid": "Enter an amount of 0 or more."
         },
-        "sendCard": "Email the card",
-        "sendCardHint": "The customer gets a link to save it to Google Wallet or download it.",
-        "paymentMethod": "Payment method",
-        "amount": "Amount charged (MXN)"
-      },
-      "searchLabel": "Search memberships",
-      "searchPlaceholder": "Search by name or code",
-      "levelFilter": "Level",
-      "allLevels": "Level: All"
+        "amountHint": "Fixed price of the chosen level. It can't be changed."
+      }
     },
     "print": {
       "metaTitle": "Card sheet · Member+",
       "title": "Card sheet",
       "subtitle": "{count, plural, one {# card} other {# cards}} · Cut along the edge of each card",
       "print": "Print",
-      "back": "Memberships",
+      "back": "Customers",
       "empty": "There are no active cards to print."
     },
     "levels": {
@@ -810,8 +775,7 @@
         },
         "keywords": {
           "dashboard": "home overview sales kpi statistics charts",
-          "customers": "customers members people contacts",
-          "memberships": "memberships cards qr validity",
+          "customers": "customers members people contacts memberships cards qr validity",
           "levels": "levels tiers benefits discount cashback prices",
           "movements": "transactions purchases sales payments movements",
           "users": "users staff employees cashiers administrators team",

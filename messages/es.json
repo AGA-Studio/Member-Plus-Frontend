@@ -223,7 +223,6 @@
       "label": "Navegación principal",
       "dashboard": "Panel",
       "customers": "Clientes",
-      "memberships": "Membresías",
       "levels": "Niveles",
       "movements": "Movimientos",
       "users": "Usuarios",
@@ -475,7 +474,34 @@
         "title": "No encontramos clientes",
         "description": "Revisa el nombre o el código, o prueba con otros filtros."
       },
-      "range": "{from}–{to} de {total} clientes"
+      "range": "{from}–{to} de {total} clientes",
+      "newDialog": {
+        "title": "Nueva membresía",
+        "fullName": "Nombre completo",
+        "fullNamePlaceholder": "Nombre y apellido",
+        "email": "Correo electrónico",
+        "emailPlaceholder": "cliente@correo.com",
+        "phone": "Teléfono",
+        "phonePlaceholder": "664 000 0000",
+        "photo": "Foto del cliente",
+        "tier": "Nivel inicial",
+        "submit": "Crear membresía",
+        "creating": "Creando…",
+        "errors": {
+          "fullNameRequired": "Escribe el nombre del cliente.",
+          "fullNameInvalid": "El nombre solo puede llevar letras, espacios, guiones y apóstrofos.",
+          "emailInvalid": "Revisa el correo: parece incompleto.",
+          "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
+          "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo.",
+          "phoneInvalid": "Revisa el teléfono: usa solo números."
+        },
+        "sendCard": "Enviar tarjeta por correo",
+        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla.",
+        "paymentMethod": "Método de pago",
+        "amount": "Precio (MXN)",
+        "amountHint": "Precio fijo del nivel elegido. No se puede cambiar."
+      },
+      "printSheet": "Imprimir hoja de tarjetas"
     },
     "customer": {
       "metaTitle": "Ficha del cliente · Member+",
@@ -598,83 +624,22 @@
         "description": "Suma un periodo de vigencia y registra el pago. Si la tarjeta sigue vigente, el periodo nuevo empieza al terminar el actual.",
         "level": "Nivel",
         "method": "Método de pago",
-        "amount": "Monto cobrado (MXN)",
+        "amount": "Precio (MXN)",
         "submit": "Renovar membresía",
         "renewing": "Renovando…",
         "errors": {
-          "amountInvalid": "Escribe un monto de 0 en adelante.",
           "unavailable": "No pudimos renovar la membresía. Inténtalo de nuevo.",
           "cancelled": "Esta membresía está cancelada y no se puede renovar."
-        }
-      }
-    },
-    "memberships": {
-      "metaTitle": "Membresías · Member+",
-      "title": "Membresías",
-      "subtitle": "Emite, imprime y administra las tarjetas de tus clientes",
-      "printSheet": "Imprimir hoja de tarjetas",
-      "newMembership": "Nueva membresía",
-      "tabsLabel": "Filtrar membresías",
-      "tabs": {
-        "all": "Todas · {count}",
-        "active": "Activas · {count}",
-        "expiring": "Por vencer · {count}",
-        "cancelled": "Canceladas · {count}"
-      },
-      "columns": {
-        "customer": "Cliente",
-        "code": "Código",
-        "level": "Nivel",
-        "issued": "Emitida",
-        "expires": "Vence",
-        "status": "Estado"
-      },
-      "empty": {
-        "title": "Aún no hay membresías",
-        "description": "Crea la primera para que tu cliente tenga su tarjeta."
-      },
-      "noResults": {
-        "title": "No encontramos membresías",
-        "description": "Revisa el nombre o el código, o prueba con otros filtros."
-      },
-      "range": "{from}–{to} de {total} membresías",
-      "newDialog": {
-        "title": "Nueva membresía",
-        "fullName": "Nombre completo",
-        "fullNamePlaceholder": "Nombre y apellido",
-        "email": "Correo electrónico",
-        "emailPlaceholder": "cliente@correo.com",
-        "phone": "Teléfono",
-        "phonePlaceholder": "664 000 0000",
-        "photo": "Foto del cliente",
-        "tier": "Nivel inicial",
-        "submit": "Crear membresía",
-        "creating": "Creando…",
-        "errors": {
-          "fullNameRequired": "Escribe el nombre del cliente.",
-          "fullNameInvalid": "El nombre solo puede llevar letras, espacios, guiones y apóstrofos.",
-          "emailInvalid": "Revisa el correo: parece incompleto.",
-          "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
-          "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo.",
-          "phoneInvalid": "Revisa el teléfono: usa solo números.",
-          "amountInvalid": "Escribe un monto de 0 en adelante."
         },
-        "sendCard": "Enviar tarjeta por correo",
-        "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla.",
-        "paymentMethod": "Método de pago",
-        "amount": "Monto cobrado (MXN)"
-      },
-      "searchLabel": "Buscar membresías",
-      "searchPlaceholder": "Buscar por nombre o código",
-      "levelFilter": "Nivel",
-      "allLevels": "Nivel: Todos"
+        "amountHint": "Precio fijo del nivel elegido. No se puede cambiar."
+      }
     },
     "print": {
       "metaTitle": "Hoja de tarjetas · Member+",
       "title": "Hoja de tarjetas",
       "subtitle": "{count, plural, one {# tarjeta} other {# tarjetas}} · Recorta por el borde de cada tarjeta",
       "print": "Imprimir",
-      "back": "Membresías",
+      "back": "Clientes",
       "empty": "No hay tarjetas activas para imprimir."
     },
     "levels": {
@@ -810,8 +775,7 @@
         },
         "keywords": {
           "dashboard": "inicio resumen ventas kpi estadisticas graficas",
-          "customers": "clientes miembros personas contactos",
-          "memberships": "membresias tarjetas qr vigencia",
+          "customers": "clientes miembros personas contactos membresias tarjetas qr vigencia",
           "levels": "niveles beneficios descuento cashback precios",
           "movements": "movimientos compras ventas transacciones cobros",
           "users": "usuarios empleados cajeros administradores equipo",

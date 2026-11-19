@@ -50,6 +50,7 @@ export function TextField({
             "placeholder:text-muted transition-[border-color,background-color] duration-150 ease-out",
             "focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2",
             "disabled:bg-surface-muted disabled:opacity-60",
+            "read-only:bg-surface-muted read-only:text-muted read-only:focus:border-border-strong",
             error ? "border-danger" : "border-border-strong",
             isPassword && "pr-12",
             className,

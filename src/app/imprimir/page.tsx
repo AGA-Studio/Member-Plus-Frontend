@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("metaTitle") };
 }
 
-export default async function PrintCardsPage({ searchParams }: PageProps<"/membresias/imprimir">) {
+export default async function PrintCardsPage({ searchParams }: PageProps<"/imprimir">) {
   await connection();
   const user = await requireUser(["admin"]);
   const params = await searchParams;
@@ -32,7 +32,7 @@ export default async function PrintCardsPage({ searchParams }: PageProps<"/membr
       <div className="mx-auto flex max-w-3xl flex-col gap-6 bg-white p-8 shadow-md print:max-w-none print:p-0 print:shadow-none">
         <div className="flex flex-col gap-4 print:hidden sm:flex-row sm:items-center sm:justify-between">
           <Link
-            href={code ? `/clientes/${encodeURIComponent(code)}` : "/membresias"}
+            href={code ? `/clientes/${encodeURIComponent(code)}` : "/clientes"}
             className="flex w-fit items-center gap-1 text-base text-muted transition-colors duration-150 ease-out hover:text-foreground"
           >
             <ChevronLeft aria-hidden strokeWidth={1.75} className="size-5" />
