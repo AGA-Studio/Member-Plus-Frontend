@@ -61,6 +61,10 @@ npm run build             # build de producción
 
 `npm ci` borra `node_modules` y reinstala desde el lock. Si en el CI falla y en local pasa, casi siempre es `package-lock.json` desincronizado: corre `npm install` y commitea el lock.
 
+En el CI ese paso casi no se paga: los seis jobs restauran `node_modules` de `actions/cache` con el hash del
+lock como llave, así que solo instalan cuando las dependencias cambian. `node_modules` está en `.gitignore`,
+pero el caché se guarda aparte y nunca entra al repo.
+
 ## 5. Qué vigila cada chequeo de convenciones
 
 Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.config.mjs` y `scripts/check-tokens.mjs`:
@@ -84,6 +88,7 @@ Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.conf
 | `vitest` y `@vitest/coverage-v8` | `^5.1.0` | Van a la par; la cobertura es v8 |
 | `actions/checkout` | `@v7` | Tag mayor flotante |
 | `actions/setup-node` | `@v7` | Tag mayor flotante, con caché de npm |
+| `actions/cache` | `@v6` | Tag mayor flotante; cachea `node_modules` y `~/.cache/ms-playwright` |
 | `docker/setup-buildx-action` | `@v4` | Solo en `image.yml` |
 | `docker/build-push-action` | `@v7` | Solo en `image.yml` |
 | `docker/login-action` | `@v4` | Solo en `image.yml` |
@@ -263,4 +268,9 @@ El job `e2e` levanta un Postgres efímero, arranca el API con la imagen publicad
 (`ghcr.io/aga-studio/member-web:latest`, que migra al arrancar), siembra los datos de demo con
 `python -m scripts.seed` dentro de la misma imagen y corre Playwright con `chromium` instalado. No es
 required check (sección 2).
+
+El contenedor del API arranca **antes** de instalar nada y sin esperar: baja la imagen y corre las
+migraciones mientras el job restaura `node_modules` y Chromium, y la espera de `/health` (con su
+`docker exec … scripts.seed`) queda justo antes de lanzar Playwright. El binario de Chromium se cachea con
+el hash del lock, así que solo se descarga cuando cambia `@playwright/test`.
 
