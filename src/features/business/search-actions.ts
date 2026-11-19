@@ -4,7 +4,7 @@ import { listLevels } from "@/lib/api/levels";
 import { listMembers } from "@/lib/api/members";
 import { listMovements } from "@/lib/api/purchases";
 import { listUsers } from "@/lib/api/users";
-import type { MemberStatus } from "@/lib/domain";
+import type { MemberStatus, Tier } from "@/lib/domain";
 import { requireActionUser } from "@/lib/session";
 
 export type SearchSource = {
@@ -14,11 +14,12 @@ export type SearchSource = {
     email: string;
     phone: string;
     tierName: string;
+    tier: Tier;
     status: MemberStatus;
     validUntil: string;
   }>;
   users: Array<{ id: number; name: string; email: string; role: "admin" | "employee"; isActive: boolean }>;
-  levels: Array<{ id: number; name: string; customersCount: number }>;
+  levels: Array<{ id: number; name: string; tier: Tier; customersCount: number }>;
   movements: Array<{
     id: string;
     memberCode: string;
@@ -49,6 +50,7 @@ export async function loadSearchSourceAction(): Promise<SearchSource | null> {
         email: member.email,
         phone: member.phone,
         tierName: member.tierName,
+        tier: member.tier,
         status: member.status,
         validUntil: member.validUntil,
       })),
@@ -59,7 +61,12 @@ export async function loadSearchSourceAction(): Promise<SearchSource | null> {
         role: user.role,
         isActive: user.isActive,
       })),
-      levels: levels.map((level) => ({ id: level.id, name: level.name, customersCount: level.customersCount })),
+      levels: levels.map((level) => ({
+        id: level.id,
+        name: level.name,
+        tier: level.tier,
+        customersCount: level.customersCount,
+      })),
       movements: movements.page.items.map((purchase) => ({
         id: purchase.id,
         memberCode: purchase.memberCode,

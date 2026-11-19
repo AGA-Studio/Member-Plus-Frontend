@@ -54,3 +54,27 @@ export function viewClasses(index: number, visible: boolean): string {
 
   return `${viewBase} ${delay}${visible ? "" : ` ${viewHidden}`}`;
 }
+
+const staggerBase =
+  "transition-[opacity,translate,scale,filter] duration-300 ease-out starting:translate-y-2 starting:scale-98 starting:opacity-0 starting:blur-xs";
+
+const staggerDelays = [
+  "delay-60",
+  "delay-100",
+  "delay-140",
+  "delay-180",
+  "delay-220",
+  "delay-260",
+  "delay-300",
+  "delay-340",
+  "delay-380",
+  "delay-420",
+  "delay-460",
+  "delay-500",
+] as const;
+
+export function staggerClasses(index: number): string {
+  const delay = staggerDelays[Math.min(Math.max(index, 0), staggerDelays.length - 1)];
+
+  return `${staggerBase} ${delay}`;
+}

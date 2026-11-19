@@ -807,6 +807,15 @@
           "users": "Users",
           "levels": "Levels",
           "movements": "Movements"
+        },
+        "keywords": {
+          "dashboard": "home overview sales kpi statistics charts",
+          "customers": "customers members people contacts",
+          "memberships": "memberships cards qr validity",
+          "levels": "levels tiers benefits discount cashback prices",
+          "movements": "transactions purchases sales payments movements",
+          "users": "users staff employees cashiers administrators team",
+          "settings": "settings preferences logo color business validity"
         }
       },
       "account": {
