@@ -48,7 +48,7 @@ export function Dialog({ open, onClose, title, children, variant = "modal" }: Di
       className={cx(
         "overflow-hidden bg-surface p-0 text-foreground shadow-lg opacity-0 open:flex open:flex-col open:opacity-100 starting:open:opacity-0",
         "transition-[opacity,scale,translate,display,overlay] duration-200 ease-out transition-discrete",
-        "backdrop:bg-foreground/40 backdrop:opacity-0 backdrop:backdrop-blur-md open:backdrop:opacity-100 starting:open:backdrop:opacity-0",
+        "backdrop:bg-foreground/40 dark:backdrop:bg-ink-950/70 backdrop:opacity-0 backdrop:backdrop-blur-md open:backdrop:opacity-100 starting:open:backdrop:opacity-0",
         "backdrop:transition-[opacity,display,overlay] backdrop:duration-200 backdrop:ease-out backdrop:transition-discrete",
         variantClasses[variant],
       )}
