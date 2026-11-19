@@ -1,8 +1,8 @@
-import { ArrowLeftRight, CreditCard, Layers, LayoutDashboard, Settings, Users, type LucideIcon } from "lucide-react";
+import { ArrowLeftRight, CreditCard, Layers, LayoutDashboard, Settings, UserCog, Users, type LucideIcon } from "lucide-react";
 
 export type BusinessNavItem = {
   href: string;
-  key: "dashboard" | "customers" | "memberships" | "levels" | "movements" | "settings";
+  key: "dashboard" | "customers" | "memberships" | "levels" | "movements" | "users" | "settings";
   icon: LucideIcon;
   onBottomBar: boolean;
 };
@@ -13,5 +13,6 @@ export const businessNavItems: BusinessNavItem[] = [
   { href: "/membresias", key: "memberships", icon: CreditCard, onBottomBar: true },
   { href: "/niveles", key: "levels", icon: Layers, onBottomBar: true },
   { href: "/movimientos", key: "movements", icon: ArrowLeftRight, onBottomBar: true },
+  { href: "/usuarios", key: "users", icon: UserCog, onBottomBar: false },
   { href: "/configuracion", key: "settings", icon: Settings, onBottomBar: false },
 ];

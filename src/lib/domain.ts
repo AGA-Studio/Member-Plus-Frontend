@@ -68,6 +68,7 @@ export type Receipt = Purchase & {
 export type UserRole = "cashier" | "admin" | "platform";
 
 export type SessionUser = {
+  id: number;
   role: UserRole;
   fullName: string;
   email: string;

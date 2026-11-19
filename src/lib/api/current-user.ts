@@ -67,6 +67,7 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionLook
   return {
     status: "ok",
     user: {
+      id: user.id,
       role: roleMap[user.role],
       fullName: user.name,
       email: user.email,

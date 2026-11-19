@@ -221,6 +221,7 @@
       "memberships": "Memberships",
       "levels": "Levels",
       "movements": "Transactions",
+      "users": "Users",
       "settings": "Settings",
       "section": "Operations"
     },
@@ -302,7 +303,77 @@
         "colorInvalid": "Write a color in #rrggbb format, for example #b91c1c.",
         "unavailable": "We couldn't save the changes. Try again."
       },
-      "footerHint": "The changes show up right away in your panel, at the counter and on your customers' card."
+      "footerHint": "The changes show up right away in your panel, at the counter and on your customers' card.",
+      "users": {
+        "title": "Users",
+        "description": "Who can sign in to your business: administrators and cashiers.",
+        "open": "Go to Users"
+      }
+    },
+    "users": {
+      "metaTitle": "Users · Member+",
+      "title": "Users",
+      "subtitle": "{count, plural, one {# person with access to your business} other {# people with access to your business}}",
+      "you": "You",
+      "columns": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "employee": "Cashier"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit",
+        "deactivate": "Deactivate",
+        "reactivate": "Reactivate"
+      },
+      "fields": {
+        "name": "Full name",
+        "email": "Email",
+        "role": "Role",
+        "password": "Password",
+        "passwordHint": "At least 8 characters. Share it with the person so they can sign in.",
+        "newPassword": "New password",
+        "newPasswordHint": "Leave it empty to keep the current one."
+      },
+      "new": {
+        "trigger": "New user",
+        "title": "New user",
+        "description": "The cashier charges at the counter. The administrator also manages customers, levels, users and the settings.",
+        "submit": "Create user",
+        "creating": "Creating…"
+      },
+      "edit": {
+        "title": "Edit {name}",
+        "submit": "Save changes",
+        "saving": "Saving…"
+      },
+      "deactivate": {
+        "title": "Deactivate {name}?",
+        "body": "This person will no longer be able to sign in. You can reactivate them whenever you want.",
+        "keep": "Keep active",
+        "confirm": "Deactivate user",
+        "confirming": "Deactivating…"
+      },
+      "errors": {
+        "nameRequired": "Write the person's name.",
+        "nameInvalid": "The name can only have letters, spaces, hyphens and apostrophes.",
+        "emailInvalid": "Write a valid email.",
+        "emailTaken": "A user with that email already exists.",
+        "passwordRequired": "Write a password.",
+        "passwordInvalid": "The password must have between 8 and 128 characters.",
+        "cannotDeactivateSelf": "You can't deactivate your own account.",
+        "notFound": "We couldn't find that user. Reload the screen.",
+        "unavailable": "We couldn't complete the action. Try again."
+      }
     },
     "customers": {
       "metaTitle": "Customers · Member+",
@@ -666,6 +737,10 @@
     "profilePhotoSaved": "Profile photo saved.",
     "profilePhotoRemoved": "Profile photo removed.",
     "settingsSaved": "Settings saved.",
+    "userCreated": "User created.",
+    "userUpdated": "User updated.",
+    "userDeactivated": "User deactivated.",
+    "userReactivated": "User reactivated.",
     "membershipRenewed": "Membership renewed.",
     "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
     "cardEmailRateLimited": "Wait a moment before sending another email.",
