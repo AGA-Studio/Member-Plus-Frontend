@@ -58,7 +58,12 @@
     },
     "dismissToast": "Cerrar aviso",
     "toastRegion": "Avisos",
-    "offline": "Sin conexión. Revisa tu internet e inténtalo de nuevo."
+    "offline": "Sin conexión. Revisa tu internet e inténtalo de nuevo.",
+    "role": {
+      "admin": "Administrador",
+      "cashier": "Cajero",
+      "platform": "Plataforma"
+    }
   },
   "auth": {
     "login": {
@@ -713,6 +718,42 @@
     "sidebar": {
       "open": "Abrir el menú lateral",
       "close": "Cerrar el menú lateral"
+    },
+    "topbar": {
+      "label": "Barra superior",
+      "search": {
+        "label": "Buscar en Member+",
+        "placeholder": "Buscar clientes, membresías, usuarios…",
+        "clear": "Borrar búsqueda",
+        "suggestions": "Ir a",
+        "loading": "Buscando…",
+        "empty": "Sin resultados para “{query}”",
+        "emptyHint": "Prueba con otro nombre, código o correo.",
+        "error": "No pudimos cargar los datos para buscar.",
+        "retry": "Reintentar",
+        "count": "{count, plural, one {# resultado} other {# resultados}}",
+        "page": "Pantalla",
+        "inactive": "Inactivo",
+        "validUntil": "vence {date}",
+        "customersCount": "{count, plural, one {# cliente} other {# clientes}}",
+        "groups": {
+          "pages": "Pantallas",
+          "customers": "Clientes",
+          "memberships": "Membresías",
+          "users": "Usuarios",
+          "levels": "Niveles",
+          "movements": "Movimientos"
+        }
+      },
+      "account": {
+        "label": "Cuenta y preferencias",
+        "editPhoto": "Cambiar foto de perfil",
+        "language": "Idioma",
+        "darkMode": "Modo oscuro",
+        "settings": "Configuración",
+        "users": "Usuarios",
+        "signOut": "Cerrar sesión"
+      }
     }
   },
   "toasts": {

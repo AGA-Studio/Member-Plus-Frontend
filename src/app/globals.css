@@ -199,6 +199,20 @@
   --danger-text: #ff9f95;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
 @layer components {
   .table-reveal > tr,
   .row-reveal > li {
