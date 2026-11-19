@@ -60,6 +60,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
 
   const pagination = (
     <Pagination
+      className="mt-4"
       pathname="/plataforma"
       params={{ q: query, status }}
       page={result.page}
@@ -153,10 +154,10 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                   </li>
                 ))}
               </ul>
-              <div className="border-t border-border">{pagination}</div>
             </>
           )}
         </section>
+        {result.items.length > 0 ? pagination : null}
       </Reveal>
     </>
   );

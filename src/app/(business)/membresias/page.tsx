@@ -180,18 +180,19 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                 );
               })}
             </ul>
-            <div className="border-t border-border">
-              <Pagination
-                pathname="/membresias"
-                params={{ q: query, level: level ? String(level.id) : undefined, tab: tab === "all" ? undefined : tab }}
-                page={result.page}
-                pageCount={result.pageCount}
-                summary={t("range", { from, to, total: result.total })}
-              />
-            </div>
           </>
         )}
       </section>
+      {result.items.length > 0 ? (
+        <Pagination
+          className="mt-4"
+        pathname="/membresias"
+        params={{ q: query, level: level ? String(level.id) : undefined, tab: tab === "all" ? undefined : tab }}
+        page={result.page}
+        pageCount={result.pageCount}
+        summary={t("range", { from, to, total: result.total })}
+        />
+      ) : null}
       </Reveal>
     </>
   );

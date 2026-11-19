@@ -171,18 +171,19 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
                 );
               })}
             </ul>
-            <div className="border-t border-border">
-              <Pagination
-                pathname="/clientes"
-                params={{ q: query, level: level ? String(level.id) : undefined, status: status }}
-                page={result.page}
-                pageCount={result.pageCount}
-                summary={t("range", { from, to, total: result.total })}
-              />
-            </div>
           </>
         )}
       </section>
+      {result.items.length > 0 ? (
+        <Pagination
+          className="mt-4"
+        pathname="/clientes"
+        params={{ q: query, level: level ? String(level.id) : undefined, status: status }}
+        page={result.page}
+        pageCount={result.pageCount}
+        summary={t("range", { from, to, total: result.total })}
+        />
+      ) : null}
       </Reveal>
     </>
   );
