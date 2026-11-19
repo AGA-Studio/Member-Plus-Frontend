@@ -57,12 +57,10 @@ These rules are strict. Follow them in every task, without exception. If a rule 
    - **Reduced motion:** `globals.css` already removes movement and keeps opacity and color changes. Add `motion-reduce:` variants only when something needs to be different.
    - **Libraries:** use CSS and Tailwind first. Do not add `motion` (Framer Motion) or any animation library without asking. It is only justified for springs, gestures and layout animations.
    - **Review:** when you review motion, use the Before/After table from the skill, and check the animation in slow motion before finishing.
-10. **Figma is the visual source of truth: always compare your code with it.** File "Member+ — Diseño": https://www.figma.com/design/OWje3kJvpbLxZlCOEq1WnF (file key `OWje3kJvpbLxZlCOEq1WnF`).
-   - **Before coding** a screen or component that exists in Figma: read it with the Figma MCP (`get_design_context` and `get_screenshot`, after loading the `figma-design-to-code` skill) and build from it, adapting it to our tokens, components and i18n. Check tokens with `get_variable_defs`.
-   - **After coding:** render the UI (Playwright screenshots at mobile and desktop widths) and compare it with the Figma screenshot: layout, spacing, sizes, radius, colors, typography, states (hover, focus, disabled, error, empty, loading), copy and icons. Fix every difference and tell the user what matched and what still differs.
-   - **If it is not designed in Figma yet,** say so and ask whether to design it first or build it from `BRAND.md`. Never invent a different look.
-   - **If Figma and `BRAND.md` or `globals.css` disagree,** do not pick one. Stop, tell the user which value differs, let them decide, then fix the wrong source.
-   - Figma variables map to code tokens through the `var(--…)` code syntax stored on each variable.
+10. **Figma is no longer used to design.** The file "Member+ — Diseño" was only the base (foundations, components and the first screens). Do not open or update Figma, and do not use the Figma MCP for new screens.
+   - **New screens:** design them directly in code from `BRAND.md`, `globals.css`, the existing components and rules 1–9. Reuse the pattern of a similar screen that is already built.
+   - **Screens that already exist in Figma:** use it only as a visual reference if it helps. If Figma and `BRAND.md` or `globals.css` disagree, `BRAND.md` wins; tell the user about the difference.
+   - **After coding:** render the UI with Playwright at mobile (390px) and desktop widths, check states (hover, focus, disabled, error, empty, loading), copy and icons, and fix whatever looks wrong.
 
 ## Contexto del proyecto
 
