@@ -670,7 +670,6 @@
       "metaTitle": "Niveles · Member+",
       "title": "Niveles y beneficios",
       "subtitle": "Define qué gana cada cliente según su nivel",
-      "notice": "Los cambios aplican a las compras nuevas. Las compras anteriores no se recalculan.",
       "rows": {
         "price": "Precio",
         "discount": "Descuento",
@@ -696,7 +695,35 @@
           "unavailable": "No pudimos guardar el nivel. Inténtalo de nuevo."
         }
       },
-      "free": "Gratis"
+      "free": "Gratis",
+      "kpi": {
+        "paying": {
+          "label": "Clientes de pago",
+          "hint": "{percent}% de tus {total, plural, one {# cliente} other {# clientes}}"
+        },
+        "revenue": {
+          "label": "Ingreso por membresías",
+          "hint": "A los precios actuales de cada nivel"
+        },
+        "discount": {
+          "label": "Descuento promedio",
+          "hint": "{max} como máximo en {level}"
+        },
+        "cashback": {
+          "label": "Cashback promedio",
+          "hint": "{max} como máximo en {level}"
+        }
+      },
+      "card": {
+        "popular": "Más popular",
+        "perMembership": "por membresía",
+        "share": "{percent}% de tus clientes",
+        "benefits": {
+          "discount": "Descuento",
+          "cashback": "Cashback",
+          "points": "Puntos por $10"
+        }
+      }
     },
     "movements": {
       "metaTitle": "Movimientos · Member+",

@@ -25,16 +25,20 @@ export function useInView<T extends HTMLElement>({
     }
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setVisible(true);
-        observer.disconnect();
+      (entries) => {
+        const entry = entries[entries.length - 1];
+        if (entry.isIntersecting) {
+          setVisible(true);
+        }
       },
       { threshold, rootMargin },
     );
     observer.observe(element);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      setVisible(false);
+    };
   }, [threshold, rootMargin]);
 
   return { ref, visible };

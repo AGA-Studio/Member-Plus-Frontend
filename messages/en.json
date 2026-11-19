@@ -670,7 +670,6 @@
       "metaTitle": "Levels · Member+",
       "title": "Levels and benefits",
       "subtitle": "Define what each customer earns by level",
-      "notice": "Changes apply to new purchases. Past purchases are not recalculated.",
       "rows": {
         "price": "Price",
         "discount": "Discount",
@@ -696,7 +695,35 @@
           "unavailable": "We couldn't save the level. Try again."
         }
       },
-      "free": "Free"
+      "free": "Free",
+      "kpi": {
+        "paying": {
+          "label": "Paying customers",
+          "hint": "{percent}% of your {total, plural, one {# customer} other {# customers}}"
+        },
+        "revenue": {
+          "label": "Membership revenue",
+          "hint": "At the current price of each level"
+        },
+        "discount": {
+          "label": "Average discount",
+          "hint": "Up to {max} at {level}"
+        },
+        "cashback": {
+          "label": "Average cashback",
+          "hint": "Up to {max} at {level}"
+        }
+      },
+      "card": {
+        "popular": "Most popular",
+        "perMembership": "per membership",
+        "share": "{percent}% of your customers",
+        "benefits": {
+          "discount": "Discount",
+          "cashback": "Cashback",
+          "points": "Points per $10"
+        }
+      }
     },
     "movements": {
       "metaTitle": "Transactions · Member+",
