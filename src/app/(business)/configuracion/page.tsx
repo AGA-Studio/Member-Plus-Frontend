@@ -23,7 +23,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
         <PageHeader title={t("title")} subtitle={t("subtitle")} />
       </Reveal>
       <SettingsForm

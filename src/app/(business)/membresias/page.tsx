@@ -69,7 +69,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
 
   return (
     <>
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
       <PageHeader
         title={t("title")}
         subtitle={t("subtitle")}
@@ -87,7 +87,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
         }
       />
       </Reveal>
-      <Reveal index={1}>
+      <Reveal variant="entrance" index={2}>
       <LinkTabs
         label={t("tabsLabel")}
         tabs={tabKeys.map((key) => ({
@@ -97,7 +97,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
         }))}
       />
       </Reveal>
-      <Reveal index={2}>
+      <Reveal variant="entrance" index={3}>
       <FilterBar
         searchLabel={t("searchLabel")}
         searchPlaceholder={t("searchPlaceholder")}
@@ -111,7 +111,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
         ]}
       />
       </Reveal>
-      <Reveal index={3}>
+      <Reveal variant="entrance" index={4}>
       <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0 max-sm:shadow-none">
         {result.items.length === 0 ? (
           <EmptyState
@@ -132,7 +132,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                   <th scope="col" className="px-6 py-3 font-medium">{t("columns.status")}</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="table-reveal">
                 {result.items.map((member) => {
                   const statusKey = getStatusKey(member);
 
@@ -154,7 +154,7 @@ export default async function MembershipsPage({ searchParams }: PageProps<"/memb
                 })}
               </tbody>
             </table>
-            <ul className="lg:hidden">
+            <ul className="row-reveal lg:hidden">
               {result.items.map((member) => {
                 const statusKey = getStatusKey(member);
 

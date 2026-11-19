@@ -119,7 +119,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                     <th scope="col" className="px-6 py-3 text-right font-medium">{t("columns.createdAt")}</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="table-reveal">
                   {result.items.map((business) => (
                     <tr key={business.id} className="border-t border-border">
                       <td className="px-6 py-3">
@@ -139,7 +139,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                   ))}
                 </tbody>
               </table>
-              <ul className="sm:hidden">
+              <ul className="row-reveal sm:hidden">
                 {result.items.map((business) => (
                   <li key={business.id} className="flex items-center gap-3 border-t border-border px-4 py-3 first:border-t-0">
                     <BusinessLogo name={business.name} initials={getInitials(business.name)} logoUrl={business.logoUrl} />
