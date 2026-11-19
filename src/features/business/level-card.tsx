@@ -18,6 +18,13 @@ const headerClasses: Record<Tier, string> = {
   onyx: "bg-tier-onyx text-tier-onyx-foreground",
 };
 
+const shineClasses: Record<Tier, string> = {
+  bronze: "tier-shine-bronze",
+  silver: "tier-shine-silver",
+  gold: "tier-shine-gold",
+  onyx: "tier-shine-onyx",
+};
+
 const shareClasses: Record<Tier, string> = {
   bronze: "fill-tier-bronze-solid",
   silver: "fill-tier-silver-solid",
@@ -47,26 +54,16 @@ export async function LevelCard({ level, sharePercent, popular }: LevelCardProps
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
-      <header className={cx("flex flex-col gap-4 p-5", headerClasses[level.tier])}>
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="text-heading">{level.name}</h2>
-          {popular ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-ink-900">
-              <Star aria-hidden strokeWidth={2} className="size-3" />
-              {t("card.popular")}
-            </span>
-          ) : null}
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <p className="font-display text-display font-semibold tabular-nums">
-            {level.priceCents === 0 ? (
-              t("free")
-            ) : (
-              <AnimatedNumber value={level.priceCents} divisor={100} options={moneyOptions} />
-            )}
-          </p>
-          <p className="text-sm opacity-80">{t("card.perMembership")}</p>
-        </div>
+      <header className={cx("flex min-h-32 items-start justify-between gap-3 p-5", headerClasses[level.tier])}>
+        <h2 data-text={level.name} className={cx("font-display text-display font-bold", shineClasses[level.tier])}>
+          {level.name}
+        </h2>
+        {popular ? (
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-ink-900">
+            <Star aria-hidden strokeWidth={2} className="size-3" />
+            {t("card.popular")}
+          </span>
+        ) : null}
       </header>
 
       <div className="flex flex-1 flex-col gap-5 p-5">
@@ -100,7 +97,17 @@ export async function LevelCard({ level, sharePercent, popular }: LevelCardProps
         </dl>
       </div>
 
-      <footer className="flex items-center justify-end border-t border-border px-5 py-3">
+      <footer className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+        <div className="flex min-w-0 flex-col">
+          <p className="font-display text-heading font-semibold tabular-nums text-foreground">
+            {level.priceCents === 0 ? (
+              t("free")
+            ) : (
+              <AnimatedNumber value={level.priceCents} divisor={100} options={moneyOptions} />
+            )}
+          </p>
+          <p className="text-xs text-muted">{t("card.perMembership")}</p>
+        </div>
         <EditLevelDialog level={level} tierLabel={level.name} />
       </footer>
     </article>
