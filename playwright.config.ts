@@ -7,10 +7,6 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  // Dos workers en CI: el runner tiene 4 vCPU y con uno solo las 24 pruebas
-  // corren en fila. Cada prueba escribe datos únicos por corrida, así que dos
-  // a la vez no se pisan (la tarjeta pública usa un cliente distinto por
-  // proyecto, porque generar un enlace revoca el anterior).
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI
     ? [["github"], ["html", { open: "never" }]]

@@ -17,20 +17,14 @@ test.use({
  */
 
 test.describe("Tarjeta pública", () => {
-  /**
-   * Cada proyecto usa un cliente distinto del seed. Generar un enlace revoca el
-   * anterior del mismo cliente, así que si `escritorio` y `movil` corren a la
-   * vez —dos workers en CI— y comparten cliente, una prueba revoca el enlace de
-   * la otra y falla de forma intermitente.
-   */
-  function customerFor(project: string) {
+  function cardCustomer(project: string) {
     return project === "movil"
       ? { code: "MP-7H3QX", name: "Carlos Ramírez" }
       : { code: "MP-4F7K2", name: "Laura Méndez" };
   }
 
   test("el enlace de la tarjeta abre sin sesión y muestra al cliente", async ({ page, browser }) => {
-    const customer = customerFor(test.info().project.name);
+    const customer = cardCustomer(test.info().project.name);
 
     await gotoApp(page, `/clientes/${customer.code}`);
 

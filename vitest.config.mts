@@ -6,8 +6,6 @@ export default defineConfig({
     include: ["src/**/*.test.ts"],
     coverage: {
       provider: "v8",
-      // Lógica pura que duplica el backend o decide formato: una divergencia
-      // se cobra mal en caja y ninguna otra prueba la ve.
       include: [
         "src/lib/pricing.ts",
         "src/lib/format.ts",
