@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import Link from "next/link";
-import { ChevronRight, Users } from "lucide-react";
+import { ChevronRight, Hourglass, Layers, UserCheck, Users } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { AnimatedNumber } from "@/components/charts/animated-number";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -10,12 +11,14 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
 import { Pagination } from "@/components/ui/pagination";
 import { buttonStyles } from "@/components/ui/button";
+import { KpiGrid, type KpiItem } from "@/features/business/dashboard-parts";
 import { FilterBar } from "@/features/business/filter-bar";
 import { getStatusKey, readParam, statusTones } from "@/features/business/member-status";
 import { NewMembershipDialog } from "@/features/business/new-membership-dialog";
 import { listLevels } from "@/lib/api/levels";
-import { listMembers } from "@/lib/api/members";
+import { countMembers, listMembers } from "@/lib/api/members";
 import { parsePage } from "@/lib/api/paginate";
+import { addDays, countIssuedBetween, percentChange, startOfDay } from "@/lib/dashboard";
 import type { MemberStatus } from "@/lib/domain";
 import { formatPoints } from "@/lib/format";
 
@@ -28,6 +31,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const statusFilters = ["active", "expiring", "expired", "cancelled"] as const;
+const poolSize = 500;
+const periodDays = 30;
 
 export default async function CustomersPage({ searchParams }: PageProps<"/clientes">) {
   await connection();
@@ -44,18 +49,81 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
   const level = levels.find((item) => String(item.id) === readParam(params.level));
   const levelOptions = levels.map((item) => ({ value: String(item.id), label: item.name }));
   const levelPrices = levels.map((item) => ({ value: String(item.id), label: item.name, priceCents: item.priceCents }));
-  const result = await listMembers({
-    query,
-    levelId: level?.id,
-    status: status as MemberStatus | "expiring" | undefined,
-    page: requestedPage,
-  });
+  const [result, counts, memberPool] = await Promise.all([
+    listMembers({
+      query,
+      levelId: level?.id,
+      status: status as MemberStatus | "expiring" | undefined,
+      page: requestedPage,
+    }),
+    countMembers(),
+    listMembers({ page: 1, pageSize: poolSize }),
+  ]);
   const filtered = Boolean(query || level || status);
   const from = (result.page - 1) * result.pageSize + 1;
   const to = from + result.items.length - 1;
 
   const formatDate = (iso: string) =>
     format.dateTime(new Date(iso), { day: "numeric", month: "short" });
+
+  const now = new Date();
+  const today = startOfDay(now);
+  const issuedDates = memberPool.items.map((member) => member.issuedAt);
+  const poolComplete = counts.all <= memberPool.items.length;
+  const newCustomers = countIssuedBetween(issuedDates, addDays(today, -(periodDays - 1)), addDays(today, 1));
+  const previousNewCustomers = countIssuedBetween(
+    issuedDates,
+    addDays(today, -(periodDays * 2 - 1)),
+    addDays(today, -(periodDays - 1)),
+  );
+  const newTrend = poolComplete ? percentChange(newCustomers, previousNewCustomers) : null;
+  const percentOf = (value: number, total: number) => (total === 0 ? 0 : Math.round((value / total) * 100));
+  const topLevel = levels.reduce<(typeof levels)[number] | null>(
+    (best, current) => (!best || current.customersCount > best.customersCount ? current : best),
+    null,
+  );
+  const levelTotal = levels.reduce((sum, item) => sum + item.customersCount, 0);
+
+  const kpis: KpiItem[] = [
+    {
+      key: "total",
+      icon: Users,
+      label: t("kpi.total.label"),
+      value: <AnimatedNumber value={counts.all} />,
+      hint: t("kpi.total.hint", { count: newCustomers }),
+      trend: {
+        percent: newTrend,
+        label: newTrend === null ? "" : format.number(newTrend / 100, { style: "percent", maximumFractionDigits: 0, signDisplay: "exceptZero" }),
+        hint: t("kpi.vsPrevious"),
+      },
+    },
+    {
+      key: "active",
+      icon: UserCheck,
+      tone: "success",
+      label: t("kpi.active.label"),
+      value: <AnimatedNumber value={counts.active} />,
+      hint: t("kpi.active.hint", { percent: percentOf(counts.active, counts.all) }),
+    },
+    {
+      key: "expiring",
+      icon: Hourglass,
+      tone: "warning",
+      label: t("kpi.expiring.label"),
+      value: <AnimatedNumber value={counts.expiring} />,
+      hint: t("kpi.expiring.hint", { expired: counts.expired, cancelled: counts.cancelled }),
+    },
+    {
+      key: "topLevel",
+      icon: Layers,
+      label: t("kpi.topLevel.label"),
+      value: topLevel && topLevel.customersCount > 0 ? topLevel.name : "—",
+      hint:
+        topLevel && topLevel.customersCount > 0
+          ? t("kpi.topLevel.hint", { count: topLevel.customersCount, percent: percentOf(topLevel.customersCount, levelTotal) })
+          : t("kpi.topLevel.none"),
+    },
+  ];
 
   return (
     <>
@@ -77,7 +145,8 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
           }
         />
       </Reveal>
-      <Reveal variant="entrance" index={2}>
+      <KpiGrid items={kpis} />
+      <Reveal variant="entrance" index={5}>
       <FilterBar
         searchLabel={t("searchLabel")}
         searchPlaceholder={t("searchPlaceholder")}
@@ -97,7 +166,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/client
         ]}
       />
       </Reveal>
-      <Reveal variant="entrance" index={3}>
+      <Reveal variant="entrance" index={6}>
       <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0 max-sm:shadow-none">
         {result.items.length === 0 ? (
           <EmptyState

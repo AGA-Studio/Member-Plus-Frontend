@@ -227,7 +227,11 @@
       "movements": "Transactions",
       "users": "Users",
       "settings": "Settings",
-      "section": "Operations"
+      "sections": {
+        "general": "General",
+        "operation": "Operations",
+        "management": "Management"
+      }
     },
     "signOut": "Sign out",
     "roles": {
@@ -501,7 +505,27 @@
         "amount": "Price (MXN)",
         "amountHint": "Fixed price of the chosen level. It can't be changed."
       },
-      "printSheet": "Print card sheet"
+      "printSheet": "Print card sheet",
+      "kpi": {
+        "vsPrevious": "Compared with the previous 30 days",
+        "total": {
+          "label": "Customers",
+          "hint": "{count, plural, =0 {No new signups in 30 days} one {# new signup in 30 days} other {# new signups in 30 days}}"
+        },
+        "active": {
+          "label": "Active",
+          "hint": "{percent}% of the total"
+        },
+        "expiring": {
+          "label": "Expiring soon",
+          "hint": "{expired, plural, =0 {None expired} one {# expired} other {# expired}} · {cancelled, plural, =0 {none cancelled} one {# cancelled} other {# cancelled}}"
+        },
+        "topLevel": {
+          "label": "Top level",
+          "hint": "{count, plural, one {# customer} other {# customers}} · {percent}%",
+          "none": "No customers"
+        }
+      }
     },
     "customer": {
       "metaTitle": "Customer profile · Member+",
@@ -687,7 +711,12 @@
         "purchases": "Purchases",
         "collected": "Collected",
         "discounts": "Discounts",
-        "cashbackUsed": "Cashback used"
+        "cashbackUsed": "Cashback used",
+        "ticket": "Average ticket",
+        "ticketHint": "Per purchase",
+        "benefits": "Benefits granted",
+        "benefitsHint": "{percent}% of sales before benefits",
+        "purchasesHint": "{count, plural, =0 {No purchases} one {# purchase} other {# purchases}}"
       },
       "columns": {
         "date": "Date",
@@ -723,7 +752,8 @@
         "fileName": "transactions.csv",
         "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}.",
         "failed": "We couldn't prepare the file. Try again."
-      }
+      },
+      "vsPrevious": "Compared with the previous period"
     },
     "logo": {
       "edit": "Change the business logo",
