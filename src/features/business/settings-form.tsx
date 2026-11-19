@@ -73,9 +73,19 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
               {t("other.levels")}
             </Link>
           </section>
+
+          <section className={cx(cardClasses, revealClasses(3), "sm:flex-row sm:items-center sm:justify-between")}>
+            <div className="flex flex-col gap-1">
+              <h2 className="text-subheading text-foreground">{t("users.title")}</h2>
+              <p className="text-sm text-muted">{t("users.description")}</p>
+            </div>
+            <Link href="/usuarios" className={buttonStyles({ variant: "outline", size: "sm", className: "shrink-0" })}>
+              {t("users.open")}
+            </Link>
+          </section>
         </div>
 
-        <section className={cx(cardClasses, revealClasses(3), "lg:col-span-2")}>
+        <section className={cx(cardClasses, revealClasses(4), "lg:col-span-2")}>
           <div className="flex flex-col gap-1">
             <h2 className="text-subheading text-foreground">{t("color.title")}</h2>
             <p className="text-sm text-muted">{t("color.description")}</p>
@@ -93,7 +103,7 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
       <div
         className={cx(
           "sticky bottom-0 z-10 flex items-center justify-between gap-4 rounded-lg border border-border bg-surface/95 p-4 shadow-md backdrop-blur",
-          revealClasses(4),
+          revealClasses(5),
         )}
       >
         <p className="hidden text-sm text-muted sm:block">{t("footerHint")}</p>

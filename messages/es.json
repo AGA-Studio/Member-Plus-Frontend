@@ -221,6 +221,7 @@
       "memberships": "Membresías",
       "levels": "Niveles",
       "movements": "Movimientos",
+      "users": "Usuarios",
       "settings": "Configuración",
       "section": "Operación"
     },
@@ -302,7 +303,77 @@
         "colorInvalid": "Escribe un color con formato #rrggbb, por ejemplo #b91c1c.",
         "unavailable": "No pudimos guardar los cambios. Inténtalo de nuevo."
       },
-      "footerHint": "Los cambios se ven al instante en tu panel, en la caja y en la tarjeta de tus clientes."
+      "footerHint": "Los cambios se ven al instante en tu panel, en la caja y en la tarjeta de tus clientes.",
+      "users": {
+        "title": "Usuarios",
+        "description": "Quién puede entrar a tu negocio: administradores y cajeros.",
+        "open": "Ir a Usuarios"
+      }
+    },
+    "users": {
+      "metaTitle": "Usuarios · Member+",
+      "title": "Usuarios",
+      "subtitle": "{count, plural, one {# persona con acceso a tu negocio} other {# personas con acceso a tu negocio}}",
+      "you": "Tú",
+      "columns": {
+        "user": "Usuario",
+        "role": "Rol",
+        "status": "Estado",
+        "createdAt": "Alta",
+        "actions": "Acciones"
+      },
+      "roles": {
+        "admin": "Administrador",
+        "employee": "Cajero"
+      },
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "actions": {
+        "edit": "Editar",
+        "deactivate": "Desactivar",
+        "reactivate": "Reactivar"
+      },
+      "fields": {
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "role": "Rol",
+        "password": "Contraseña",
+        "passwordHint": "Mínimo 8 caracteres. Compártela con la persona para que pueda entrar.",
+        "newPassword": "Nueva contraseña",
+        "newPasswordHint": "Déjala vacía para conservar la actual."
+      },
+      "new": {
+        "trigger": "Nuevo usuario",
+        "title": "Nuevo usuario",
+        "description": "El cajero cobra en caja. El administrador también maneja clientes, niveles, usuarios y la configuración.",
+        "submit": "Crear usuario",
+        "creating": "Creando…"
+      },
+      "edit": {
+        "title": "Editar a {name}",
+        "submit": "Guardar cambios",
+        "saving": "Guardando…"
+      },
+      "deactivate": {
+        "title": "¿Desactivar a {name}?",
+        "body": "Esta persona ya no podrá iniciar sesión. Puedes reactivarla cuando quieras.",
+        "keep": "Mantener activo",
+        "confirm": "Desactivar usuario",
+        "confirming": "Desactivando…"
+      },
+      "errors": {
+        "nameRequired": "Escribe el nombre de la persona.",
+        "nameInvalid": "El nombre solo puede llevar letras, espacios, guiones y apóstrofos.",
+        "emailInvalid": "Escribe un correo válido.",
+        "emailTaken": "Ya existe un usuario con ese correo.",
+        "passwordRequired": "Escribe una contraseña.",
+        "passwordInvalid": "La contraseña debe tener entre 8 y 128 caracteres.",
+        "cannotDeactivateSelf": "No puedes desactivar tu propia cuenta.",
+        "notFound": "No encontramos a ese usuario. Recarga la pantalla.",
+        "unavailable": "No pudimos completar la acción. Inténtalo de nuevo."
+      }
     },
     "customers": {
       "metaTitle": "Clientes · Member+",
@@ -666,6 +737,10 @@
     "profilePhotoSaved": "Foto de perfil guardada.",
     "profilePhotoRemoved": "Foto de perfil quitada.",
     "settingsSaved": "Configuración guardada.",
+    "userCreated": "Usuario creado.",
+    "userUpdated": "Usuario actualizado.",
+    "userDeactivated": "Usuario desactivado.",
+    "userReactivated": "Usuario reactivado.",
     "membershipRenewed": "Membresía renovada.",
     "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
     "cardEmailRateLimited": "Espera un momento antes de enviar otro correo.",
