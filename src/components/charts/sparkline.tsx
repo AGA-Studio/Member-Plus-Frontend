@@ -27,12 +27,11 @@ export function Sparkline({ values, className }: SparklineProps) {
       <path d={areaPath(points, height)} className="chart-fade fill-primary/10" />
       <path
         d={linePath(points)}
-        pathLength={1}
         vectorEffect="non-scaling-stroke"
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="chart-draw fill-none stroke-primary"
+        className="chart-wipe fill-none stroke-primary"
       />
     </svg>
   );
