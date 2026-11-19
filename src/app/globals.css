@@ -346,6 +346,15 @@
     }
   }
 
+  .chart-wipe {
+    clip-path: inset(-4px -4px -4px -4px);
+    transition: clip-path 900ms var(--ease-out) 200ms;
+
+    @starting-style {
+      clip-path: inset(-4px 100% -4px -4px);
+    }
+  }
+
   .chart-fade {
     transition: opacity 700ms var(--ease-out) 450ms;
 
@@ -430,6 +439,10 @@
 
   [data-inview="false"] .chart-draw {
     stroke-dashoffset: 1;
+  }
+
+  [data-inview="false"] .chart-wipe {
+    clip-path: inset(-4px 100% -4px -4px);
   }
 
   [data-inview="false"] .chart-fade {
