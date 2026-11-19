@@ -57,12 +57,12 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
         <PageHeader title={t("title")} subtitle={t("subtitle", { business: user.businessName })} />
       </Reveal>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Reveal index={1} className="lg:col-span-2">
+        <Reveal variant="entrance" index={2} className="lg:col-span-2">
           <section className="flex h-full flex-col justify-between gap-8 rounded-lg border border-border bg-surface p-6 shadow-sm lg:p-8">
             <div className="flex flex-col gap-2">
               <h2 className="text-base font-medium text-muted">{t("collected.label")}</h2>
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
           </section>
         </Reveal>
 
-        <Reveal index={2}>
+        <Reveal variant="entrance" index={3}>
           <section className="flex h-full flex-col gap-5 rounded-lg border border-border bg-surface p-6 shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-col gap-1">
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Reveal index={3}>
+        <Reveal variant="entrance" index={4}>
           <section className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
             <div className="flex items-center justify-between gap-3 px-6 pb-3 pt-5">
               <h2 className="text-subheading text-foreground">{t("recent.title")}</h2>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
           </section>
         </Reveal>
 
-        <Reveal index={4}>
+        <Reveal variant="entrance" index={5}>
           <section className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
             <div className="flex items-center justify-between gap-3 px-6 pb-3 pt-5">
               <h2 className="text-subheading text-foreground">{t("expiring.title")}</h2>

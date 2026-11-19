@@ -93,14 +93,14 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
 
   return (
     <>
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
         <PageHeader
           title={t("title")}
           subtitle={t("subtitle")}
           actions={<ExportCsvButton query={query} period={period} />}
         />
       </Reveal>
-      <Reveal index={1}>
+      <Reveal variant="entrance" index={2}>
         <FilterBar
           searchLabel={t("searchLabel")}
           searchPlaceholder={t("searchPlaceholder")}
@@ -114,7 +114,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
           ]}
         />
       </Reveal>
-      <Reveal index={2}>
+      <Reveal variant="entrance" index={3}>
         <dl className="grid grid-cols-2 gap-4 rounded-lg border border-border bg-surface p-5 shadow-sm lg:grid-cols-4">
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col gap-1">
@@ -124,7 +124,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
           ))}
         </dl>
       </Reveal>
-      <Reveal index={3} className="flex flex-col gap-6">
+      <Reveal variant="entrance" index={4} className="flex flex-col gap-6">
         {page.items.length === 0 ? (
           <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
             <EmptyState
@@ -148,7 +148,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
                     <th scope="col" className="px-6 py-3 text-right font-medium">{t("columns.cashback")}</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="table-reveal">
                   {page.items.map((purchase) => {
                     const { breakdown } = purchase;
                     const cashbackUsed = breakdown.cashbackAppliedCents > 0;
@@ -186,7 +186,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
               {groups.map((group) => (
                 <section key={group.key} className="flex flex-col gap-2">
                   <h2 className="text-sm font-medium text-muted">{group.label}</h2>
-                  <ul className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+                  <ul className="row-reveal overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
                     {group.items.map((purchase) => (
                       <li key={purchase.id} className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 first:border-t-0">
                         <span className="flex min-w-0 flex-col">

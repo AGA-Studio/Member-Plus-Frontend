@@ -9,7 +9,7 @@ import { listLevels } from "@/lib/api/levels";
 import { cx } from "@/lib/cx";
 import type { Tier } from "@/lib/domain";
 import { formatMoney } from "@/lib/format";
-import { revealClasses } from "@/lib/motion";
+import { entranceClasses } from "@/lib/motion";
 
 export const instant = false;
 
@@ -34,10 +34,10 @@ export default async function LevelsPage() {
 
   return (
     <>
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
         <PageHeader title={t("title")} subtitle={t("subtitle")} />
       </Reveal>
-      <Reveal index={1}>
+      <Reveal variant="entrance" index={2}>
         <Alert tone="info">{t("notice")}</Alert>
       </Reveal>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -50,7 +50,7 @@ export default async function LevelsPage() {
           ];
 
           return (
-            <li key={level.id} className={cx(revealClasses(index + 2), "flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm")}>
+            <li key={level.id} className={cx(entranceClasses(index + 3), "flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm")}>
               <div className={cx("flex h-24 items-center px-5", swatchClasses[level.tier])}>
                 <h2 className="text-heading">{level.name}</h2>
               </div>

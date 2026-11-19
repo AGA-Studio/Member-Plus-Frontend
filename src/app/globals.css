@@ -199,6 +199,104 @@
   --danger-text: #ff9f95;
 }
 
+@layer components {
+  .table-reveal > tr,
+  .row-reveal > li {
+    --row: 0;
+  }
+
+  .table-reveal > tr:nth-child(2),
+  .row-reveal > li:nth-child(2) {
+    --row: 1;
+  }
+  .table-reveal > tr:nth-child(3),
+  .row-reveal > li:nth-child(3) {
+    --row: 2;
+  }
+  .table-reveal > tr:nth-child(4),
+  .row-reveal > li:nth-child(4) {
+    --row: 3;
+  }
+  .table-reveal > tr:nth-child(5),
+  .row-reveal > li:nth-child(5) {
+    --row: 4;
+  }
+  .table-reveal > tr:nth-child(6),
+  .row-reveal > li:nth-child(6) {
+    --row: 5;
+  }
+  .table-reveal > tr:nth-child(7),
+  .row-reveal > li:nth-child(7) {
+    --row: 6;
+  }
+  .table-reveal > tr:nth-child(8),
+  .row-reveal > li:nth-child(8) {
+    --row: 7;
+  }
+  .table-reveal > tr:nth-child(9),
+  .row-reveal > li:nth-child(9) {
+    --row: 8;
+  }
+  .table-reveal > tr:nth-child(10),
+  .row-reveal > li:nth-child(10) {
+    --row: 9;
+  }
+  .table-reveal > tr:nth-child(11),
+  .row-reveal > li:nth-child(11) {
+    --row: 10;
+  }
+  .table-reveal > tr:nth-child(12),
+  .row-reveal > li:nth-child(12) {
+    --row: 11;
+  }
+
+  .table-reveal > tr:nth-child(n + 13),
+  .row-reveal > li:nth-child(n + 13) {
+    --row: 11;
+  }
+
+  .table-reveal > tr > td {
+    --column: 0;
+  }
+
+  .table-reveal > tr > td:nth-child(2) {
+    --column: 1;
+  }
+  .table-reveal > tr > td:nth-child(3) {
+    --column: 2;
+  }
+  .table-reveal > tr > td:nth-child(4) {
+    --column: 3;
+  }
+  .table-reveal > tr > td:nth-child(5) {
+    --column: 4;
+  }
+  .table-reveal > tr > td:nth-child(6) {
+    --column: 5;
+  }
+  .table-reveal > tr > td:nth-child(7) {
+    --column: 6;
+  }
+  .table-reveal > tr > td:nth-child(8) {
+    --column: 7;
+  }
+
+  .table-reveal > tr > td,
+  .row-reveal > li {
+    transition-property: opacity, translate, scale, filter;
+    transition-duration: 500ms;
+    transition-timing-function: var(--ease-out);
+    transition-delay: calc(360ms + var(--column, 0) * 60ms + var(--row, 0) * 30ms);
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 0.75rem;
+      scale: 0.98;
+      filter: blur(4px);
+    }
+  }
+}
+
 @layer base {
   *,
   ::after,

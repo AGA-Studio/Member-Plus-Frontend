@@ -29,14 +29,14 @@ export default async function UsersPage() {
 
   return (
     <>
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
         <PageHeader
           title={t("title")}
           subtitle={t("subtitle", { count: users.length })}
           actions={<NewUserButton />}
         />
       </Reveal>
-      <Reveal index={1}>
+      <Reveal variant="entrance" index={2}>
         <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0 max-sm:shadow-none">
           <table className="hidden w-full lg:table">
             <thead className="bg-surface-muted text-left text-sm text-muted">
@@ -48,7 +48,7 @@ export default async function UsersPage() {
                 <th scope="col" className="px-6 py-3"><span className="sr-only">{t("columns.actions")}</span></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="table-reveal">
               {users.map((user) => {
                 const isSelf = user.id === session.id;
 
@@ -84,7 +84,7 @@ export default async function UsersPage() {
             </tbody>
           </table>
 
-          <ul className="lg:hidden">
+          <ul className="row-reveal lg:hidden">
             {users.map((user) => {
               const isSelf = user.id === session.id;
 

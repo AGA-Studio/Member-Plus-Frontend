@@ -33,7 +33,7 @@ import {
   formatPositiveMoney,
   formatSignedPoints,
 } from "@/lib/format";
-import { revealClasses } from "@/lib/motion";
+import { entranceClasses } from "@/lib/motion";
 import { requireUser } from "@/lib/session";
 
 export const instant = false;
@@ -153,7 +153,7 @@ export default async function CustomerPage({
       photoUrl={member.photoUrl}
       cancelled={isCancelled}
     >
-      <Reveal>
+      <Reveal variant="entrance" index={1}>
         <Link
           href="/clientes"
           className="flex w-fit items-center gap-1 rounded-sm text-base text-muted transition-colors duration-150 ease-out hover:text-foreground"
@@ -163,7 +163,7 @@ export default async function CustomerPage({
         </Link>
       </Reveal>
 
-      <Reveal index={1} className="flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
+      <Reveal variant="entrance" index={2} className="flex flex-col gap-4 2xl:flex-row 2xl:items-center 2xl:justify-between">
         <div className="flex min-w-0 items-center gap-4">
           <Avatar name={member.fullName} photoUrl={member.photoUrl} className="size-16 text-base" />
           <div className="flex min-w-0 flex-col gap-1">
@@ -195,7 +195,7 @@ export default async function CustomerPage({
       {member.status === "expired" ? <Alert tone="warning">{t("expiredNotice")}</Alert> : null}
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,24rem)_1fr]">
-        <div className={cx(revealClasses(2), "flex flex-col gap-6")}>
+        <div className={cx(entranceClasses(3), "flex flex-col gap-6")}>
           <MembershipCard
             tier={member.tier}
             tierLabel={member.tierName}
@@ -213,7 +213,7 @@ export default async function CustomerPage({
           <div className="hidden lg:block">{dataList}</div>
         </div>
 
-        <div className={cx(revealClasses(3), "flex min-w-0 flex-col gap-6")}>
+        <div className={cx(entranceClasses(4), "flex min-w-0 flex-col gap-6")}>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
             {metrics.map(({ icon: Icon, label, value, hint, mobile }) => (
               <div
@@ -266,7 +266,7 @@ export default async function CustomerPage({
                         <th scope="col" className="px-5 py-3 text-right font-medium">{t("payments.amount")}</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="table-reveal">
                       {payments.items.map((payment) => (
                         <tr key={payment.id} className="border-t border-border">
                           <td className="px-5 py-3">
@@ -285,7 +285,7 @@ export default async function CustomerPage({
                       ))}
                     </tbody>
                   </table>
-                  <ul className="sm:hidden">
+                  <ul className="row-reveal sm:hidden">
                     {payments.items.map((payment) => (
                       <li key={payment.id} className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 first:border-t-0">
                         <span className="flex flex-col">
@@ -349,7 +349,7 @@ export default async function CustomerPage({
                         )}
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="table-reveal">
                       {purchases.items.map((purchase) => {
                         const used = purchase.breakdown.cashbackAppliedCents > 0;
 
@@ -376,7 +376,7 @@ export default async function CustomerPage({
                       })}
                     </tbody>
                   </table>
-                  <ul className="sm:hidden">
+                  <ul className="row-reveal sm:hidden">
                     {purchases.items.map((purchase) => (
                       <li key={purchase.id} className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 first:border-t-0">
                         <span className="flex flex-col">

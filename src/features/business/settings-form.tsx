@@ -6,7 +6,7 @@ import { useActionState, useRef } from "react";
 import { Button, buttonStyles } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
-import { revealClasses } from "@/lib/motion";
+import { entranceClasses } from "@/lib/motion";
 import { useGuardedAction } from "@/lib/use-action-guard";
 import { useNotifyOnce } from "@/lib/use-notify-once";
 import { cx } from "@/lib/cx";
@@ -40,7 +40,7 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
     <form ref={formRef} action={formAction} noValidate className="flex flex-col gap-6">
       <div className="grid gap-6 lg:grid-cols-5 lg:items-start">
         <div className="flex flex-col gap-6 lg:col-span-3">
-          <section className={cx(cardClasses, revealClasses(1))}>
+          <section className={cx(cardClasses, entranceClasses(2))}>
             <h2 className="text-subheading text-foreground">{t("business.title")}</h2>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
@@ -64,7 +64,7 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
             </div>
           </section>
 
-          <section className={cx(cardClasses, revealClasses(2), "sm:flex-row sm:items-center sm:justify-between")}>
+          <section className={cx(cardClasses, entranceClasses(3), "sm:flex-row sm:items-center sm:justify-between")}>
             <div className="flex flex-col gap-1">
               <h2 className="text-subheading text-foreground">{t("other.title")}</h2>
               <p className="text-sm text-muted">{t("other.description")}</p>
@@ -74,7 +74,7 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
             </Link>
           </section>
 
-          <section className={cx(cardClasses, revealClasses(3), "sm:flex-row sm:items-center sm:justify-between")}>
+          <section className={cx(cardClasses, entranceClasses(4), "sm:flex-row sm:items-center sm:justify-between")}>
             <div className="flex flex-col gap-1">
               <h2 className="text-subheading text-foreground">{t("users.title")}</h2>
               <p className="text-sm text-muted">{t("users.description")}</p>
@@ -85,7 +85,7 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
           </section>
         </div>
 
-        <section className={cx(cardClasses, revealClasses(4), "lg:col-span-2")}>
+        <section className={cx(cardClasses, entranceClasses(5), "lg:col-span-2")}>
           <div className="flex flex-col gap-1">
             <h2 className="text-subheading text-foreground">{t("color.title")}</h2>
             <p className="text-sm text-muted">{t("color.description")}</p>
@@ -103,7 +103,7 @@ export function SettingsForm({ initialValues, businessInitials }: SettingsFormPr
       <div
         className={cx(
           "sticky bottom-0 z-10 flex items-center justify-between gap-4 rounded-lg border border-border bg-surface/95 p-4 shadow-md backdrop-blur",
-          revealClasses(5),
+          entranceClasses(6),
         )}
       >
         <p className="hidden text-sm text-muted sm:block">{t("footerHint")}</p>
