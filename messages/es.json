@@ -241,12 +241,6 @@
       "metaTitle": "Panel · Member+",
       "title": "Panel",
       "subtitle": "Así va {business} en los últimos 30 días.",
-      "collected": {
-        "label": "Cobrado en los últimos 30 días",
-        "purchases": "{count, plural, =0 {Sin compras todavía} one {# compra} other {# compras}}",
-        "discounts": "Descuentos otorgados",
-        "cashbackUsed": "Cashback usado"
-      },
       "memberships": {
         "title": "Membresías",
         "total": "{count, plural, one {# cliente en total} other {# clientes en total}}",
@@ -267,6 +261,76 @@
         "validUntil": "Vence el {date}",
         "empty": "Ninguna membresía vence pronto.",
         "viewAll": "Ver todas"
+      },
+      "kpi": {
+        "revenue": {
+          "label": "Cobrado"
+        },
+        "purchases": {
+          "label": "Compras",
+          "count": "{count, plural, =0 {Sin compras todavía} one {# compra} other {# compras}}"
+        },
+        "ticket": {
+          "label": "Ticket promedio",
+          "hint": "Por compra"
+        },
+        "customers": {
+          "label": "Clientes activos",
+          "newCount": "{count, plural, =0 {Sin altas nuevas} one {# alta nueva} other {# altas nuevas}}",
+          "expiring": "{count, plural, =0 {Ninguna por vencer} one {# por vencer} other {# por vencer}}"
+        },
+        "period": "Últimos 30 días",
+        "vsPrevious": "Frente a los 30 días anteriores"
+      },
+      "chart": {
+        "title": "Ventas",
+        "subtitle": "Lo cobrado por día",
+        "total": "Cobrado en el periodo",
+        "purchases": "{count, plural, =0 {Sin compras} one {# compra} other {# compras}}",
+        "tooltipPurchases": "{count, plural, =0 {Sin compras} one {# compra} other {# compras}}",
+        "ranges": {
+          "7": "7 días",
+          "30": "30 días",
+          "90": "90 días"
+        },
+        "rangeGroup": "Periodo de la gráfica",
+        "chart": "Gráfica de ventas por día",
+        "empty": "Aún no hay ventas en este periodo.",
+        "partial": "Se muestran las últimas {count} compras."
+      },
+      "levels": {
+        "title": "Clientes por nivel",
+        "subtitle": "Cómo se reparte tu cartera",
+        "centerLabel": "{count, plural, one {cliente} other {clientes}}",
+        "chartLabel": "Distribución de clientes por nivel",
+        "customers": "{count, plural, one {# cliente} other {# clientes}}",
+        "empty": "Todavía no hay clientes con membresía."
+      },
+      "status": {
+        "title": "Estado de las membresías",
+        "chartLabel": "Distribución de las membresías por estado"
+      },
+      "weekday": {
+        "title": "Ventas por día de la semana",
+        "subtitle": "Últimos 90 días",
+        "best": "Tu mejor día es el {day}.",
+        "chartLabel": "Ventas cobradas por día de la semana",
+        "empty": "Aún no hay ventas para comparar."
+      },
+      "benefits": {
+        "title": "Beneficios otorgados",
+        "subtitle": "Últimos 30 días",
+        "gross": "Ventas antes de beneficios",
+        "discounts": "Descuentos por nivel",
+        "cashback": "Cashback usado",
+        "share": "{percent}% de las ventas"
+      },
+      "top": {
+        "title": "Mejores clientes",
+        "subtitle": "Por lo cobrado en 90 días",
+        "purchases": "{count, plural, one {# compra} other {# compras}}",
+        "empty": "Aún no hay compras para mostrar.",
+        "viewAll": "Ver clientes"
       }
     },
     "settings": {

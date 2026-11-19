@@ -35,3 +35,22 @@ export function entranceClasses(index = 0): string {
 
   return `${entranceBase} ${delay}`;
 }
+
+const viewBase = "transition-[opacity,translate,scale,filter] duration-500 ease-out";
+
+const viewHidden = "translate-y-3 scale-98 opacity-0 blur-xs";
+
+const viewDelays = [
+  "sm:delay-0",
+  "sm:delay-80",
+  "sm:delay-160",
+  "sm:delay-240",
+  "sm:delay-320",
+  "sm:delay-400",
+] as const;
+
+export function viewClasses(index: number, visible: boolean): string {
+  const delay = viewDelays[Math.min(index, viewDelays.length - 1)];
+
+  return `${viewBase} ${delay}${visible ? "" : ` ${viewHidden}`}`;
+}

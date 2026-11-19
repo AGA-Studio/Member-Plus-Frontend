@@ -39,6 +39,10 @@
   --color-tier-gold-foreground: #5b3d02;
   --color-tier-onyx-foreground: #eef2f8;
   --color-tier-onyx-edge: #01befe;
+  --color-tier-bronze-solid: #cd8a52;
+  --color-tier-silver-solid: #9aa6b8;
+  --color-tier-gold-solid: #e0ae3a;
+  --color-tier-onyx-solid: #01befe;
 
   --background-image-brand: linear-gradient(135deg, #01befe, #0062f2 55%, #012874);
   --background-image-tier-bronze: linear-gradient(135deg, #f3d9c3, #cd8a52 55%, #8c5427);
@@ -330,6 +334,119 @@
     @starting-style {
       translate: -2rem 0;
     }
+  }
+
+  .chart-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 900ms var(--ease-out) 200ms;
+
+    @starting-style {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  .chart-fade {
+    transition: opacity 700ms var(--ease-out) 450ms;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  .chart-pop {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    transition: opacity 600ms var(--ease-out) 200ms, scale 600ms var(--ease-out) 200ms;
+
+    @starting-style {
+      opacity: 0;
+      scale: 0.9;
+    }
+  }
+
+  .chart-bars > * {
+    --bar: 0;
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transition: scale 650ms var(--ease-out);
+    transition-delay: calc(300ms + var(--bar) * 60ms);
+
+    @starting-style {
+      scale: 1 0;
+    }
+  }
+  .chart-bars > :nth-child(2) {
+    --bar: 1;
+  }
+  .chart-bars > :nth-child(3) {
+    --bar: 2;
+  }
+  .chart-bars > :nth-child(4) {
+    --bar: 3;
+  }
+  .chart-bars > :nth-child(5) {
+    --bar: 4;
+  }
+  .chart-bars > :nth-child(6) {
+    --bar: 5;
+  }
+  .chart-bars > :nth-child(7) {
+    --bar: 6;
+  }
+  .chart-bars > :nth-child(8) {
+    --bar: 7;
+  }
+  .chart-bars > :nth-child(9) {
+    --bar: 8;
+  }
+
+  .chart-spread > * {
+    --bar: 0;
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+    transition: scale 700ms var(--ease-out);
+    transition-delay: calc(300ms + var(--bar) * 80ms);
+
+    @starting-style {
+      scale: 0 1;
+    }
+  }
+  .chart-spread > :nth-child(2) {
+    --bar: 1;
+  }
+  .chart-spread > :nth-child(3) {
+    --bar: 2;
+  }
+  .chart-spread > :nth-child(4) {
+    --bar: 3;
+  }
+  .chart-spread > :nth-child(5) {
+    --bar: 4;
+  }
+  .chart-spread > :nth-child(6) {
+    --bar: 5;
+  }
+
+  [data-inview="false"] .chart-draw {
+    stroke-dashoffset: 1;
+  }
+
+  [data-inview="false"] .chart-fade {
+    opacity: 0;
+  }
+
+  [data-inview="false"] .chart-pop {
+    opacity: 0;
+    scale: 0.9;
+  }
+
+  [data-inview="false"] .chart-bars > * {
+    scale: 1 0;
+  }
+
+  [data-inview="false"] .chart-spread > * {
+    scale: 0 1;
   }
 }
 

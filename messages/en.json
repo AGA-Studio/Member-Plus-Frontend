@@ -241,12 +241,6 @@
       "metaTitle": "Dashboard · Member+",
       "title": "Dashboard",
       "subtitle": "How {business} is doing in the last 30 days.",
-      "collected": {
-        "label": "Collected in the last 30 days",
-        "purchases": "{count, plural, =0 {No purchases yet} one {# purchase} other {# purchases}}",
-        "discounts": "Discounts given",
-        "cashbackUsed": "Cashback used"
-      },
       "memberships": {
         "title": "Memberships",
         "total": "{count, plural, one {# customer in total} other {# customers in total}}",
@@ -267,6 +261,76 @@
         "validUntil": "Expires on {date}",
         "empty": "No membership expires soon.",
         "viewAll": "View all"
+      },
+      "kpi": {
+        "revenue": {
+          "label": "Collected"
+        },
+        "purchases": {
+          "label": "Purchases",
+          "count": "{count, plural, =0 {No purchases yet} one {# purchase} other {# purchases}}"
+        },
+        "ticket": {
+          "label": "Average ticket",
+          "hint": "Per purchase"
+        },
+        "customers": {
+          "label": "Active customers",
+          "newCount": "{count, plural, =0 {No new signups} one {# new signup} other {# new signups}}",
+          "expiring": "{count, plural, =0 {None expiring soon} one {# expiring soon} other {# expiring soon}}"
+        },
+        "period": "Last 30 days",
+        "vsPrevious": "Compared with the previous 30 days"
+      },
+      "chart": {
+        "title": "Sales",
+        "subtitle": "What you collected each day",
+        "total": "Collected in the period",
+        "purchases": "{count, plural, =0 {No purchases} one {# purchase} other {# purchases}}",
+        "tooltipPurchases": "{count, plural, =0 {No purchases} one {# purchase} other {# purchases}}",
+        "ranges": {
+          "7": "7 days",
+          "30": "30 days",
+          "90": "90 days"
+        },
+        "rangeGroup": "Chart period",
+        "chart": "Sales per day chart",
+        "empty": "There are no sales in this period yet.",
+        "partial": "Showing the latest {count} purchases."
+      },
+      "levels": {
+        "title": "Customers by level",
+        "subtitle": "How your customer base is split",
+        "centerLabel": "{count, plural, one {customer} other {customers}}",
+        "chartLabel": "Distribution of customers by level",
+        "customers": "{count, plural, one {# customer} other {# customers}}",
+        "empty": "There are no customers with a membership yet."
+      },
+      "status": {
+        "title": "Membership status",
+        "chartLabel": "Distribution of memberships by status"
+      },
+      "weekday": {
+        "title": "Sales by day of the week",
+        "subtitle": "Last 90 days",
+        "best": "Your best day is {day}.",
+        "chartLabel": "Collected sales by day of the week",
+        "empty": "There are no sales to compare yet."
+      },
+      "benefits": {
+        "title": "Benefits granted",
+        "subtitle": "Last 30 days",
+        "gross": "Sales before benefits",
+        "discounts": "Level discounts",
+        "cashback": "Cashback used",
+        "share": "{percent}% of sales"
+      },
+      "top": {
+        "title": "Top customers",
+        "subtitle": "By amount collected in 90 days",
+        "purchases": "{count, plural, one {# purchase} other {# purchases}}",
+        "empty": "There are no purchases to show yet.",
+        "viewAll": "View customers"
       }
     },
     "settings": {
