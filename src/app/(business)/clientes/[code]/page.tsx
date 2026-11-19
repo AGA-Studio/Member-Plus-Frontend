@@ -247,6 +247,7 @@ export default async function CustomerPage({
           {tab === "data" ? (
             dataList
           ) : tab === "payments" && payments ? (
+            <>
             <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
               {payments.items.length === 0 ? (
                 <EmptyState
@@ -300,8 +301,12 @@ export default async function CustomerPage({
                       </li>
                     ))}
                   </ul>
-                  <div className="border-t border-border">
-                    <Pagination
+                </>
+              )}
+            </section>
+            {payments.items.length > 0 ? (
+              <Pagination
+                  className="mt-4"
                       pathname={basePath}
                       params={{ tab: "payments" }}
                       page={payments.page}
@@ -312,11 +317,10 @@ export default async function CustomerPage({
                         total: payments.total,
                       })}
                     />
-                  </div>
-                </>
-              )}
-            </section>
+            ) : null}
+            </>
           ) : (
+            <>
             <section className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
               {purchases.items.length === 0 ? (
                 <EmptyState
@@ -390,18 +394,20 @@ export default async function CustomerPage({
                       </li>
                     ))}
                   </ul>
-                  <div className="border-t border-border">
-                    <Pagination
+                </>
+              )}
+            </section>
+            {purchases.items.length > 0 ? (
+              <Pagination
+                  className="mt-4"
                       pathname={basePath}
                       params={{ tab: tab === "purchases" ? undefined : tab }}
                       page={purchases.page}
                       pageCount={purchases.pageCount}
                       summary={t("purchases.range", { from, to, total: purchases.total })}
                     />
-                  </div>
-                </>
-              )}
-            </section>
+            ) : null}
+            </>
           )}
 
           {isCancelled ? null : <CancelMembershipButton className="sm:hidden" />}

@@ -179,7 +179,6 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
                   })}
                 </tbody>
               </table>
-              <div className="border-t border-border">{pagination}</div>
             </section>
 
             <div className="flex flex-col gap-4 lg:hidden">
@@ -205,8 +204,8 @@ export default async function MovementsPage({ searchParams }: PageProps<"/movimi
                   </ul>
                 </section>
               ))}
-              <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">{pagination}</div>
             </div>
+            {pagination}
           </>
         )}
       </Reveal>

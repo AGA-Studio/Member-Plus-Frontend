@@ -309,6 +309,28 @@
       filter: blur(4px);
     }
   }
+
+  html[data-page-direction="next"] .table-reveal > tr > td,
+  html[data-page-direction="next"] .row-reveal > li,
+  html[data-page-direction="prev"] .table-reveal > tr > td,
+  html[data-page-direction="prev"] .row-reveal > li {
+    transition-duration: 350ms;
+    transition-delay: calc(var(--column, 0) * 40ms + var(--row, 0) * 20ms);
+  }
+
+  html[data-page-direction="next"] .table-reveal > tr > td,
+  html[data-page-direction="next"] .row-reveal > li {
+    @starting-style {
+      translate: 2rem 0;
+    }
+  }
+
+  html[data-page-direction="prev"] .table-reveal > tr > td,
+  html[data-page-direction="prev"] .row-reveal > li {
+    @starting-style {
+      translate: -2rem 0;
+    }
+  }
 }
 
 @layer base {
