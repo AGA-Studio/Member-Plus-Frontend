@@ -17,6 +17,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { cx } from "@/lib/cx";
+import { staggerClasses } from "@/lib/motion";
 import { formatMoney } from "@/lib/format";
 import {
   flattenResults,
@@ -24,6 +25,7 @@ import {
   searchEntries,
   searchGroups,
   tokenize,
+  type Equivalent,
   type SearchEntry,
   type SearchGroup,
   type SearchResult,
@@ -31,6 +33,7 @@ import {
 } from "@/lib/search";
 import { businessNavItems } from "./nav-items";
 import { buildSearchEntries, type SearchLabels } from "./search-index";
+import type { SearchLocaleLabels } from "./search-locales";
 import { loadSearchSourceAction, type SearchSource } from "./search-actions";
 
 type LoadState = "idle" | "loading" | "ready" | "error";
@@ -73,10 +76,10 @@ function iconFor(entry: SearchEntry): LucideIcon {
   return groupIcons[entry.group];
 }
 
-function Highlight({ text, tokens }: { text: string; tokens: string[] }) {
+function Highlight({ text, tokens, equivalents }: { text: string; tokens: string[]; equivalents?: Equivalent[] }) {
   return (
     <>
-      {highlightParts(text, tokens).map((part, index) =>
+      {highlightParts(text, tokens, equivalents).map((part, index) =>
         part.match ? (
           <strong key={index} className="font-bold text-foreground">
             {part.text}
@@ -89,11 +92,13 @@ function Highlight({ text, tokens }: { text: string; tokens: string[] }) {
   );
 }
 
-export function GlobalSearch() {
+type GlobalSearchProps = {
+  locales: SearchLocaleLabels[];
+  localeIndex: number;
+};
+
+export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
   const t = useTranslations("business.topbar.search");
-  const nav = useTranslations("business.nav");
-  const statuses = useTranslations("memberStatus");
-  const roles = useTranslations("business.users.roles");
   const movements = useTranslations("business.movements");
   const format = useFormatter();
   const router = useRouter();
@@ -107,19 +112,15 @@ export function GlobalSearch() {
   const [loadState, setLoadState] = useState<LoadState>(cachedSource ? "ready" : "idle");
   const [results, setResults] = useState<SearchResults>({});
   const [searching, setSearching] = useState(false);
+  const [settledQuery, setSettledQuery] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const labels = useMemo<SearchLabels>(
     () => ({
-      pages: businessNavItems.map((item) => ({ href: item.href, label: nav(item.key) })),
+      localeIndex,
+      locales,
+      pages: businessNavItems.map((item) => ({ href: item.href, key: item.key })),
       pageHint: t("page"),
-      status: {
-        active: statuses("active"),
-        expiring: statuses("expiring"),
-        expired: statuses("expired"),
-        cancelled: statuses("cancelled"),
-      },
-      roles: { admin: roles("admin"), employee: roles("employee") },
       noConcept: movements("noConcept"),
       validUntil: (date) =>
         t("validUntil", { date: format.dateTime(new Date(date), { day: "numeric", month: "short", year: "numeric" }) }),
@@ -128,7 +129,7 @@ export function GlobalSearch() {
       date: (iso) => format.dateTime(new Date(iso), { day: "numeric", month: "short" }),
       inactive: t("inactive"),
     }),
-    [format, movements, nav, roles, statuses, t],
+    [format, localeIndex, locales, movements, t],
   );
 
   const entries = useMemo(() => buildSearchEntries(source, labels), [source, labels]);
@@ -179,6 +180,7 @@ export function GlobalSearch() {
       const found = await searchEntries(entries, query, { signal: controller.signal });
       if (!found) return;
       setResults(found);
+      setSettledQuery(query);
       setActiveIndex(0);
       setSearching(false);
     }, debounceMilliseconds);
@@ -214,6 +216,7 @@ export function GlobalSearch() {
   function clear() {
     setQuery("");
     setResults({});
+    setSettledQuery(null);
     setSearching(false);
     inputRef.current?.focus();
   }
@@ -222,6 +225,7 @@ export function GlobalSearch() {
     closePanel();
     setQuery("");
     setResults({});
+    setSettledQuery(null);
     inputRef.current?.blur();
     router.push(href);
   }
@@ -257,7 +261,7 @@ export function GlobalSearch() {
   }
 
   const activeId = flat[activeIndex] ? `${listId}-${flat[activeIndex].id}` : undefined;
-  const showResults = hasQuery && loadState === "ready" && !searching;
+  const showResults = hasQuery && loadState === "ready" && settledQuery !== null;
   const noResults = showResults && flat.length === 0;
   const busy = loadState === "loading" || (hasQuery && searching);
 
@@ -286,15 +290,17 @@ export function GlobalSearch() {
           active ? "bg-surface-muted" : "bg-transparent",
         )}
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary-text">
-          <Icon aria-hidden strokeWidth={1.75} className="size-5" />
-        </span>
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-base text-foreground">
-            <Highlight text={result.title} tokens={activeTokens} />
+        <span className={cx("flex min-w-0 flex-1 items-center gap-3", staggerClasses(position))}>
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary-text">
+            <Icon aria-hidden strokeWidth={1.75} className="size-5" />
           </span>
-          <span className="truncate text-sm text-muted">
-            <Highlight text={result.subtitle} tokens={activeTokens} />
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate text-base text-foreground">
+              <Highlight text={result.title} tokens={activeTokens} equivalents={result.equivalents} />
+            </span>
+            <span className="truncate text-sm text-muted">
+              <Highlight text={result.subtitle} tokens={activeTokens} equivalents={result.equivalents} />
+            </span>
           </span>
         </span>
       </Link>
@@ -388,7 +394,7 @@ export function GlobalSearch() {
 
             {loadState === "ready" && !hasQuery ? (
               <div className="flex flex-col gap-1">
-                <p className="px-3 pb-1 pt-2 text-xs font-medium text-muted">{t("suggestions")}</p>
+                <p className={cx("px-3 pb-1 pt-2 text-xs font-medium text-muted", staggerClasses(0))}>{t("suggestions")}</p>
                 {suggestions.map((result) => renderRow(result, false))}
               </div>
             ) : null}
@@ -400,7 +406,9 @@ export function GlobalSearch() {
 
                   return (
                     <div key={group} role="group" aria-label={t(`groups.${group}`)} className="flex flex-col gap-1 pb-2">
-                      <p className="px-3 pb-1 pt-2 text-xs font-medium text-muted">{t(`groups.${group}`)}</p>
+                      <p className={cx("px-3 pb-1 pt-2 text-xs font-medium text-muted", staggerClasses(positions.get(items[0].id) ?? 0))}>
+                        {t(`groups.${group}`)}
+                      </p>
                       {items.map((result) => renderRow(result, true))}
                     </div>
                   );

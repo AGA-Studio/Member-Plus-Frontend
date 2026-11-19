@@ -2,6 +2,8 @@ export const searchGroups = ["pages", "customers", "memberships", "users", "leve
 
 export type SearchGroup = (typeof searchGroups)[number];
 
+export type Equivalent = { shown: string; others: string[] };
+
 export type SearchEntry = {
   id: string;
   group: SearchGroup;
@@ -9,6 +11,7 @@ export type SearchEntry = {
   subtitle: string;
   href: string;
   fields: string[];
+  equivalents?: Equivalent[];
 };
 
 export type SearchResult = SearchEntry & { score: number };
@@ -35,20 +38,29 @@ export function tokenize(query: string): string[] {
   return [...new Set(fold(query).split(/\s+/).filter(Boolean))];
 }
 
-export function findRanges(text: string, tokens: string[]): Array<[number, number]> {
+function collectRanges(folded: string, needle: string, ranges: Array<[number, number]>) {
+  if (needle.length === 0) return;
+
+  let from = 0;
+  for (;;) {
+    const index = folded.indexOf(needle, from);
+    if (index === -1) break;
+    ranges.push([index, index + needle.length]);
+    from = index + needle.length;
+  }
+}
+
+export function findRanges(text: string, tokens: string[], equivalents: Equivalent[] = []): Array<[number, number]> {
   if (tokens.length === 0) return [];
 
   const folded = fold(text);
   const ranges: Array<[number, number]> = [];
 
-  for (const token of tokens) {
-    let from = 0;
-    for (;;) {
-      const index = folded.indexOf(token, from);
-      if (index === -1) break;
-      ranges.push([index, index + token.length]);
-      from = index + token.length;
-    }
+  for (const token of tokens) collectRanges(folded, token, ranges);
+
+  for (const equivalent of equivalents) {
+    const matchesOther = tokens.some((token) => equivalent.others.some((other) => fold(other).includes(token)));
+    if (matchesOther) collectRanges(folded, fold(equivalent.shown), ranges);
   }
 
   ranges.sort((first, second) => first[0] - second[0]);
@@ -63,8 +75,8 @@ export function findRanges(text: string, tokens: string[]): Array<[number, numbe
   return merged;
 }
 
-export function highlightParts(text: string, tokens: string[]): HighlightPart[] {
-  const ranges = findRanges(text, tokens);
+export function highlightParts(text: string, tokens: string[], equivalents: Equivalent[] = []): HighlightPart[] {
+  const ranges = findRanges(text, tokens, equivalents);
   if (ranges.length === 0) return [{ text, match: false }];
 
   const parts: HighlightPart[] = [];

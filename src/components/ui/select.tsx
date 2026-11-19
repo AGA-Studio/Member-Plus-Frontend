@@ -11,6 +11,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { cx } from "@/lib/cx";
+import { staggerClasses } from "@/lib/motion";
 
 export type SelectOption = { value: string; label: string };
 
@@ -268,13 +269,15 @@ export function Select({
               onPointerEnter={() => setActiveIndex(index)}
               onClick={() => choose(index)}
               className={cx(
-                "flex h-11 cursor-pointer items-center justify-between gap-2 rounded-sm px-3 text-base transition-colors duration-100 ease-out",
+                "flex h-11 cursor-pointer items-center rounded-sm px-3 text-base transition-colors duration-100 ease-out",
                 index === activeIndex ? "bg-surface-muted" : "bg-transparent",
                 isSelected ? "font-medium text-primary-text" : "text-foreground",
               )}
             >
-              <span className="truncate">{option.label}</span>
-              {isSelected ? <Check aria-hidden strokeWidth={2} className="size-4 shrink-0" /> : null}
+              <span className={cx("flex min-w-0 flex-1 items-center justify-between gap-2", staggerClasses(index))}>
+                <span className="truncate">{option.label}</span>
+                {isSelected ? <Check aria-hidden strokeWidth={2} className="size-4 shrink-0" /> : null}
+              </span>
             </div>
           );
         })}

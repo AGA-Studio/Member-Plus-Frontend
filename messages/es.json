@@ -807,6 +807,15 @@
           "users": "Usuarios",
           "levels": "Niveles",
           "movements": "Movimientos"
+        },
+        "keywords": {
+          "dashboard": "inicio resumen ventas kpi estadisticas graficas",
+          "customers": "clientes miembros personas contactos",
+          "memberships": "membresias tarjetas qr vigencia",
+          "levels": "niveles beneficios descuento cashback precios",
+          "movements": "movimientos compras ventas transacciones cobros",
+          "users": "usuarios empleados cajeros administradores equipo",
+          "settings": "configuracion ajustes logo color negocio vigencia"
         }
       },
       "account": {

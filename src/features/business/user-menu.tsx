@@ -10,6 +10,7 @@ import { ProfilePhotoDialog } from "@/features/auth/profile-button";
 import { LanguageDialog } from "@/features/i18n/language-button";
 import { useTheme } from "@/features/theme/use-theme";
 import { cx } from "@/lib/cx";
+import { staggerClasses } from "@/lib/motion";
 import type { UserRole } from "@/lib/domain";
 import type { Theme } from "@/lib/theme";
 
@@ -110,7 +111,7 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
           "transition-[opacity,scale,display,overlay] duration-150 ease-out transition-discrete",
         )}
       >
-        <div className="flex items-center gap-3 border-b border-border px-3 pb-3 pt-2">
+        <div className={cx("flex items-center gap-3 border-b border-border px-3 pb-3 pt-2", staggerClasses(0))}>
           <Avatar name={fullName} photoUrl={photoUrl} className="size-11" />
           <span className="flex min-w-0 flex-col">
             <span className="truncate text-base font-semibold text-foreground">{fullName}</span>
@@ -119,14 +120,19 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
         </div>
 
         <div className="flex flex-col gap-1 pt-2">
-          <button type="button" onClick={() => openDialog("photo")} className={itemClasses}>
-            <Camera aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
-            {t("editPhoto")}
-          </button>
-          <button type="button" onClick={() => openDialog("language")} className={itemClasses}>
-            <Languages aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
-            {t("language")}
-          </button>
+          <div className={staggerClasses(1)}>
+            <button type="button" onClick={() => openDialog("photo")} className={itemClasses}>
+              <Camera aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
+              {t("editPhoto")}
+            </button>
+          </div>
+          <div className={staggerClasses(2)}>
+            <button type="button" onClick={() => openDialog("language")} className={itemClasses}>
+              <Languages aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
+              {t("language")}
+            </button>
+          </div>
+          <div className={staggerClasses(3)}>
           <button type="button" role="switch" aria-checked={dark} onClick={toggleTheme} className={itemClasses}>
             {dark ? (
               <Moon aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
@@ -149,21 +155,26 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
               />
             </span>
           </button>
+          </div>
           {role === "admin" ? (
             <>
-              <Link href="/usuarios" onClick={closeMenu} className={cx(itemClasses, "lg:hidden")}>
-                <UserCog aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
-                {t("users")}
-              </Link>
-              <Link href="/configuracion" onClick={closeMenu} className={cx(itemClasses, "lg:hidden")}>
-                <Settings aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
-                {t("settings")}
-              </Link>
+              <div className={cx(staggerClasses(4), "lg:hidden")}>
+                <Link href="/usuarios" onClick={closeMenu} className={itemClasses}>
+                  <UserCog aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
+                  {t("users")}
+                </Link>
+              </div>
+              <div className={cx(staggerClasses(5), "lg:hidden")}>
+                <Link href="/configuracion" onClick={closeMenu} className={itemClasses}>
+                  <Settings aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
+                  {t("settings")}
+                </Link>
+              </div>
             </>
           ) : null}
         </div>
 
-        <div className="mt-2 border-t border-border pt-2">
+        <div className={cx("mt-2 border-t border-border pt-2", staggerClasses(6))}>
           <button type="button" onClick={() => openDialog("logout")} className={itemClasses}>
             <LogOut aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
             {t("signOut")}
