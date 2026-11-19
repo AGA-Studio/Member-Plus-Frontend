@@ -9,6 +9,8 @@ import { cx } from "@/lib/cx";
 import { locales } from "@/i18n/config";
 import { useLocaleChange } from "@/i18n/use-locale-change";
 
+const dialogCloseMilliseconds = 220;
+
 type LanguageDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -32,8 +34,8 @@ export function LanguageDialog({ open, onClose }: LanguageDialogProps) {
               aria-checked={selected}
               disabled={pending}
               onClick={() => {
-                change(locale);
                 onClose();
+                window.setTimeout(() => change(locale), dialogCloseMilliseconds);
               }}
               className={cx(
                 "flex h-12 items-center justify-between rounded-md border px-4 text-left text-base transition-[border-color,background-color,color,transform] duration-150 ease-out active:scale-97 disabled:opacity-60",

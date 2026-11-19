@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { cookies, headers } from "next/headers";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import { FlashToast } from "@/components/ui/flash-toast";
 import { EntryTransitionProvider } from "@/features/auth/entry-transition";
 import { ToastProvider } from "@/components/ui/toast-provider";
@@ -54,7 +54,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
           <ToastProvider>
-            <EntryTransitionProvider playOnLoad={hasSession && !isReload}>{children}</EntryTransitionProvider>
+            <EntryTransitionProvider playOnLoad={hasSession && !isReload}>
+              <Fragment key={locale}>{children}</Fragment>
+            </EntryTransitionProvider>
             <Suspense fallback={null}>
               <FlashToast />
             </Suspense>
