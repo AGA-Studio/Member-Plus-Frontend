@@ -665,7 +665,8 @@
       "subtitle": "{count, plural, one {# tarjeta} other {# tarjetas}} · Recorta por el borde de cada tarjeta",
       "print": "Imprimir",
       "back": "Clientes",
-      "empty": "No hay tarjetas activas para imprimir."
+      "empty": "No hay tarjetas activas para imprimir.",
+      "cancelled": "Esta membresía está cancelada: su tarjeta ya no es válida y no se puede imprimir."
     },
     "levels": {
       "metaTitle": "Niveles · Member+",
