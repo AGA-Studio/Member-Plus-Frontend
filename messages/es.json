@@ -32,7 +32,11 @@
       }
     },
     "photoField": {
-      "choose": "Tomar o elegir foto",
+      "choose": "Elegir foto",
+      "takePhoto": "Tomar foto",
+      "cameraTitle": "Tomar foto",
+      "cameraShot": "Capturar",
+      "cameraError": "No pudimos abrir la cámara. Revisa el permiso del navegador o usa «Elegir foto».",
       "change": "Cambiar foto",
       "remove": "Descartar",
       "preparing": "Preparando…",

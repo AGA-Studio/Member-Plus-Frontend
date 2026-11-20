@@ -4,6 +4,7 @@ import { Camera } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { CameraCaptureDialog } from "@/components/ui/camera-capture-dialog";
 import { shrinkImage } from "@/lib/shrink-image";
 import { RemoteImage } from "./remote-image";
 import { useSelectedImage } from "@/lib/use-selected-image";
@@ -21,10 +22,12 @@ export function PhotoField({ name, label, optional = false, currentUrl = null, f
   const common = useTranslations("common");
   const labelId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<File | null>(null);
   const { file, previewUrl: preview, select: setFile } = useSelectedImage();
   const [preparing, setPreparing] = useState(false);
   const [invalid, setInvalid] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
 
   const attach = useCallback((next: File | null) => {
     const input = inputRef.current;
@@ -76,6 +79,22 @@ export function PhotoField({ name, label, optional = false, currentUrl = null, f
     setInvalid(false);
   }
 
+  // En pantallas táctiles el evento con `capture` abre la cámara nativa, que
+  // funciona incluso sin HTTPS. En escritorio se pide la webcam con getUserMedia
+  // y, si el navegador no la ofrece (o no es un contexto seguro), se abre el
+  // selector de archivos.
+  function openCamera() {
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const canUseWebcam = !coarsePointer && Boolean(navigator.mediaDevices?.getUserMedia);
+
+    if (!canUseWebcam) {
+      cameraRef.current?.click();
+      return;
+    }
+
+    setCameraOpen(true);
+  }
+
   const emptyPreview = fallback ?? <Camera aria-hidden strokeWidth={1.75} className="size-6" />;
 
   return (
@@ -109,7 +128,20 @@ export function PhotoField({ name, label, optional = false, currentUrl = null, f
             aria-labelledby={labelId}
             onChange={(event) => void handleChange(event.target.files?.[0])}
           />
+          <input
+            ref={cameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="sr-only"
+            tabIndex={-1}
+            aria-labelledby={labelId}
+            onChange={(event) => void handleChange(event.target.files?.[0])}
+          />
           <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" disabled={preparing} onClick={openCamera}>
+              {t("takePhoto")}
+            </Button>
             <Button variant="outline" size="sm" loading={preparing} onClick={() => inputRef.current?.click()}>
               {preparing ? t("preparing") : file || currentUrl ? t("change") : t("choose")}
             </Button>
@@ -124,6 +156,15 @@ export function PhotoField({ name, label, optional = false, currentUrl = null, f
           </span>
         </div>
       </div>
+      {cameraOpen ? (
+        <CameraCaptureDialog
+          onClose={() => setCameraOpen(false)}
+          onCapture={(captured) => {
+            setCameraOpen(false);
+            void handleChange(captured);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
