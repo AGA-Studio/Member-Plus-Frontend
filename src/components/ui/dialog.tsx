@@ -10,17 +10,25 @@ type DialogProps = {
   onClose: () => void;
   title: string;
   children: ReactNode;
-  variant?: "modal" | "drawer";
+  variant?: "modal" | "wide" | "drawer";
 };
 
 const variantClasses = {
   modal:
     "m-auto w-11/12 max-w-md rounded-xl scale-95 open:scale-100 starting:open:scale-95",
+  wide:
+    "m-auto w-11/12 max-w-2xl rounded-xl scale-95 open:scale-100 starting:open:scale-95",
   drawer:
     "mb-0 ml-0 mt-auto w-full max-w-none rounded-t-xl translate-y-8 open:translate-y-0 starting:open:translate-y-8 lg:my-0 lg:ml-auto lg:mr-0 lg:h-dvh lg:max-h-none lg:max-w-md lg:rounded-none lg:translate-y-0 lg:translate-x-8 lg:open:translate-x-0 lg:starting:open:translate-x-8",
 };
 
-export function Dialog({ open, onClose, title, children, variant = "modal" }: DialogProps) {
+export function Dialog({
+  open,
+  onClose,
+  title,
+  children,
+  variant = "modal",
+}: DialogProps) {
   const t = useTranslations("common");
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -41,7 +49,12 @@ export function Dialog({ open, onClose, title, children, variant = "modal" }: Di
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      onClose={onClose}
+      onCancel={(event) => {
+        // Escape: se evita el cierre nativo (que dispararía el evento `close`
+        // y con él onClose) y se delega al padre, que cierra por estado.
+        event.preventDefault();
+        onClose();
+      }}
       onClick={(event) => {
         if (event.target === ref.current) onClose();
       }}
