@@ -25,7 +25,8 @@ export default async function PrintCardsPage({ searchParams }: PageProps<"/impri
   const t = await getTranslations("business.print");
 
   const single = code ? await findMemberByCode(code) : null;
-  const members = code ? (single ? [single] : []) : await listActiveMembers();
+  const cancelled = single?.status === "cancelled" ? single : null;
+  const members = code ? (single && !cancelled ? [single] : []) : await listActiveMembers();
 
   return (
     <main className="min-h-dvh bg-surface-muted px-4 py-8 print:bg-white print:p-0">
@@ -38,13 +39,15 @@ export default async function PrintCardsPage({ searchParams }: PageProps<"/impri
             <ChevronLeft aria-hidden strokeWidth={1.75} className="size-5" />
             {t("back")}
           </Link>
-          <PrintButton label={t("print")} />
+          {cancelled ? null : <PrintButton label={t("print")} />}
         </div>
         <div className="flex flex-col gap-1">
           <h1 className="text-heading text-ink-900">{t("title")}</h1>
-          <p className="text-sm text-ink-500">{t("subtitle", { count: members.length })}</p>
+          {cancelled ? null : <p className="text-sm text-ink-500">{t("subtitle", { count: members.length })}</p>}
         </div>
-        {members.length === 0 ? (
+        {cancelled ? (
+          <p className="text-base text-ink-500">{t("cancelled")}</p>
+        ) : members.length === 0 ? (
           <p className="text-base text-ink-500">{t("empty")}</p>
         ) : (
           <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">

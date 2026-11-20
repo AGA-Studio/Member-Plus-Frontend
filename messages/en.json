@@ -664,7 +664,8 @@
       "subtitle": "{count, plural, one {# card} other {# cards}} · Cut along the edge of each card",
       "print": "Print",
       "back": "Customers",
-      "empty": "There are no active cards to print."
+      "empty": "There are no active cards to print.",
+      "cancelled": "This membership is cancelled: its card is no longer valid and can't be printed."
     },
     "levels": {
       "metaTitle": "Levels · Member+",
