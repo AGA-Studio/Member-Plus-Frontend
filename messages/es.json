@@ -359,11 +359,11 @@
         "defaultHint": "Sin color propio, se usa el azul de Member+.",
         "preview": {
           "title": "Vista previa",
-          "button": "Guardar cambios",
-          "badge": "Membresía activa",
-          "link": "Ver tarjeta",
-          "navItem": "Panel",
-          "secondary": "Cancelar"
+          "button": "Botón principal",
+          "badge": "Etiqueta de ejemplo",
+          "link": "Enlace de ejemplo",
+          "navItem": "Elemento de menú",
+          "secondary": "Botón secundario"
         }
       },
       "other": {
