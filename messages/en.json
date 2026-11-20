@@ -359,11 +359,11 @@
         "defaultHint": "Without a color of its own, the Member+ blue is used.",
         "preview": {
           "title": "Preview",
-          "button": "Save changes",
-          "badge": "Active membership",
-          "link": "View card",
-          "navItem": "Dashboard",
-          "secondary": "Cancel"
+          "button": "Primary button",
+          "badge": "Sample label",
+          "link": "Sample link",
+          "navItem": "Menu item",
+          "secondary": "Secondary button"
         }
       },
       "other": {
