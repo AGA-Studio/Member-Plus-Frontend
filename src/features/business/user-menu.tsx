@@ -33,18 +33,28 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
   const roles = useTranslations("common.role");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const openAtPointerDown = useRef(false);
   const [expanded, setExpanded] = useState(false);
   const [dialog, setDialog] = useState<ActiveDialog>(null);
   const { theme, change } = useTheme(initialTheme);
   const dark = theme === "dark";
+
+  function rememberOpenState() {
+    openAtPointerDown.current = Boolean(menuRef.current?.matches(":popover-open"));
+  }
 
   function toggleMenu() {
     const menu = menuRef.current;
     const trigger = triggerRef.current;
     if (!menu || !trigger) return;
 
-    if (menu.matches(":popover-open")) {
-      menu.hidePopover();
+    // El popover se cierra solo al tocar fuera (light dismiss) antes de que llegue
+    // el click; si estaba abierto al empezar el toque (o sigue abierto), se cierra.
+    const wasOpen = openAtPointerDown.current;
+    openAtPointerDown.current = false;
+
+    if (wasOpen || menu.matches(":popover-open")) {
+      if (menu.matches(":popover-open")) menu.hidePopover();
       return;
     }
 
@@ -79,6 +89,7 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
         ref={triggerRef}
         type="button"
         onClick={toggleMenu}
+        onPointerDown={rememberOpenState}
         aria-haspopup="true"
         aria-expanded={expanded}
         aria-label={t("label")}
