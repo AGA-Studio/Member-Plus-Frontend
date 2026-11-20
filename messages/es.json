@@ -649,6 +649,7 @@
         "level": "Nivel",
         "method": "Método de pago",
         "amount": "Precio (MXN)",
+        "free": "Gratis",
         "submit": "Renovar membresía",
         "renewing": "Renovando…",
         "errors": {

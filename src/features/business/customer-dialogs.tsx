@@ -78,7 +78,8 @@ export function CustomerDialogsProvider({
   const [photoKey, setPhotoKey] = useState(0);
   const [renewOpen, setRenewOpen] = useState(false);
   const currentLevel = levelOptions.find((option) => option.value === String(levelId));
-  const [renewAmount, setRenewAmount] = useState(formatPlainPesos(currentLevel?.priceCents ?? 0));
+  const [renewPriceCents, setRenewPriceCents] = useState(currentLevel?.priceCents ?? 0);
+  const renewAmount = formatPlainPesos(renewPriceCents);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelling, startCancelling] = useTransition();
   const [removingPhoto, startRemovingPhoto] = useTransition();
@@ -240,7 +241,7 @@ export function CustomerDialogsProvider({
             options={levelOptions}
             onValueChange={(selected) => {
               const level = levelOptions.find((option) => option.value === selected);
-              if (level) setRenewAmount(formatPlainPesos(level.priceCents));
+              if (level) setRenewPriceCents(level.priceCents);
             }}
           />
           <div className="grid gap-5 sm:grid-cols-2">
@@ -253,7 +254,7 @@ export function CustomerDialogsProvider({
             <TextField
               label={t("renewDialog.amount")}
               hint={t("renewDialog.amountHint")}
-              value={renewAmount}
+              value={renewPriceCents === 0 ? t("renewDialog.free") : renewAmount}
               readOnly
               tabIndex={-1}
               autoComplete="off"
