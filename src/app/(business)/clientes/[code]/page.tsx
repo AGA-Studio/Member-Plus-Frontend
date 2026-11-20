@@ -184,7 +184,7 @@ export default async function CustomerPage({
         </div>
         <div className="hidden flex-wrap items-center gap-3 sm:flex 2xl:justify-end">
           {isCancelled ? null : <CancelMembershipButton />}
-          {printLink("")}
+          {isCancelled ? null : printLink("")}
           {member.status === "active" ? <DeliverCardButton id={member.id} email={member.email} /> : null}
           {isCancelled ? null : <RenewMembershipButton />}
           <EditCustomerButton />
@@ -205,8 +205,8 @@ export default async function CustomerPage({
             className={member.status === "active" ? undefined : "opacity-50"}
           />
           <div className="grid grid-cols-2 gap-3 sm:hidden">
-            <EditCustomerButton />
-            {printLink("")}
+            <EditCustomerButton className={isCancelled ? "col-span-2" : undefined} />
+            {isCancelled ? null : printLink("")}
             {member.status === "active" ? <DeliverCardButton id={member.id} email={member.email} className="col-span-2" /> : null}
             {isCancelled ? null : <RenewMembershipButton className="col-span-2" />}
           </div>
