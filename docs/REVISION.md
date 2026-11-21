@@ -27,7 +27,7 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Auth | JWT en cookie httpOnly que emite FastAPI | Sin NextAuth, sin tokens en `localStorage` |
 | Negocio | Sale del usuario autenticado | Sin selector de negocio ni subdominios; el cliente nunca manda `business_id` |
 | Identidad | **Sin reconocimiento facial.** La foto del cliente se guarda solo para mostrarse (16 nov 2026) y se borra al cancelar la membresía | El lector y la webcam solo leen el QR; la foto nunca se compara ni se analiza (`PhotoField` en el alta y en «Editar datos») |
-| Hostnames | App en `memberplus.neyzt.org`, API en `api-memberplus.neyzt.org` | `/api/*` reescrito en Next; **guion y no punto** (el SSL de Cloudflare cubre un nivel) |
+| Hostnames | App en `memberplus.neyzt.org`, API en `api-memberplus.neyzt.org` | `/api/*` reescrito en Next; **guion y no punto** (el SSL de Cloudflare cubre un nivel). Desde el 21 nov 2026 el host lo comparte la landing (Astro) en `/` y `/en*`; la app va **noindex** |
 | Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (webhook al tag `latest`) | `output: "standalone"`; Coolify no construye |
 | Servicios de terceros | Cloudflare Turnstile en el login (encendido en producción), Cloudflare R2 para imágenes, Backblaze B2 para respaldos | Widget en `features/auth/turnstile-widget.tsx`; las llaves viven solo en Coolify, nunca en el repo |
 

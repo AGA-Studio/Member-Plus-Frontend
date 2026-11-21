@@ -57,7 +57,7 @@ Una sola vez, en el proyecto `Member+`:
 1. **Recurso → Docker Image** con `ghcr.io/aga-studio/member-plus-frontend:latest`. El tag es móvil a propósito: cada push a `main` lo mueve y el webhook lo despliega.
 2. **Puerto**: `3000`.
 3. **Healthcheck**: `GET /healthz.txt`, código 200.
-4. **Dominio**: `memberplus.neyzt.org`, con TLS de Cloudflare.
+4. **Dominio**: `memberplus.neyzt.org`, con TLS de Cloudflare. **Host compartido desde el 21 nov 2026** con la landing (repo `Member-Plus-Landing`), que se queda con `/`, `/privacidad`, `/terminos` y `/en*`; este contenedor sirve el resto de las rutas y va **noindex**.
 5. **Variables**: las de la sección 5.
 6. **Deploy webhook (obligatorio: es el despliegue automático).** En Coolify → *Keys & Tokens* → *API Tokens*, un token con permiso **`deploy`**; en la app → *Webhooks* → copiar **Deploy Webhook (auth required)**. Después, en este repo:
 
@@ -68,7 +68,7 @@ Una sola vez, en el proyecto `Member+`:
 
    Sin `COOLIFY_WEBHOOK` el paso solo imprime un aviso y el deploy sigue siendo manual; guardar la imagen anterior como `sha-<7>` es el rollback. **`COOLIFY_TOKEN` es opcional**: solo si la URL es la de *auth required*; si ya trae `?api_token=...`, el paso no manda cabecera.
 
-El dominio de la app está en uso desde el 13 nov 2026; el del API (`api-memberplus.neyzt.org`) desde el 12.
+El dominio de la app está en uso desde el 13 nov 2026; el del API (`api-memberplus.neyzt.org`) desde el 12. Desde el 21 nov 2026 el host lo comparte la landing de marketing (Astro, en `Member-Plus-Landing`): el reparto por ruta lo hace Traefik con las labels de esa app.
 
 ## 5. Variables de entorno
 
