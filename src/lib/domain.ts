@@ -132,3 +132,8 @@ export type PlatformBusiness = {
   logoUrl: string | null;
   createdAt: string;
 };
+
+export type PlatformBusinessDetail = PlatformBusiness & {
+  validityMonths: number;
+  usersCount: number;
+};
