@@ -125,7 +125,8 @@ ESP32-S3 + cámara (solo lee el QR) o webcam del navegador
 - **Next es cliente puro**: toda la lógica va en FastAPI. **No crear rutas API ni lógica de negocio en Next.**
 - Sin Supabase: JWT propio y Postgres 18 en Compose.
 - Docker Compose levanta API y BD; el frontend corre aparte en desarrollo.
-- Hosting: Coolify en servidor propio con Cloudflare. **App en `memberplus.neyzt.org`** (aún sin crear) y **API en `api-memberplus.neyzt.org`** (ya sirviendo; guion y no punto, porque el certificado de Cloudflare cubre un solo nivel). El navegador llama `/api/*` y Next lo reescribe al API. **Localhost con Docker de respaldo obligatorio** para la demo.
+- Hosting: Coolify en servidor propio con Cloudflare. **App en `memberplus.neyzt.org`** y **API en `api-memberplus.neyzt.org`** (guion y no punto, porque el certificado de Cloudflare cubre un solo nivel). El navegador llama `/api/*` y Next lo reescribe al API. **Localhost con Docker de respaldo obligatorio** para la demo.
+- **El host `memberplus.neyzt.org` es compartido** (desde el 21 nov 2026): la landing (Astro, repo `Member-Plus-Landing`) atiende `/`, `/privacidad`, `/terminos` y `/en*`; las rutas de la app siguen siendo de este frontend. La app va **noindex** (`X-Robots-Tag: noindex, nofollow` en todas sus rutas): no es contenido público y las reglas de `robots.txt` de la landing ya lo dicen.
 - **El contrato de la API aún no existe** y el esquema de BD tampoco. Sin eso el frontend trabajaría a ciegas: pedir a backend rutas, payloads y errores por módulo antes de integrar.
 
 ## 7. Multi-tenant (regla más importante de la UI)
