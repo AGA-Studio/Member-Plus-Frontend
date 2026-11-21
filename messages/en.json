@@ -886,7 +886,9 @@
     "membershipCreatedPending": "Membership created. The card will be emailed in a moment.",
     "cardEmailRateLimited": "Wait a moment before sending another email.",
     "logoSaved": "Logo saved.",
-    "logoRemoved": "Logo removed."
+    "logoRemoved": "Logo removed.",
+    "businessSuspended": "Business suspended.",
+    "businessReactivated": "Business reactivated."
   },
   "system": {
     "notFound": {
@@ -963,6 +965,7 @@
       "suspended": "Suspended"
     },
     "customersCount": "{count, plural, one {# customer} other {# customers}}",
+    "openBusiness": "Open {name}",
     "range": "{from}–{to} of {total} businesses",
     "empty": {
       "title": "No businesses yet",
@@ -971,6 +974,40 @@
     "noResults": {
       "title": "No businesses match these filters",
       "description": "Try another name or remove the filters."
+    },
+    "detail": {
+      "metaTitle": "Business details · Member+",
+      "back": "Businesses",
+      "privacyHint": "Only counts are shown: the platform cannot see customer or user data.",
+      "suspendedNotice": "This business is suspended: its users cannot sign in and open sessions stop working.",
+      "metrics": {
+        "customers": "Customers",
+        "users": "Users",
+        "validity": "Card validity",
+        "validityValue": "{count, plural, one {# month} other {# months}}",
+        "createdAt": "Joined"
+      },
+      "suspend": {
+        "open": "Suspend business",
+        "title": "Suspend {name}?",
+        "body": "Its users will not be able to sign in and open sessions will stop working. Data is kept and you can reactivate it any time.",
+        "keep": "Cancel",
+        "confirm": "Suspend",
+        "confirming": "Suspending…"
+      },
+      "reactivate": {
+        "open": "Reactivate business",
+        "title": "Reactivate {name}?",
+        "body": "Its users will be able to sign in again and everything will be as it was.",
+        "keep": "Cancel",
+        "confirm": "Reactivate",
+        "confirming": "Reactivating…"
+      },
+      "errors": {
+        "unavailable": "Could not change the business status. Try again.",
+        "notFound": "This business no longer exists.",
+        "trialNotAllowed": "A business cannot go back to the trial status."
+      }
     },
     "header": {
       "label": "Platform",

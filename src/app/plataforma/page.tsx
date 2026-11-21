@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Building2 } from "lucide-react";
+import { Building2, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { getInitials } from "@/components/ui/avatar";
@@ -117,17 +118,25 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                     <th scope="col" className="px-6 py-3 font-medium">{t("columns.business")}</th>
                     <th scope="col" className="px-4 py-3 font-medium">{t("columns.status")}</th>
                     <th scope="col" className="px-4 py-3 text-right font-medium">{t("columns.customers")}</th>
-                    <th scope="col" className="px-6 py-3 text-right font-medium">{t("columns.createdAt")}</th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium">{t("columns.createdAt")}</th>
+                    <th scope="col" aria-hidden className="w-12" />
                   </tr>
                 </thead>
                 <tbody className="table-reveal">
                   {result.items.map((business) => (
-                    <tr key={business.id} className="border-t border-border">
+                    <tr
+                      key={business.id}
+                      className="relative cursor-pointer border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted"
+                    >
                       <td className="px-6 py-3">
-                        <span className="flex items-center gap-3">
+                        <Link
+                          href={`/plataforma/${business.id}`}
+                          aria-label={t("openBusiness", { name: business.name })}
+                          className="flex items-center gap-3 rounded-sm after:absolute after:inset-0"
+                        >
                           <BusinessLogo name={business.name} initials={getInitials(business.name)} logoUrl={business.logoUrl} />
                           <span className="text-base font-medium text-foreground">{business.name}</span>
-                        </span>
+                        </Link>
                       </td>
                       <td className="px-4 py-3">
                         <Badge tone={statusTones[business.status]}>{statusLabels(business.status)}</Badge>
@@ -135,22 +144,29 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                       <td className="px-4 py-3 text-right text-base tabular-nums text-foreground">
                         {format.number(business.customersCount)}
                       </td>
-                      <td className="px-6 py-3 text-right text-base text-muted">{formatDate(business.createdAt)}</td>
+                      <td className="px-4 py-3 text-right text-base text-muted">{formatDate(business.createdAt)}</td>
+                      <td aria-hidden className="pr-6 text-muted"><ChevronRight strokeWidth={1.75} className="size-5" /></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               <ul className="row-reveal sm:hidden">
                 {result.items.map((business) => (
-                  <li key={business.id} className="flex items-center gap-3 border-t border-border px-4 py-3 first:border-t-0">
-                    <BusinessLogo name={business.name} initials={getInitials(business.name)} logoUrl={business.logoUrl} />
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-base font-medium text-foreground">{business.name}</span>
-                      <span className="text-sm text-muted">
-                        {t("customersCount", { count: business.customersCount })}
+                  <li key={business.id} className="border-t border-border first:border-t-0">
+                    <Link
+                      href={`/plataforma/${business.id}`}
+                      className="flex items-center gap-3 px-4 py-3 transition-colors duration-150 ease-out hover:bg-surface-muted"
+                    >
+                      <BusinessLogo name={business.name} initials={getInitials(business.name)} logoUrl={business.logoUrl} />
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="truncate text-base font-medium text-foreground">{business.name}</span>
+                        <span className="text-sm text-muted">
+                          {t("customersCount", { count: business.customersCount })}
+                        </span>
                       </span>
-                    </span>
-                    <Badge tone={statusTones[business.status]}>{statusLabels(business.status)}</Badge>
+                      <Badge tone={statusTones[business.status]}>{statusLabels(business.status)}</Badge>
+                      <ChevronRight aria-hidden strokeWidth={1.75} className="size-5 shrink-0 text-muted" />
+                    </Link>
                   </li>
                 ))}
               </ul>

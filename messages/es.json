@@ -886,7 +886,9 @@
     "membershipCreatedPending": "Membresía creada. La tarjeta se enviará por correo en un momento.",
     "cardEmailRateLimited": "Espera un momento antes de enviar otro correo.",
     "logoSaved": "Logo guardado.",
-    "logoRemoved": "Logo quitado."
+    "logoRemoved": "Logo quitado.",
+    "businessSuspended": "Negocio suspendido.",
+    "businessReactivated": "Negocio reactivado."
   },
   "system": {
     "notFound": {
@@ -963,6 +965,7 @@
       "suspended": "Suspendido"
     },
     "customersCount": "{count, plural, one {# cliente} other {# clientes}}",
+    "openBusiness": "Abrir {name}",
     "range": "{from}–{to} de {total} negocios",
     "empty": {
       "title": "Aún no hay negocios",
@@ -971,6 +974,40 @@
     "noResults": {
       "title": "No hay negocios con estos filtros",
       "description": "Prueba con otro nombre o quita los filtros."
+    },
+    "detail": {
+      "metaTitle": "Detalle del negocio · Member+",
+      "back": "Negocios",
+      "privacyHint": "Solo se muestran conteos: la plataforma no ve datos de clientes ni de usuarios.",
+      "suspendedNotice": "Este negocio está suspendido: sus usuarios no pueden iniciar sesión y las sesiones abiertas dejan de funcionar.",
+      "metrics": {
+        "customers": "Clientes",
+        "users": "Usuarios",
+        "validity": "Vigencia de tarjetas",
+        "validityValue": "{count, plural, one {# mes} other {# meses}}",
+        "createdAt": "Alta"
+      },
+      "suspend": {
+        "open": "Suspender negocio",
+        "title": "¿Suspender {name}?",
+        "body": "Sus usuarios no podrán iniciar sesión y las sesiones abiertas dejarán de funcionar. Los datos se conservan y puedes reactivarlo cuando quieras.",
+        "keep": "Cancelar",
+        "confirm": "Suspender",
+        "confirming": "Suspendiendo…"
+      },
+      "reactivate": {
+        "open": "Reactivar negocio",
+        "title": "¿Reactivar {name}?",
+        "body": "Sus usuarios podrán volver a iniciar sesión y todo seguirá como estaba.",
+        "keep": "Cancelar",
+        "confirm": "Reactivar",
+        "confirming": "Reactivando…"
+      },
+      "errors": {
+        "unavailable": "No se pudo cambiar el estado del negocio. Inténtalo de nuevo.",
+        "notFound": "Este negocio ya no existe.",
+        "trialNotAllowed": "Un negocio no puede volver al estado de prueba."
+      }
     },
     "header": {
       "label": "Plataforma",
