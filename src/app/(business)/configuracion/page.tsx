@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
+import { LogoSection } from "@/features/business/logo-section";
 import { SettingsForm } from "@/features/business/settings-form";
 import { requireSession } from "@/lib/session";
 
@@ -25,6 +26,13 @@ export default async function SettingsPage() {
     <>
       <Reveal variant="entrance" index={1}>
         <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      </Reveal>
+      <Reveal variant="entrance" index={2} className="mb-6">
+        <LogoSection
+          businessName={user.businessName}
+          initials={user.businessInitials}
+          logoUrl={user.businessLogoUrl}
+        />
       </Reveal>
       <SettingsForm
         businessInitials={user.businessInitials}

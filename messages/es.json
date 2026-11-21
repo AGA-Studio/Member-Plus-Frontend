@@ -367,8 +367,8 @@
         }
       },
       "other": {
-        "title": "Precios y logo",
-        "description": "El precio de cada membresía se edita en Niveles. El logo se cambia desde la tarjeta de tu negocio, abajo en el menú lateral.",
+        "title": "Precios",
+        "description": "El precio de cada membresía se edita en Niveles.",
         "levels": "Ir a Niveles"
       },
       "submit": "Guardar cambios",
