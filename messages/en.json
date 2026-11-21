@@ -367,8 +367,8 @@
         }
       },
       "other": {
-        "title": "Prices and logo",
-        "description": "The price of each membership is edited in Levels. The logo is changed from your business card, at the bottom of the side menu.",
+        "title": "Prices",
+        "description": "The price of each membership is edited in Levels.",
         "levels": "Go to Levels"
       },
       "submit": "Save changes",
