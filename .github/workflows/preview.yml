@@ -83,7 +83,7 @@ jobs:
             -X POST -H "Authorization: Bearer $COOLIFY_TOKEN" \
             -H 'Content-Type: application/json' \
             "https://coolify.neyzt.org/api/v1/applications/$COOLIFY_APP/previews" \
-            -d "{\"pull_request_id\":${{ github.event.pull_request.number }},\"pull_request_html_url\":\"${{ github.event.pull_request.html_url }}\",\"git_type\":\"github\",\"docker_tag\":\"pr-${{ github.event.pull_request.number }}\",\"instant_deploy\":true}")
+            -d "{\"pull_request_id\":${{ github.event.pull_request.number }},\"pull_request_html_url\":\"${{ github.event.pull_request.html_url }}\",\"docker_tag\":\"pr-${{ github.event.pull_request.number }}\",\"instant_deploy\":true}")
           echo "Coolify respondió HTTP $code"
           cat /tmp/coolify.out
           [ "$code" -ge 200 ] && [ "$code" -lt 300 ]
