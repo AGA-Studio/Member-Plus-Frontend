@@ -15,6 +15,8 @@ Qué corre en cada PR, por qué y cómo reproducirlo. Guía del despliegue en [D
 9. [Problemas comunes](#9-problemas-comunes)
 10. [Reglas](#10-reglas)
 11. [Revisor automático de PRs](#11-revisor-automático-de-prs)
+12. [Pruebas de interfaz (Playwright)](#12-pruebas-de-interfaz-playwright)
+13. [Cómo leer una corrida](#13-cómo-leer-una-corrida)
 
 ## 1. Por qué
 
@@ -267,4 +269,26 @@ El contenedor del API arranca **antes** de instalar nada y sin esperar: baja la 
 migraciones mientras el job restaura `node_modules` y Chromium, y la espera de `/health` (con su
 `docker exec … scripts.seed`) queda justo antes de lanzar Playwright. El binario de Chromium se cachea con
 el hash del lock, así que solo se descarga cuando cambia `@playwright/test`.
+
+## 13. Cómo leer una corrida
+
+Al abrir el PR no hay que lanzar nada: GitHub Actions arranca solo y el resultado aparece en el propio PR.
+
+- **Dónde se ve.** Al final de la pestaña *Conversation* está la lista de checks con su estado (*Queued*,
+  *In progress*, *Success*, *Failure*); *Details* abre el log del job. La pestaña *Checks* muestra lo mismo
+  con más detalle, y `gh pr checks <n> --watch` lo sigue desde la terminal.
+- **Qué corre en un PR.** `ci.yml` (los seis jobs de la sección 2) y `review.yml` (una sola vez, al abrir o
+  al salir de borrador). `image.yml` **no** corre aquí: solo en push a `main` y en tags `v*`.
+- **Qué desbloquea el merge.** Los cinco required del ruleset: `lint`, `typecheck`, `messages`, `test` y
+  `build`. `e2e` y `review` corren en el PR pero pueden fallar sin bloquear.
+- **La primera corrida es la lenta.** `node_modules` se restaura de `actions/cache` con el hash de
+  `package-lock.json` como llave; si el lock cambió, los jobs caen al `npm ci` completo.
+- **Un push nuevo cancela el anterior** (`concurrency` con `cancel-in-progress`): si ves una corrida
+  cancelada en gris, la que cuenta es la del último commit del PR.
+- **Relanzar sin tocar el código.** *Re-run all jobs* en la página de la corrida, o
+  `gh workflow run ci.yml --ref <rama>`. El revisor tiene su propio disparador con el número de PR como
+  entrada (sección 11).
+- **Leer un rojo.** El log del job nombra el comando que falló; la sección 9 lista los síntomas frecuentes y
+  la 4 cómo reproducirlos en local. Y un job verde no siempre trabajó: si un paso quedó saltado por un `if`,
+  el log lo dice.
 
