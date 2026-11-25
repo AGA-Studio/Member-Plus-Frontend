@@ -296,3 +296,5 @@ Límites por diseño:
 - **PRs desde forks no tienen preview**: no reciben `COOLIFY_TOKEN`.
 - La preview queda fuera de `latest` y del despliegue: un PR no puede romper producción por esta vía.
 
+La URL de la preview se publica **en el propio PR**: un comentario que se crea al abrir y se edita en cada push (marcador `<!-- preview-frontend -->`, como el del revisor); al cerrar, el mismo comentario se marca como eliminada. El paso de comentar corre **después** de que Coolify aceptó la preview, así que una URL publicada siempre apunta a una preview real.
+

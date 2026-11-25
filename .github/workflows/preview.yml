@@ -15,6 +15,7 @@ concurrency:
 permissions:
   contents: read
   packages: write
+  pull-requests: write
 
 env:
   REGISTRY: ghcr.io
@@ -88,6 +89,24 @@ jobs:
           cat /tmp/coolify.out
           [ "$code" -ge 200 ] && [ "$code" -lt 300 ]
 
+      # Un solo comentario por PR (marcador como el del revisor): se crea al
+      # abrir y se edita en cada push; al cerrar se marca como eliminada.
+      - name: Comentar la URL de la preview en el PR
+        if: github.event.action != 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- preview-frontend -->'
+          body=$(printf '%s\n**Preview de este PR:** https://%s-memberplus.neyzt.org\n\nEtiqueta de imagen: pr-%s. Cada push al PR la redespliega; al cerrar el PR la preview se borra.\n' "$marker" "$PR" "$PR")
+          comment_id=$(gh api "repos/$REPO/issues/$PR/comments" --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -1)
+          if [ -n "$comment_id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" --silent
+          else
+            gh api -X POST "repos/$REPO/issues/$PR/comments" -f body="$body" --silent
+          fi
+
       - name: Borrar la preview al cerrar el PR
         if: github.event.action == 'closed'
         env:
@@ -106,3 +125,17 @@ jobs:
             echo "::error::No se pudo borrar la preview (HTTP $code): revisa los permisos del token (necesita deploy y delete) o bórrala en el panel de Coolify.";
             exit 1
           }
+
+      - name: Marcar la preview como eliminada en el PR
+        if: github.event.action == 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- preview-frontend -->'
+          comment_id=$(gh api "repos/$REPO/issues/$PR/comments" --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -1)
+          if [ -n "$comment_id" ]; then
+            body=$(printf '%s\n**Preview de este PR:** https://%s-memberplus.neyzt.org\n\n: red — la preview fue eliminada al cerrar el PR.\n' "$marker" "$PR")
+            gh api -X PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" --silent
+          fi
