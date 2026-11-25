@@ -104,8 +104,10 @@ Vuelve a esta carpeta y corre `npm run dev`. Entra con `admin@cafe-aurora.mx` / 
 | `npm run check:tokens` | Falla con hex sueltos o clases de la paleta por defecto |
 | `npm run typecheck` | `next typegen && tsc --noEmit` |
 | `npm run messages:check` | Compara las claves de `es.json` y `en.json` |
+| `npm run test` | Pruebas unitarias con Vitest |
+| `npm run test:e2e` | Pruebas de interfaz con Playwright (necesita el API arriba) |
 
-Los seis corren en el CI en cada PR; `lint`, `typecheck`, `messages`, `test` y `build` son obligatorios para mergear.
+En cada PR, el CI corre los jobs `lint` (incluye `check:tokens`), `typecheck`, `messages`, `test` y `build`, obligatorios para mergear, y `e2e`, que no bloquea.
 
 ## Estructura
 
@@ -124,17 +126,17 @@ scripts/              chequeos de convenciones y revisor de PRs
 - [BRAND.md](BRAND.md) — identidad, tokens, componentes y voz.
 - [docs/CI.md](docs/CI.md) — qué corre en cada PR y cómo reproducirlo en local.
 - [docs/DEPLOY.md](docs/DEPLOY.md) — imagen en GHCR, Coolify, rollback y la trampa del rewrite.
+- [docs/REVISION.md](docs/REVISION.md) — criterios que vigila el revisor automático.
 - [PROJECT_MEMORY.md](PROJECT_MEMORY.md) — contexto del proyecto, alcance del MVP y reglas de negocio.
-- Diseño en Figma: [Member+ — Diseño](https://www.figma.com/design/OWje3kJvpbLxZlCOEq1WnF).
+- Figma [Member+ — Diseño](https://www.figma.com/design/OWje3kJvpbLxZlCOEq1WnF): solo referencia; las pantallas nuevas se diseñan en código.
 
 ## Flujo de trabajo
 
-`main` es la única rama: trabajo en `feature/<nombre>`, PR a `main` y merge del equipo. **Mergear a `main`
-despliega**: la imagen se publica en GHCR y el workflow llama al deploy webhook de Coolify, que apunta al
-tag móvil `latest`.
+`main` es la única rama: trabajo en `feature/*`, `fix/*` o `docs/*`, PR a `main` y merge del equipo.
+**Mergear a `main` despliega**: la imagen se publica en GHCR y el workflow pide a Coolify que jale el tag
+móvil `latest` y reinicie el stack del frontend.
 
 El código va en inglés; todo el texto que ve el usuario pasa por `messages/`. Las reglas para agentes e
-integrantes están en `PROJECT_MEMORY.md` (sección 15) y `BRAND.md`; `AGENTS.md` solo trae el bloque de
-Next que reescribe `next dev`.
+integrantes están en `AGENTS.md`, `PROJECT_MEMORY.md` (sección 15) y `BRAND.md`.
 
 ¿Encontraste un bug o tienes una idea? → [Issues de este repo](https://github.com/AGA-Studio/Member-Plus-Frontend/issues/new/choose). El trabajo planificado por hitos vive en el [tablero Final 9no](https://kan.neyzt.org/member-plus/final-9no) y las decisiones, en la [wiki](https://wiki.neyzt.org).

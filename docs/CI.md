@@ -18,7 +18,7 @@ Qué corre en cada PR, por qué y cómo reproducirlo. Guía del despliegue en [D
 
 ## 1. Por qué
 
-Antes de esto, un PR se mergeaba con lo que el autor recordara correr. El CI pone cuatro verificaciones **deterministas** — mismo commit, mismo resultado, sin depender de nada externo — y las marca como obligatorias en el ruleset `protect-main`.
+Antes de esto, un PR se mergeaba con lo que el autor recordara correr. El CI pone cinco verificaciones **deterministas** — mismo commit, mismo resultado, sin depender de nada externo — y las marca como obligatorias en el ruleset `protect-main`.
 
 Aparte va el revisor automático, que opina pero no bloquea.
 
@@ -35,7 +35,7 @@ Aparte va el revisor automático, que opina pero no bloquea.
 
 `e2e` corre en cada PR pero **no va al ruleset**: depende de que el Postgres y la imagen del API arranquen, así que un fallo de infraestructura no debe bloquear merges ajenos al cambio (sección 10).
 
-Los cinco son required checks: sin ellos en verde, el PR no se puede mergear.
+Los cinco primeros son required checks: sin ellos en verde, el PR no se puede mergear.
 
 **Los nombres no se cambian.** `lint`, `typecheck`, `messages`, `test` y `build` son exactamente lo que el ruleset espera; renombrar un job deja el PR bloqueado esperando un check que ya no existe.
 
@@ -54,7 +54,7 @@ npm run lint              # ESLint
 npm run check:tokens      # hex sueltos y paleta por defecto de Tailwind
 npm run typecheck         # next typegen && tsc --noEmit
 npm run messages:check    # es.json contra en.json
-npm run test              # Vitest: pricing, format, customer-errors y tenant-theme
+npm run test              # Vitest: todos los src/**/*.test.ts
 npm run test:coverage     # lo mismo con cobertura y umbral
 npm run build             # build de producción
 ```
@@ -114,17 +114,14 @@ Y si agregas un job, decide a propósito si va al ruleset: solo los determinista
 
 ## 8. Qué no cubre todavía
 
-| Falta | Cuándo |
+| Sin cubrir | Nota |
 |---|---|
-| ~~Pruebas unitarias de la lógica pura~~ | **Hechas** (`src/lib/*.test.ts`, job `test`). `pricing.test.ts` repite los casos de `tests/unit/test_pricing_service.py` del backend y compara `calculatePurchase` con aritmética entera exacta: si la fórmula cambia en el backend, hay que cambiarla en `pricing.ts` y en estas pruebas. `format`, `customer-errors` y `tenant-theme` cubren formato de dinero, el mapeo de errores del API y el contraste del color del negocio |
-| Tests de componentes | Después de la demo, con Testing Library: son server components con `cookies()` y `redirect()`, hay que montarles medio Next |
-| ~~Cobertura~~ | **Hecha** (`npm run test:coverage`): 100 % en los cuatro módulos de `src/lib/` (`pricing.ts`, `format.ts`, `customer-errors.ts`, `tenant-theme.ts`), con umbral en `vitest.config.mts`. Si se agrega lógica pura nueva, se amplía `coverage.include` |
-| Pruebas de extremo a extremo | Existen las de inicio de sesión, caja, aislamiento y tarjeta pública (sección 12), y corren en el CI como job `e2e`. Falta el alta de membresía: **está bloqueada por un bug** del formulario, no por falta de pruebas |
-| Revisión de accesibilidad | Manual por ahora; `BRAND.md` la exige |
+| Pruebas de componentes | Son server components con `cookies()` y `redirect()`: probarlos pide montar buena parte de Next |
+| Revisión de accesibilidad | Manual; `BRAND.md` la exige |
 
-El job `test` (Vitest) ya va junto a los cinco actuales y es required; el de Playwright (`e2e`) también corre en cada PR, pero se queda fuera del ruleset porque depende de que el Postgres y la API arranquen (ver secciones 2 y 10).
+Lo que sí está cubierto: las pruebas unitarias de `src/**/*.test.ts` (job `test`) y las de extremo a extremo (job `e2e`, sección 12). `pricing.test.ts` repite los casos de `tests/unit/test_pricing_service.py` del backend y compara `calculatePurchase` con aritmética entera exacta: si la fórmula cambia en el backend, hay que cambiarla en `pricing.ts` y en estas pruebas. La cobertura (`npm run test:coverage`) exige 100 % en cuatro módulos de `src/lib/` (`pricing.ts`, `format.ts`, `customer-errors.ts`, `tenant-theme.ts`), con umbral en `vitest.config.mts`; para exigirla en lógica nueva se amplía `coverage.include`.
 
-El despliegue ya no está en esta lista: `image.yml` publica en GHCR y llama al webhook de Coolify en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
+El despliegue lo hace `image.yml` en cada push a `main`; los detalles están en [DEPLOY.md](DEPLOY.md).
 
 ## 9. Problemas comunes
 
@@ -224,7 +221,7 @@ Archivos y qué cubre cada uno:
 | `cashier-checkout.spec.ts` | Compra completa de $1,000 en Oro: resumen (−$150.00, $850.00, +85 puntos, +$25.50 de cashback), comprobante y el formulario deshabilitado sin tarjeta |
 | `cashier-isolation.spec.ts` | El cajero de Café Aurora no encuentra `MP-3GYM4` (Gimnasio Titán) ni por el diálogo ni entrando directo con `?code=` |
 | `public-card.spec.ts` | El enlace de la tarjeta, copiado del diálogo «Entregar tarjeta», abre en un contexto **sin sesión**; un enlace inválido muestra «Este enlace no funciona» |
-| `new-membership.spec.ts` | Alta completa (nombre válido, cae en la ficha) y, desactivado, el aviso cuando el nombre no cumple la regla (issue #57) |
+| `new-membership.spec.ts` | Alta completa (nombre válido, cae en la ficha) y el aviso cuando el nombre no cumple la regla |
 
 Las pruebas **escriben datos**: cada corrida registra compras y crea membresías, así que los correos son
 únicos por ejecución y las comprobaciones miran lo que acaba de crear esa corrida, nunca totales del negocio.
@@ -248,24 +245,17 @@ por rol en `tests/e2e/.auth/` y los proyectos `escritorio` y `movil` dependen de
 - Un solo archivo compartido rompería el aislamiento: el rol que abre la sesión es lo que hace que la
   prueba de Café Aurora contra Gimnasio Titán signifique algo.
 
-### El aviso del alta cuando el nombre no cumple la regla
-
-El alta funciona. Lo que falla es el mensaje cuando el nombre no cumple la validación del API: el campo se
-marca en rojo y el diálogo responde «Escribe el nombre del cliente.» con el campo lleno.
+### Nombres en el alta
 
 `PersonName` (`schemas/validators.py` del backend) solo acepta letras, espacios, guiones y apóstrofos, con al
-menos dos letras; un 422 con `loc: ["body", "full_name"]`. El frontend detecta bien el campo
-(`members.ts`), pero `toFieldErrors` (`src/features/business/actions.ts`) lo traduce a `fullNameRequired`,
-que es la clave de «campo vacío». Afecta a crear y a Editar datos.
-
-Por eso las pruebas usan un nombre **solo de letras** y el caso del aviso está desactivado: es el issue
-[#57](https://github.com/AGA-Studio/Member-Plus-Frontend/issues/57) y, cuando se arregle, el caso se activa
-quitándole el marcador.
+menos dos letras; si no se cumple, responde 422 con `loc: ["body", "full_name"]`. Por eso las pruebas generan
+nombres **solo de letras**, y un caso comprueba que un nombre con números muestre el aviso de caracteres no
+permitidos.
 
 ### En el CI
 
 En CI las pruebas corren con **dos workers** (`workers: 2` en la config): el runner tiene 4 vCPU y con uno
-solo las 24 pruebas van en fila. Cada prueba escribe datos únicos por corrida, y la de la tarjeta pública
+solo las pruebas van en fila. Cada prueba escribe datos únicos por corrida, y la de la tarjeta pública
 usa un cliente distinto en cada proyecto porque generar un enlace revoca el anterior del mismo cliente.
 
 El job `e2e` levanta un Postgres efímero, arranca el API con la imagen publicada
