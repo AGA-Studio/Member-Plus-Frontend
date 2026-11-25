@@ -4,8 +4,9 @@ Lo que un cambio no puede romper, en una página.
 
 Este archivo lo lee `scripts/review_pr.py`, que comenta los PRs automáticamente. **No es la fuente de verdad**: manda el wiki (`wiki.neyzt.org`, colección `9no`) y, para diseño, `BRAND.md`. Si aquí dice una cosa y ellos otra, ganan ellos y esto se corrige.
 
-> Última sincronización: **18 de noviembre de 2026**.
-> Cambios que refleja: la foto del cliente dejó de ser una violación —16 nov 2026, solo para mostrarse y se borra al cancelar—, el job `test` entró al ruleset y el E2E corre en el CI como job `e2e` (no required). El 18 nov 2026 el umbral del 100 % pasó de dos a **cuatro** módulos de `src/lib/` (`tenant-theme.ts` y `customer-errors.ts` ya tenían pruebas y no estaban en `coverage.include`) y el E2E pasó a **dos workers** en CI; el orden de la sección 7 no cambia.
+> Última sincronización: **24 de noviembre de 2026**.
+> El 24 nov 2026: las pantallas 4, 11 y 13 ya construidas salieron de «fuera del alcance», el alta de negocio pasó a decisión cerrada y el despliegue dejó de usar webhook.
+> Cambios anteriores: la foto del cliente dejó de ser una violación —16 nov 2026, solo para mostrarse y se borra al cancelar—, el job `test` entró al ruleset y el E2E corre en el CI como job `e2e` (no required). El 18 nov 2026 el umbral del 100 % pasó de dos a **cuatro** módulos de `src/lib/` (`tenant-theme.ts` y `customer-errors.ts` ya tenían pruebas y no estaban en `coverage.include`) y el E2E pasó a **dos workers** en CI; el orden de la sección 7 no cambia.
 > Fuentes: *Decisiones por validar*, *MVP*, *Pantallas*, `BRAND.md` y `AGENTS.md` de este repositorio.
 
 ## 1. Decisiones cerradas
@@ -28,7 +29,8 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Negocio | Sale del usuario autenticado | Sin selector de negocio ni subdominios; el cliente nunca manda `business_id` |
 | Identidad | **Sin reconocimiento facial.** La foto del cliente se guarda solo para mostrarse (16 nov 2026) y se borra al cancelar la membresía | El lector y la webcam solo leen el QR; la foto nunca se compara ni se analiza (`PhotoField` en el alta y en «Editar datos») |
 | Hostnames | App en `memberplus.neyzt.org`, API en `api-memberplus.neyzt.org` | `/api/*` reescrito en Next; **guion y no punto** (el SSL de Cloudflare cubre un nivel). Desde el 21 nov 2026 el host lo comparte la landing (Astro) en `/` y `/en*`; la app va **noindex** |
-| Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (webhook al tag `latest`) | `output: "standalone"`; Coolify no construye |
+| Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (Coolify jala `latest` y reinicia el stack balanceado) | `output: "standalone"`; Coolify no construye |
+| Alta de negocio | Registro directo sin aprobación (24 nov 2026); se construye después de la defensa | La pantalla 2 sigue fuera de lo que se construye ahora |
 | Servicios de terceros | Cloudflare Turnstile en el login (encendido en producción), Cloudflare R2 para imágenes, Backblaze B2 para respaldos | Widget en `features/auth/turnstile-widget.tsx`; las llaves viven solo en Coolify, nunca en el repo |
 
 ### Violaciones conocidas
@@ -49,16 +51,16 @@ Un PR no las resuelve: si el cambio las toca, se pide la decisión y no se asume
 | Abierta | Lo que asume el MVP |
 |---------|---------------------|
 | Next como cliente puro | Sí: sin rutas API propias en Next |
-| Alta de negocio | Por script o seed; sin formulario público (pantalla 2 fuera) |
 | Planes y cobro | Fuera del prototipo, sin pasarela |
+| Verificación de correo en el registro | Sin verificación |
 | Placa ESP32-S3 exacta | N16R8 con cámara, por confirmar |
 | Wi-Fi, energía y montaje | Portal cautivo, fuente de 5 V 2 A, carcasa |
 
 ## 3. Fuera del alcance de lo que se construye ahora
 
-Pantallas **2** (registro de negocio), **4** (detalle del negocio), **5** (planes), **11** (usuarios), **12** (dispositivos), **13** (configuración) y **14** (plan y uso) · catálogo, artículos o inventario · canje de puntos · portal del cliente · sucursales · app móvil · reportes · reconocimiento facial · fotos de clientes.
+Pantallas **2** (registro de negocio), **5** (planes), **12** (dispositivos) y **14** (plan y uso) · catálogo, artículos o inventario · canje de puntos · portal del cliente · sucursales · app móvil · reportes · reconocimiento facial y cualquier otro uso biométrico.
 
-Las pantallas del MVP son: **1** login, **7** clientes, **8** ficha del cliente (la alta de membresía y la hoja de tarjetas con QR viven en clientes; la pantalla **9** de membresías se eliminó), **10** niveles, **15** movimientos, **16** caja, **17** registrar compra y **18** comprobante, más **3** (negocios) en solo lectura para la plataforma.
+Las pantallas construidas son: **1** login, **6** panel, **7** clientes, **8** ficha del cliente (la alta de membresía y la hoja de tarjetas con QR viven en clientes; la pantalla **9** de membresías se eliminó), **10** niveles, **11** usuarios, **13** configuración, **15** movimientos, **16** caja, **17** registrar compra y **18** comprobante, más **3** (negocios) y **4** (detalle, con suspender y reactivar) para la plataforma.
 
 ## 4. Reglas con número
 

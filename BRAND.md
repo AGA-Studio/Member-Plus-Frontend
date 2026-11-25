@@ -115,10 +115,10 @@ Solo en tarjetas e insignias de nivel. Cada negocio elige el acabado de cada uno
 - Se activa con el atributo `data-theme="dark"` en `<html>`. Por defecto no existe y el sistema es claro.
 - Las variantes `dark:` de Tailwind siguen ese atributo (no la preferencia del sistema).
 - El fondo es azul marino (`#0a1020`), no negro. El botón primario no cambia.
-- El **interruptor de tema** (y guardar la preferencia en una cookie) está **pendiente de construir**.
+- El **interruptor de tema** está en el menú de usuario del panel del negocio y guarda la preferencia en la cookie `theme`.
 
 ### 5.7 Color por negocio
-Cada negocio tendrá su color de marca. El token `primary` lee la variable `--tenant-primary` y usa `#0062f2` si no existe, y sus derivados (hover, pulsado, soft) se recalculan solos. **Pendiente:** validar el contraste del color elegido por el negocio contra el texto blanco.
+Cada negocio puede elegir su color de marca en `/configuracion`. El token `primary` lee la variable `--tenant-primary` y usa `#0062f2` si no existe, y sus derivados (hover, pulsado, soft) se recalculan solos. El contraste se resuelve sin rechazar colores: el texto sobre el color es blanco o negro según WCAG y `--primary-text` se ajusta hasta 4.5:1 en los dos temas (`src/lib/tenant-theme.ts`). Se aplica al panel del negocio, a la caja y a la tarjeta pública; no al login.
 
 ## 6. Tipografía
 
@@ -250,7 +250,9 @@ Todo se siente fluido y premium: animaciones y transiciones **cortas, pero que s
 
 Solo **`lucide-react`**. Tamaños 16, 20 y 24 px (`size-4`, `size-5`, `size-6`), con `strokeWidth={1.75}` (más finos que el 2 por defecto). Color por Tailwind. Decorativos con `aria-hidden`; un ícono que sirve de botón lleva `aria-label` traducido.
 
-## 12. Componentes (diseño aprobado, aún sin construir)
+## 12. Componentes
+
+Construidos en `src/components/ui/`.
 
 ### Botones
 | Variante | Se ve | Cuándo |
@@ -286,11 +288,6 @@ Reglas: ícono a la izquierda del texto; botón solo con ícono lleva `aria-labe
 ### Insignias
 `rounded-full`, `text-xs font-semibold`. Tonos: neutral, azul, éxito, aviso, error (fondo `*-soft`, texto `*-text`). Más las insignias de nivel con acabados metálicos.
 
-### Orden de construcción previsto
-- **Fase A (base):** Botón, Campo, Tarjeta, Insignia, Logo.
-- **Fase B (antes de las pantallas):** Selector, Casilla/Interruptor, Tabla, Ventana modal, Aviso (toast), Estado vacío, Cargando.
-- **Fase C (propios de Member+):** Tarjeta de membresía con acabados metálicos, Cifra protagonista (puntos y monto), estructura de navegación, interruptor de tema.
-
 ## 13. Accesibilidad
 
 - Contraste AA mínimo; nunca solo color para comunicar estado.
@@ -310,7 +307,7 @@ Reglas: ícono a la izquierda del texto; botón solo con ícono lleva `aria-labe
 | Fuentes Montserrat, Geist y Geist Mono | ✅ Cargadas en el layout raíz |
 | Logo, favicon e íconos de app | ✅ En `src/assets/brand/` y `src/app/` |
 | Íconos de interfaz (`lucide-react`) | ✅ Instalada |
-| Componentes (fases A, B, C) | ✅ Construidos en `src/components/ui/` (botón, campo, selector, diálogo, aviso, tooltip, avatar, logo del negocio, campo de foto, entre otros) |
-| Interruptor de modo oscuro y cookie | ⏳ Sin construir |
-| Color por negocio y validación de contraste | ⏳ Pendiente |
-| Imagen Open Graph | ⏳ Pendiente (requiere dominio) |
+| Componentes | ✅ Construidos en `src/components/ui/` (botón, campo, selector, diálogo, aviso, tooltip, avatar, logo del negocio, campo de foto, entre otros) |
+| Interruptor de modo oscuro y cookie | ✅ En el menú de usuario del panel |
+| Color por negocio y validación de contraste | ✅ En `src/lib/tenant-theme.ts` |
+| Imagen Open Graph | Sin implementar |
