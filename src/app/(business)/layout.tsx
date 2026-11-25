@@ -6,6 +6,7 @@ import { BottomNav } from "@/features/business/bottom-nav";
 import { Sidebar } from "@/features/business/sidebar";
 import { Topbar } from "@/features/business/topbar";
 import { requireUser } from "@/lib/session";
+import { tenantThemeClassName } from "@/lib/tenant-theme";
 import { parseTheme, themeCookieName } from "@/lib/theme";
 
 export default async function BusinessLayout({ children }: LayoutProps<"/">) {
@@ -13,7 +14,7 @@ export default async function BusinessLayout({ children }: LayoutProps<"/">) {
   const theme = parseTheme((await cookies()).get(themeCookieName)?.value);
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background">
+    <div className={`${tenantThemeClassName} flex h-dvh overflow-hidden bg-background`}>
       <TenantTheme color={user.businessPrimaryColor} foreground={user.businessPrimaryForeground} />
       <Reveal variant="entrance" className="hidden shrink-0 origin-top-left lg:flex">
         <Sidebar
