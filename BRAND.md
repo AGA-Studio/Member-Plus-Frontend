@@ -118,7 +118,7 @@ Solo en tarjetas e insignias de nivel. Cada negocio elige el acabado de cada uno
 - El **interruptor de tema** está en el menú de usuario del panel del negocio y guarda la preferencia en la cookie `theme`.
 
 ### 5.7 Color por negocio
-Cada negocio puede elegir su color de marca en `/configuracion`. El token `primary` lee la variable `--tenant-primary` y usa `#0062f2` si no existe, y sus derivados (hover, pulsado, soft) se recalculan solos. El contraste se resuelve sin rechazar colores: el texto sobre el color es blanco o negro según WCAG y `--primary-text` se ajusta hasta 4.5:1 en los dos temas (`src/lib/tenant-theme.ts`). Se aplica al panel del negocio, a la caja y a la tarjeta pública; no al login.
+Cada negocio puede elegir su color de marca en `/configuracion`. El bloque de tokens (`primary`, sus derivados hover/pulsado/soft, `ring`, `primary-text` y `primary-foreground`) se escribe acotado a la clase `tenant-theme`, que llevan el contenedor del panel, el de la caja y el de la tarjeta pública; **nunca** en `:root`. Next deja montada (oculta) la ruta anterior al navegar, así que una regla global sobrevivía al cierre de sesión y teñía el login con el color del negocio anterior (issue #110). Sin color, todo queda en el azul `#0062f2`. El contraste se resuelve sin rechazar colores: el texto sobre el color es blanco o negro según WCAG y `--primary-text` se ajusta hasta 4.5:1 en los dos temas (`src/lib/tenant-theme.ts`). El login no lleva la clase: siempre es Member+.
 
 ## 6. Tipografía
 
