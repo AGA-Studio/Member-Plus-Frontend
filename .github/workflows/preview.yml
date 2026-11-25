@@ -45,6 +45,16 @@ jobs:
 
       # Etiqueta mutable por PR: cada push la reemplaza. El deploy de Coolify
       # hace pull de esa etiqueta antes de recrear el contenedor de la preview.
+      # metadata-action además pasa el repositorio a minúsculas (GHCR lo exige).
+      - name: Calcular tag
+        id: meta
+        if: github.event.action != 'closed'
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=pr
+
       - name: Construir y publicar pr-<n>
         if: github.event.action != 'closed'
         uses: docker/build-push-action@v7
@@ -52,7 +62,8 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

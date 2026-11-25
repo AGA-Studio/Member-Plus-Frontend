@@ -95,7 +95,7 @@ Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.conf
 | `docker/setup-buildx-action` | `@v4` | `image.yml` y `preview.yml` |
 | `docker/build-push-action` | `@v7` | `image.yml` y `preview.yml` |
 | `docker/login-action` | `@v4` | `image.yml` y `preview.yml` |
-| `docker/metadata-action` | `@v6` | Solo en `image.yml` |
+| `docker/metadata-action` | `@v6` | `image.yml` y `preview.yml` |
 
 Para ver la última versión de una action:
 
