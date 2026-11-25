@@ -110,7 +110,7 @@ La rebanada del MVP y las pantallas 4, 6, 11 y 13 están en `main` y consumen el
 - Voz: "tú", sin exclamaciones, botones con verbo en infinitivo, campos opcionales con "(opcional)".
 - Logos en `src/assets/brand/` (PNG con transparencia; se importan con `next/image`): `logo-on-light.png`, `logo-on-dark.png`, `icon-on-light.png`, `icon-on-dark.png`. Favicon e íconos: `src/app/favicon.ico`, `icon.png`, `apple-icon.png`. Los logos son raster, no vectores. Wiki: https://wiki.neyzt.org/doc/logos-e-iconos-1nQyelGFas
 - El logo de Member+ es de la plataforma; cada negocio tiene su propio logo y nombre.
-- Componentes en `src/components/ui/`; el color por negocio entra por `--tenant-primary` y el modo oscuro se cambia desde el menú de usuario.
+- Componentes en `src/components/ui/`; el color por negocio entra como bloque de tokens acotado a la clase `tenant-theme` del contenedor de la pantalla (nunca en `:root`, ver BRAND 5.7) y el modo oscuro se cambia desde el menú de usuario.
 
 ## 6. Arquitectura general (sistema completo)
 
