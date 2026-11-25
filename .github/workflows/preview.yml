@@ -1,0 +1,141 @@
+name: Preview
+
+# Imagen por PR y preview de Coolify en <n>-memberplus.neyzt.org.
+# El despliegue de producción sigue siendo solo de image.yml (push a main);
+# esto publica la etiqueta `pr-<n>` y pide la preview, nunca mueve `latest`.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  # App «Frontend» del proyecto Member+ en Coolify. La misma que despliega main.
+  COOLIFY_APP: o4bq6g7omikkta104dwyzec6
+
+jobs:
+  preview:
+    # Un PR desde un fork no recibe secretos: sin token no hay preview.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        if: github.event.action != 'closed'
+
+      - uses: docker/setup-buildx-action@v4
+        if: github.event.action != 'closed'
+
+      - name: Entrar a GHCR
+        if: github.event.action != 'closed'
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Etiqueta mutable por PR: cada push la reemplaza. El deploy de Coolify
+      # hace pull de esa etiqueta antes de recrear el contenedor de la preview.
+      # metadata-action además pasa el repositorio a minúsculas (GHCR lo exige).
+      - name: Calcular tag
+        id: meta
+        if: github.event.action != 'closed'
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=pr
+
+      - name: Construir y publicar pr-<n>
+        if: github.event.action != 'closed'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # La misma llamada abre la preview o la redespliega con la etiqueta nueva.
+      # El dominio sale de Preview URL template de la app en Coolify
+      # ({{pr_id}}-memberplus.neyzt.org): un nivel, que el SSL de Cloudflare cubre.
+      - name: Abrir o actualizar la preview
+        if: github.event.action != 'closed'
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+        run: |
+          if [ -z "$COOLIFY_TOKEN" ]; then
+            echo "::notice::Sin COOLIFY_TOKEN configurado: la imagen quedó publicada y la preview es manual."
+            exit 0
+          fi
+          code=$(curl -sS -o /tmp/coolify.out -w '%{http_code}' --max-time 30 \
+            -X POST -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            -H 'Content-Type: application/json' \
+            "https://coolify.neyzt.org/api/v1/applications/$COOLIFY_APP/previews" \
+            -d "{\"pull_request_id\":${{ github.event.pull_request.number }},\"pull_request_html_url\":\"${{ github.event.pull_request.html_url }}\",\"docker_tag\":\"pr-${{ github.event.pull_request.number }}\",\"instant_deploy\":true}")
+          echo "Coolify respondió HTTP $code"
+          cat /tmp/coolify.out
+          [ "$code" -ge 200 ] && [ "$code" -lt 300 ]
+
+      # Un solo comentario por PR (marcador como el del revisor): se crea al
+      # abrir y se edita en cada push; al cerrar se marca como eliminada.
+      - name: Comentar la URL de la preview en el PR
+        if: github.event.action != 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- preview-frontend -->'
+          body=$(printf '%s\n**Preview de este PR:** https://%s-memberplus.neyzt.org\n\nEtiqueta de imagen: pr-%s. Cada push al PR la redespliega; al cerrar el PR la preview se borra.\n' "$marker" "$PR" "$PR")
+          comment_id=$(gh api "repos/$REPO/issues/$PR/comments" --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -1)
+          if [ -n "$comment_id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" --silent
+          else
+            gh api -X POST "repos/$REPO/issues/$PR/comments" -f body="$body" --silent
+          fi
+
+      - name: Borrar la preview al cerrar el PR
+        if: github.event.action == 'closed'
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+        run: |
+          if [ -z "$COOLIFY_TOKEN" ]; then
+            echo "::notice::Sin COOLIFY_TOKEN configurado: la preview queda para borrarse a mano."
+            exit 0
+          fi
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 \
+            -X DELETE -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            "https://coolify.neyzt.org/api/v1/applications/$COOLIFY_APP/previews/${{ github.event.pull_request.number }}")
+          echo "Coolify respondió HTTP $code"
+          # 404 = ya no existía; cualquier otro fallo se ve en rojo a propósito.
+          [ "$code" -ge 200 ] && [ "$code" -lt 300 ] || [ "$code" = "404" ] || {
+            echo "::error::No se pudo borrar la preview (HTTP $code): revisa los permisos del token (necesita deploy y delete) o bórrala en el panel de Coolify.";
+            exit 1
+          }
+
+      - name: Marcar la preview como eliminada en el PR
+        if: github.event.action == 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker='<!-- preview-frontend -->'
+          comment_id=$(gh api "repos/$REPO/issues/$PR/comments" --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -1)
+          if [ -n "$comment_id" ]; then
+            body=$(printf '%s\n**Preview de este PR:** https://%s-memberplus.neyzt.org\n\n: red — la preview fue eliminada al cerrar el PR.\n' "$marker" "$PR")
+            gh api -X PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" --silent
+          fi
