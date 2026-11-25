@@ -15,6 +15,8 @@ Qué corre en cada PR, por qué y cómo reproducirlo. Guía del despliegue en [D
 9. [Problemas comunes](#9-problemas-comunes)
 10. [Reglas](#10-reglas)
 11. [Revisor automático de PRs](#11-revisor-automático-de-prs)
+12. [Pruebas de interfaz (Playwright)](#12-pruebas-de-interfaz-playwright)
+13. [Previews por PR](#13-previews-por-pr)
 
 ## 1. Por qué
 
@@ -42,6 +44,7 @@ Los cinco primeros son required checks: sin ellos en verde, el PR no se puede me
 ## 3. Cuándo corre
 
 - `pull_request` contra `main` y `push` a `main`, más `workflow_dispatch` para lanzarlo a mano.
+- `preview.yml` corre en `pull_request` (abierto, actualizado, reabierto y cerrado): publica la imagen `pr-<n>` y despliega la preview de Coolify; al cerrar borra la preview (sección 13).
 - `concurrency` con `cancel-in-progress`: un push nuevo cancela el run anterior de la misma rama.
 - `permissions: contents: read`: el CI no escribe nada en el repo.
 - No usa secretos, así que también corre en PRs desde forks.
@@ -89,10 +92,10 @@ Todo esto sale de `AGENTS.md` y `BRAND.md`, y está implementado en `eslint.conf
 | `actions/checkout` | `@v7` | Tag mayor flotante |
 | `actions/setup-node` | `@v7` | Tag mayor flotante, con caché de npm |
 | `actions/cache` | `@v6` | Tag mayor flotante; cachea `node_modules` y `~/.cache/ms-playwright` |
-| `docker/setup-buildx-action` | `@v4` | Solo en `image.yml` |
-| `docker/build-push-action` | `@v7` | Solo en `image.yml` |
-| `docker/login-action` | `@v4` | Solo en `image.yml` |
-| `docker/metadata-action` | `@v6` | Solo en `image.yml` |
+| `docker/setup-buildx-action` | `@v4` | `image.yml` y `preview.yml` |
+| `docker/build-push-action` | `@v7` | `image.yml` y `preview.yml` |
+| `docker/login-action` | `@v4` | `image.yml` y `preview.yml` |
+| `docker/metadata-action` | `@v6` | `image.yml` y `preview.yml` |
 
 Para ver la última versión de una action:
 
@@ -267,4 +270,31 @@ El contenedor del API arranca **antes** de instalar nada y sin esperar: baja la 
 migraciones mientras el job restaura `node_modules` y Chromium, y la espera de `/health` (con su
 `docker exec … scripts.seed`) queda justo antes de lanzar Playwright. El binario de Chromium se cachea con
 el hash del lock, así que solo se descarga cuando cambia `@playwright/test`.
+
+## 13. Previews por PR
+
+`preview.yml` publica una imagen por PR y pide a Coolify una preview en `<n>-memberplus.neyzt.org`.
+Producción no se toca: `latest` solo lo mueve `image.yml` en `main`.
+
+| Paso | Qué hace |
+|---|---|
+| Construir | `docker build` con la etiqueta `pr-<n>` (mutable: se reemplaza en cada push) |
+| Abrir | `POST /api/v1/applications/<app>/previews` con `docker_tag: pr-<n>` e `instant_deploy` |
+| Cerrar | `DELETE /api/v1/applications/<app>/previews/<n>` cuando el PR se cierra |
+
+Requisitos en Coolify (los configura quien administra el panel, no el repo):
+
+1. *Preview Deployments* encendido en la app «Frontend».
+2. *Preview URL template* en `{{pr_id}}-memberplus.neyzt.org` — **un nivel**; la plantilla por defecto (`{{pr_id}}.{{domain}}`) da dos niveles y el SSL Universal de Cloudflare no los cubre.
+3. `COOLIFY_TOKEN` con permisos `deploy`, `write` (abrir la preview o cambiar su etiqueta) y `delete` (borrarla al cerrar).
+4. En el API, `TURNSTILE_ALLOWED_HOSTS=*-memberplus.neyzt.org`: `siteverify` devuelve el hostname de la preview y sin eso el login responde `turnstile_failed`.
+
+Límites por diseño:
+
+- **Un contenedor por PR abierto.** Se apaga al cerrar; si el run de cierre falla, la preview queda y se borra desde el panel.
+- **La preview usa el API y la base reales** (las variables de *preview* se clonan de producción). Es para revisar la interfaz; no es un entorno de pruebas con datos aparte.
+- **PRs desde forks no tienen preview**: no reciben `COOLIFY_TOKEN`.
+- La preview queda fuera de `latest` y del despliegue: un PR no puede romper producción por esta vía.
+
+La URL de la preview se publica **en el propio PR**: un comentario que se crea al abrir y se edita en cada push (marcador `<!-- preview-frontend -->`, como el del revisor); al cerrar, el mismo comentario se marca como eliminada. El paso de comentar corre **después** de que Coolify aceptó la preview, así que una URL publicada siempre apunta a una preview real.
 
