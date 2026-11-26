@@ -6,6 +6,7 @@ Este archivo lo lee `scripts/review_pr.py`, que comenta los PRs automáticamente
 
 > Última sincronización: **24 de noviembre de 2026**.
 > El 24 nov 2026: las pantallas 4, 11 y 13 ya construidas salieron de «fuera del alcance», el alta de negocio pasó a decisión cerrada y el despliegue dejó de usar webhook.
+> El 25 nov 2026, solo en estos dos puntos: planes y cobro pasó a decisión cerrada y el alta de negocio inicia sesión automáticamente.
 > Cambios anteriores: la foto del cliente dejó de ser una violación —16 nov 2026, solo para mostrarse y se borra al cancelar—, el job `test` entró al ruleset y el E2E corre en el CI como job `e2e` (no required). El 18 nov 2026 el umbral del 100 % pasó de dos a **cuatro** módulos de `src/lib/` (`tenant-theme.ts` y `customer-errors.ts` ya tenían pruebas y no estaban en `coverage.include`) y el E2E pasó a **dos workers** en CI; el orden de la sección 7 no cambia.
 > Fuentes: *Decisiones por validar*, *MVP*, *Pantallas*, `BRAND.md` y `AGENTS.md` de este repositorio.
 
@@ -30,7 +31,8 @@ Un PR no las contradice. Si de verdad hay que cambiarlas, se cambia primero la c
 | Identidad | **Sin reconocimiento facial.** La foto del cliente se guarda solo para mostrarse (16 nov 2026) y se borra al cancelar la membresía | El lector y la webcam solo leen el QR; la foto nunca se compara ni se analiza (`PhotoField` en el alta y en «Editar datos») |
 | Hostnames | App en `memberplus.neyzt.org`, API en `api-memberplus.neyzt.org` | `/api/*` reescrito en Next; **guion y no punto** (el SSL de Cloudflare cubre un nivel). Desde el 21 nov 2026 el host lo comparte la landing (Astro) en `/` y `/en*`; la app va **noindex** |
 | Despliegue | Imagen standalone en GHCR; **mergear a `main` despliega** (Coolify jala `latest` y reinicia el stack balanceado) | `output: "standalone"`; Coolify no construye |
-| Alta de negocio | Registro directo sin aprobación (24 nov 2026); se construye después de la defensa | La pantalla 2 sigue fuera de lo que se construye ahora |
+| Alta de negocio | Registro directo sin aprobación (24 nov 2026); se construye después de la defensa. Tras el alta se inicia sesión automáticamente (25 nov 2026, [Registro de negocios: decisión](https://wiki.neyzt.org/doc/registro-de-negocios-decision-Z5dzocmJW2), paso 4 del flujo) | La pantalla 2 sigue fuera de lo que se construye ahora. El inicio automático usa `/api/v1/auth/login` con un token nuevo de Turnstile; si falla, manda a `/login?correo=` |
+| Planes y cobro | Planes con límites y cobro manual, sin pasarela; al registrarse, prueba de 30 días del plan Negocio. Casilla marcada el 25 nov 2026 en [Decisiones por validar](https://wiki.neyzt.org/doc/decisiones-por-validar-vIwlwjifkU) | Los planes y límites se leen de la API, nunca fijos en el código; el front no cobra |
 | Servicios de terceros | Cloudflare Turnstile en el login (encendido en producción), Cloudflare R2 para imágenes, Backblaze B2 para respaldos | Widget en `features/auth/turnstile-widget.tsx`; las llaves viven solo en Coolify, nunca en el repo |
 
 ### Violaciones conocidas
@@ -51,7 +53,6 @@ Un PR no las resuelve: si el cambio las toca, se pide la decisión y no se asume
 | Abierta | Lo que asume el MVP |
 |---------|---------------------|
 | Next como cliente puro | Sí: sin rutas API propias en Next |
-| Planes y cobro | Fuera del prototipo, sin pasarela |
 | Verificación de correo en el registro | Sin verificación |
 | Placa ESP32-S3 exacta | N16R8 con cámara, por confirmar |
 | Wi-Fi, energía y montaje | Portal cautivo, fuente de 5 V 2 A, carcasa |
