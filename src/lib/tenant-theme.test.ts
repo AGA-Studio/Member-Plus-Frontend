@@ -99,10 +99,19 @@ describe("buildTenantCss", () => {
   it("sets the color, the foreground and the text for both themes", () => {
     const css = buildTenantCss(crimson.toUpperCase().replace("#", "#"), white) ?? "";
 
-    expect(css).toContain(`--tenant-primary:${crimson}`);
+    expect(css).toContain(`--primary:${crimson}`);
     expect(css).toContain(`--primary-foreground:${white}`);
-    expect(css).toContain(":root{");
-    expect(css).toContain('[data-theme="dark"]{--primary-text:');
+    expect(css).toContain(".tenant-theme{");
+    expect(css).toContain('[data-theme="dark"] .tenant-theme{--primary-soft:');
+    expect(css).toMatch(/\[data-theme="dark"\] \.tenant-theme\{.*--primary-text:#[0-9a-f]{6}\}/);
+  });
+
+  /** Regresión: con `:root` el login heredaba el color del negocio anterior. */
+  it("never targets the document root", () => {
+    const css = buildTenantCss(crimson) ?? "";
+
+    expect(css).not.toContain(":root");
+    expect(css.startsWith(".tenant-theme{")).toBe(true);
   });
 
   it("ignores a foreground that is not white or black", () => {
@@ -112,7 +121,7 @@ describe("buildTenantCss", () => {
   it("only writes what it can validate, so nothing else can be injected", () => {
     const css = buildTenantCss(crimson) ?? "";
 
-    expect(css).toMatch(/^[a-z0-9#:{};\-[\]="]+$/);
+    expect(css).toMatch(/^[a-z0-9#:{};,.%()\-\s[\]="]+$/i);
     expect(buildTenantCss(`${crimson};}body{display:none`)).toBeNull();
   });
 });

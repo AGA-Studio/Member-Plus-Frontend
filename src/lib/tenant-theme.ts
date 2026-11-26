@@ -13,6 +13,16 @@ const black: Rgb = [0, 0, 0];
 
 export const brandPrimaryHex = toHex([0, 98, 242]);
 
+/**
+ * Las variables del negocio se escriben en un contenedor, nunca en `:root`.
+ * Next conserva montada (oculta) la ruta anterior al navegar, así que un
+ * `:root` con el color del negocio sobrevive al cierre de sesión y pinta el
+ * login con los colores del negocio anterior. Con la clase, el bloque oculto
+ * solo puede afectar a su propio subárbol.
+ */
+export const tenantThemeClassName = "tenant-theme";
+
+
 const lightSoftShare = 0.12;
 const darkSoftShare = 0.22;
 
@@ -96,16 +106,21 @@ function safeForeground(hex: string, foreground: string | null | undefined): str
   return normalized === toHex(white) || normalized === toHex(black) ? normalized : pickForeground(hex);
 }
 
+function scopedTenantCss(scope: string, hex: string, foreground?: string | null): string {
+  const text = tenantTextColors(hex);
+  const selector = `.${scope}`;
+
+  return [
+    `${selector}{--primary:${hex};--primary-hover:color-mix(in oklab,${hex} 85%,black);--primary-active:color-mix(in oklab,${hex} 70%,black);--primary-soft:color-mix(in oklab,${hex} 12%,var(--surface));--primary-text:${text.light};--primary-foreground:${safeForeground(hex, foreground)};--ring:${hex}}`,
+    `[data-theme="dark"] ${selector}{--primary-soft:color-mix(in oklab,${hex} 22%,var(--surface));--primary-text:${text.dark}}`,
+  ].join("");
+}
+
 export function buildTenantCss(color: string | null | undefined, foreground?: string | null): string | null {
   const hex = normalizeHexColor(color);
   if (!hex) return null;
 
-  const text = tenantTextColors(hex);
-
-  return [
-    `:root{--tenant-primary:${hex};--primary-foreground:${safeForeground(hex, foreground)};--primary-text:${text.light}}`,
-    `[data-theme="dark"]{--primary-text:${text.dark}}`,
-  ].join("");
+  return scopedTenantCss(tenantThemeClassName, hex, foreground);
 }
 
 export const tenantPreviewClassName = "tenant-preview";
@@ -114,11 +129,5 @@ export function buildTenantPreviewCss(color: string | null | undefined): string 
   const hex = normalizeHexColor(color);
   if (!hex) return null;
 
-  const text = tenantTextColors(hex);
-  const scope = `.${tenantPreviewClassName}`;
-
-  return [
-    `${scope}{--primary:${hex};--primary-hover:color-mix(in oklab,${hex} 85%,black);--primary-active:color-mix(in oklab,${hex} 70%,black);--primary-soft:color-mix(in oklab,${hex} 12%,var(--surface));--primary-text:${text.light};--primary-foreground:${pickForeground(hex)};--ring:${hex}}`,
-    `[data-theme="dark"] ${scope}{--primary-soft:color-mix(in oklab,${hex} 22%,var(--surface));--primary-text:${text.dark}}`,
-  ].join("");
+  return scopedTenantCss(tenantPreviewClassName, hex);
 }
