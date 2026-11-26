@@ -9,24 +9,20 @@ type CheckboxFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "ty
 };
 
 export function CheckboxField({ error, children, ...rest }: CheckboxFieldProps) {
-  const inputId = useId();
-  const messageId = `${inputId}-message`;
+  const messageId = useId();
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-start gap-3">
+      <label className="flex min-h-11 cursor-pointer items-center gap-3 text-base text-foreground">
         <input
-          id={inputId}
           type="checkbox"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? messageId : undefined}
-          className="mt-3 size-5 shrink-0 cursor-pointer rounded-xs accent-primary transition-transform duration-150 ease-out active:scale-97"
+          className="size-5 shrink-0 cursor-pointer rounded-xs accent-primary transition-transform duration-150 ease-out active:scale-97"
           {...rest}
         />
-        <label htmlFor={inputId} className="flex min-h-11 cursor-pointer items-center text-base text-foreground">
-          <span>{children}</span>
-        </label>
-      </div>
+        <span>{children}</span>
+      </label>
       {error ? (
         <p
           id={messageId}
