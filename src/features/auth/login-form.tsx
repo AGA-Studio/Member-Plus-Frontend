@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,14 +21,15 @@ const roleHomePaths: Record<LoginRole, string> = {
 
 type LoginFormProps = {
   turnstileSiteKey: string;
+  initialEmail?: string;
 };
 
-export function LoginForm({ turnstileSiteKey }: LoginFormProps) {
+export function LoginForm({ turnstileSiteKey, initialEmail = "" }: LoginFormProps) {
   const t = useTranslations("auth.login");
   const router = useRouter();
   const { begin } = useEntryTransition();
   const [pending, startTransition] = useTransition();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [emailError, setEmailError] = useState<"emailRequired" | null>(null);
   const [passwordError, setPasswordError] = useState<"passwordRequired" | null>(null);
   const [failure, setFailure] = useState<LoginFailure | null>(null);
@@ -91,6 +93,7 @@ export function LoginForm({ turnstileSiteKey }: LoginFormProps) {
           label={t("password")}
           placeholder={t("passwordPlaceholder")}
           autoComplete="current-password"
+          autoFocus={initialEmail !== ""}
           error={passwordMessage}
         />
       </div>
@@ -114,6 +117,15 @@ export function LoginForm({ turnstileSiteKey }: LoginFormProps) {
           {pending ? t("submitting") : t("submit")}
         </Button>
         <p className="text-center text-sm text-muted">{t("help")}</p>
+        <p className="text-center text-sm text-muted">
+          {t("noAccount")}{" "}
+          <Link
+            href="/registro"
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-4 transition-transform duration-150 ease-out hover:underline active:scale-97"
+          >
+            {t("createAccount")}
+          </Link>
+        </p>
       </div>
     </form>
   );

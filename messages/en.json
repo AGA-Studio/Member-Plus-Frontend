@@ -74,6 +74,8 @@
       "metaTitle": "Sign in · Member+",
       "title": "Sign in",
       "subtitle": "Go to your business in Member+.",
+      "noAccount": "Don't have an account yet?",
+      "createAccount": "Create account",
       "password": "Password",
       "passwordPlaceholder": "Enter your password",
       "submit": "Sign in",
@@ -111,6 +113,73 @@
         "label": "Security check",
         "unavailable": "We couldn't load the security check. You can still try to sign in."
       }
+    }
+  },
+  "registration": {
+    "metaTitle": "Create your account · Member+",
+    "title": "Create your account",
+    "subtitle": "Register your business and start using Member+ right away.",
+    "sections": {
+      "business": "Your business",
+      "account": "Your account",
+      "plan": "Your plan"
+    },
+    "fields": {
+      "businessName": "Business name",
+      "businessNamePlaceholder": "Enter your business name",
+      "adminName": "Your name",
+      "adminNamePlaceholder": "Enter your full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordHint": "Use at least {count} characters.",
+      "passwordConfirmation": "Confirm password"
+    },
+    "plans": {
+      "free": "Free of charge",
+      "monthly": "{price} per month",
+      "trial": "{days, plural, one {#-day} other {#-day}} trial",
+      "trialNote": "Nothing is charged now. When the trial ends, your business moves to the {plan} plan and nothing is deleted.",
+      "customers": "Up to {count, number} customers",
+      "customersUnlimited": "Unlimited customers",
+      "users": "{count, plural, one {# user} other {Up to # users}}",
+      "usersUnlimited": "Unlimited users",
+      "history": "{days, number} days of transaction history",
+      "historyFull": "Full transaction history",
+      "images": "Logo and customer photos",
+      "exports": "Export transactions"
+    },
+    "privacy": "I accept the <link>privacy notice</link>",
+    "submit": "Create account",
+    "submitting": "Creating account…",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "turnstileUnavailable": "We couldn't load the security check. You can try to create the account anyway.",
+    "errors": {
+      "businessNameRequired": "Enter your business name.",
+      "businessNameInvalid": "Use 2 to 120 characters.",
+      "adminNameRequired": "Enter your name.",
+      "adminNameInvalid": "Use at least 2 letters. Only letters, spaces, hyphens and apostrophes.",
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "Check the email: it looks incomplete.",
+      "emailTaken": "That email already has an account. Use another one or sign in.",
+      "passwordRequired": "Enter a password.",
+      "passwordInvalid": "Use 8 to 128 characters.",
+      "passwordConfirmationRequired": "Enter the password again.",
+      "passwordMismatch": "The passwords don't match.",
+      "privacyRequired": "To create the account, accept the privacy notice."
+    },
+    "failures": {
+      "closed": "Sign-up is closed for now. Try again later.",
+      "rateLimited": "There were too many attempts. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+      "turnstileFailed": "We couldn't verify that you are a person. Try again.",
+      "planInvalid": "That plan is no longer available. Choose another one.",
+      "unavailable": "We couldn't create your account right now. Try again in a moment."
+    },
+    "unavailable": {
+      "title": "We couldn't load sign-up",
+      "description": "Try again in a moment.",
+      "retry": "Try again"
     }
   },
   "cashier": {
@@ -859,6 +928,8 @@
   "toasts": {
     "signedIn": "Signed in.",
     "signedOut": "Signed out.",
+    "accountCreated": "Account created.",
+    "accountCreatedSignIn": "Account created. Sign in with your password.",
     "membershipCreated": "Membership created. You can print the card now.",
     "purchaseRegistered": "Purchase registered.",
     "customerUpdated": "Details saved.",
