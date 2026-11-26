@@ -1,6 +1,8 @@
 export const toastTones = {
   signedIn: "success",
   signedOut: "success",
+  accountCreated: "success",
+  accountCreatedSignIn: "info",
   membershipCreated: "success",
   membershipCreatedSent: "success",
   membershipCreatedPending: "info",

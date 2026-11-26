@@ -74,6 +74,8 @@
       "metaTitle": "Inicia sesión · Member+",
       "title": "Inicia sesión",
       "subtitle": "Entra a tu negocio en Member+.",
+      "noAccount": "¿Aún no tienes cuenta?",
+      "createAccount": "Crear cuenta",
       "password": "Contraseña",
       "passwordPlaceholder": "Escribe tu contraseña",
       "submit": "Iniciar sesión",
@@ -111,6 +113,73 @@
         "label": "Verificación de seguridad",
         "unavailable": "No pudimos cargar la verificación de seguridad. Puedes intentar entrar de todos modos."
       }
+    }
+  },
+  "registration": {
+    "metaTitle": "Crea tu cuenta · Member+",
+    "title": "Crea tu cuenta",
+    "subtitle": "Registra tu negocio y entra a Member+ en este momento.",
+    "sections": {
+      "business": "Tu negocio",
+      "account": "Tu cuenta",
+      "plan": "Tu plan"
+    },
+    "fields": {
+      "businessName": "Nombre del negocio",
+      "businessNamePlaceholder": "Escribe el nombre de tu negocio",
+      "adminName": "Tu nombre",
+      "adminNamePlaceholder": "Escribe tu nombre completo",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Escribe tu correo",
+      "password": "Contraseña",
+      "passwordHint": "Usa al menos {count} caracteres.",
+      "passwordConfirmation": "Confirmar contraseña"
+    },
+    "plans": {
+      "free": "Sin costo",
+      "monthly": "{price} al mes",
+      "trial": "{days, plural, one {# día} other {# días}} de prueba",
+      "trialNote": "No se cobra nada ahora. Al terminar la prueba, tu negocio sigue con el plan {plan} y no se borra nada.",
+      "customers": "Hasta {count, number} clientes",
+      "customersUnlimited": "Clientes sin límite",
+      "users": "{count, plural, one {# usuario} other {Hasta # usuarios}}",
+      "usersUnlimited": "Usuarios sin límite",
+      "history": "Historial de movimientos de {days, number} días",
+      "historyFull": "Historial completo de movimientos",
+      "images": "Logo y fotos de clientes",
+      "exports": "Exportar movimientos"
+    },
+    "privacy": "Acepto el <link>aviso de privacidad</link>",
+    "submit": "Crear cuenta",
+    "submitting": "Creando cuenta…",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "signIn": "Iniciar sesión",
+    "turnstileUnavailable": "No pudimos cargar la verificación de seguridad. Puedes intentar crear la cuenta de todos modos.",
+    "errors": {
+      "businessNameRequired": "Escribe el nombre de tu negocio.",
+      "businessNameInvalid": "Usa entre 2 y 120 caracteres.",
+      "adminNameRequired": "Escribe tu nombre.",
+      "adminNameInvalid": "Usa al menos 2 letras. Solo letras, espacios, guiones y apóstrofos.",
+      "emailRequired": "Escribe tu correo.",
+      "emailInvalid": "Revisa el correo: parece incompleto.",
+      "emailTaken": "Ese correo ya tiene una cuenta. Usa otro o inicia sesión.",
+      "passwordRequired": "Escribe una contraseña.",
+      "passwordInvalid": "Usa entre 8 y 128 caracteres.",
+      "passwordConfirmationRequired": "Escribe la contraseña otra vez.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "privacyRequired": "Para crear la cuenta, acepta el aviso de privacidad."
+    },
+    "failures": {
+      "closed": "El registro está cerrado por ahora. Inténtalo más adelante.",
+      "rateLimited": "Hubo demasiados intentos. Inténtalo de nuevo en {minutes, plural, one {# minuto} other {# minutos}}.",
+      "turnstileFailed": "No pudimos verificar que eres una persona. Inténtalo de nuevo.",
+      "planInvalid": "Ese plan ya no está disponible. Elige otro.",
+      "unavailable": "No pudimos crear tu cuenta ahora. Inténtalo de nuevo en un momento."
+    },
+    "unavailable": {
+      "title": "No pudimos cargar el registro",
+      "description": "Inténtalo de nuevo en un momento.",
+      "retry": "Volver a intentar"
     }
   },
   "cashier": {
@@ -859,6 +928,8 @@
   "toasts": {
     "signedIn": "Sesión iniciada.",
     "signedOut": "Sesión cerrada.",
+    "accountCreated": "Cuenta creada.",
+    "accountCreatedSignIn": "Cuenta creada. Entra con tu contraseña.",
     "membershipCreated": "Membresía creada. Ya puedes imprimir su tarjeta.",
     "purchaseRegistered": "Compra registrada.",
     "customerUpdated": "Datos guardados.",

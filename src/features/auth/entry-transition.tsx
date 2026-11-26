@@ -17,8 +17,10 @@ import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/components/ui/toast-provider";
 import { cx } from "@/lib/cx";
 
+type EntryAnnouncement = "signedIn" | "accountCreated";
+
 type EntryTransitionValue = {
-  begin: () => boolean;
+  begin: (announcement?: EntryAnnouncement) => boolean;
   exit: () => Promise<boolean>;
 };
 
@@ -102,6 +104,7 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
   const startedAt = useRef(0);
   const startPath = useRef(pathname);
   const playing = useRef(false);
+  const announcementRef = useRef<EntryAnnouncement>("signedIn");
   const unmounted = useRef(false);
 
   useEffect(() => {
@@ -179,7 +182,7 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
         flushSync(() => setPhase("reveal"));
         await reveal.finished;
         finish();
-        if (announce) show("success", toasts("signedIn"));
+        if (announce) show("success", toasts(announcementRef.current));
       } catch {
         finish();
       }
@@ -187,9 +190,10 @@ export function EntryTransitionProvider({ playOnLoad, children }: EntryTransitio
     [show, toasts],
   );
 
-  const begin = useCallback(() => {
+  const begin = useCallback((announcement: EntryAnnouncement = "signedIn") => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
 
+    announcementRef.current = announcement;
     startedAt.current = performance.now();
     startPath.current = pathname;
     setInstantCover(false);

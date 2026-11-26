@@ -16,12 +16,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const instant = false;
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   await connection();
   const user = await getSessionUser();
   if (user) redirect(roleHomePaths[user.role]);
 
   const t = await getTranslations("auth.login");
+  const { correo } = await searchParams;
+  const initialEmail = typeof correo === "string" ? correo : "";
 
   return (
     <main className="flex min-h-dvh flex-col lg:grid lg:grid-cols-2">
@@ -38,7 +40,7 @@ export default async function LoginPage() {
             <h1 className="text-title text-foreground">{t("title")}</h1>
             <p className="text-base text-muted">{t("subtitle")}</p>
           </div>
-          <LoginForm turnstileSiteKey={process.env.TURNSTILE_SITEKEY ?? ""} />
+          <LoginForm turnstileSiteKey={process.env.TURNSTILE_SITEKEY ?? ""} initialEmail={initialEmail} />
         </div>
       </section>
     </main>
