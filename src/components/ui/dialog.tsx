@@ -7,11 +7,10 @@ import { cx } from "@/lib/cx";
 
 type DialogProps = {
   open: boolean;
-  onClose: () => void;
   title: string;
   children: ReactNode;
   variant?: "modal" | "wide" | "drawer";
-};
+} & ({ dismissible?: true; onClose: () => void } | { dismissible: false; onClose?: never });
 
 const variantClasses = {
   modal:
@@ -28,6 +27,7 @@ export function Dialog({
   title,
   children,
   variant = "modal",
+  dismissible = true,
 }: DialogProps) {
   const t = useTranslations("common");
   const ref = useRef<HTMLDialogElement>(null);
@@ -53,10 +53,13 @@ export function Dialog({
         // Escape: se evita el cierre nativo (que dispararía el evento `close`
         // y con él onClose) y se delega al padre, que cierra por estado.
         event.preventDefault();
-        onClose();
+        onClose?.();
       }}
       onClick={(event) => {
-        if (event.target === ref.current) onClose();
+        if (event.target === ref.current) onClose?.();
+      }}
+      onKeyDown={(event) => {
+        if (!dismissible && event.key === "Escape") event.preventDefault();
       }}
       className={cx(
         "overflow-hidden bg-surface p-0 text-foreground shadow-lg opacity-0 open:flex open:flex-col open:opacity-100 starting:open:opacity-0",
@@ -67,18 +70,20 @@ export function Dialog({
       )}
     >
       <div className="flex min-h-0 flex-col gap-5 overflow-y-auto p-6">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex min-h-11 items-center justify-between gap-3">
           <h2 id={titleId} className="text-subheading text-foreground">
             {title}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t("close")}
-            className="flex size-11 items-center justify-center rounded-md text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97"
-          >
-            <X aria-hidden strokeWidth={1.75} className="size-5" />
-          </button>
+          {dismissible ? (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t("close")}
+              className="flex size-11 items-center justify-center rounded-md text-muted transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface-muted hover:text-foreground active:scale-97"
+            >
+              <X aria-hidden strokeWidth={1.75} className="size-5" />
+            </button>
+          ) : null}
         </div>
         {children}
       </div>

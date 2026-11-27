@@ -140,7 +140,7 @@
       "free": "Sin costo",
       "monthly": "{price} al mes",
       "trial": "{days, plural, one {# día} other {# días}} de prueba",
-      "trialNote": "No se cobra nada ahora. Al terminar la prueba, tu negocio sigue con el plan {plan} y no se borra nada.",
+      "trialNote": "No se cobra nada: al crear la cuenta verás un pago simulado. Al terminar la prueba, tu negocio sigue con el plan {plan} y no se borra nada.",
       "customers": "Hasta {count, number} clientes",
       "customersUnlimited": "Clientes sin límite",
       "users": "{count, plural, one {# usuario} other {Hasta # usuarios}}",
@@ -181,6 +181,18 @@
       "title": "No pudimos cargar el registro",
       "description": "Inténtalo de nuevo en un momento.",
       "retry": "Volver a intentar"
+    },
+    "payment": {
+      "processingTitle": "Procesando tu pago",
+      "approvedTitle": "Pago aprobado",
+      "steps": {
+        "verifying": "Verificando tus datos…",
+        "charging": "Procesando el pago de tu suscripción…",
+        "activating": "Activando tu plan…"
+      },
+      "approvedDetail": "Tu plan {plan} está listo, con {days, plural, one {# día} other {# días}} de prueba.",
+      "summary": "Plan {plan}: {price} al mes",
+      "simulated": "Pago simulado: no se hace ningún cobro."
     }
   },
   "cashier": {
