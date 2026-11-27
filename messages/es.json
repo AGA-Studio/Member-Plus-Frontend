@@ -139,7 +139,7 @@
       "free": "Sin costo",
       "monthly": "{price} al mes",
       "trial": "{days, plural, one {# día} other {# días}} de prueba",
-      "trialNote": "No se cobra nada ahora. Al terminar la prueba, tu negocio sigue con el plan {plan} y no se borra nada.",
+      "trialNote": "No se cobra nada: al crear la cuenta verás un pago simulado. Al terminar la prueba, tu negocio sigue con el plan {plan} y no se borra nada.",
       "customers": "Hasta {count, number} clientes",
       "customersUnlimited": "Clientes sin límite",
       "users": "{count, plural, one {# usuario} other {Hasta # usuarios}}",
