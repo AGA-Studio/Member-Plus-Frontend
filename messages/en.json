@@ -139,7 +139,7 @@
       "free": "Free of charge",
       "monthly": "{price} per month",
       "trial": "{days, plural, one {#-day} other {#-day}} trial",
-      "trialNote": "Nothing is charged now. When the trial ends, your business moves to the {plan} plan and nothing is deleted.",
+      "trialNote": "Nothing is charged: when you create the account you will see a simulated payment. When the trial ends, your business moves to the {plan} plan and nothing is deleted.",
       "customers": "Up to {count, number} customers",
       "customersUnlimited": "Unlimited customers",
       "users": "{count, plural, one {# user} other {Up to # users}}",
