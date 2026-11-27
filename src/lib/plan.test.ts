@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { PlanSummary } from "./domain";
-import { isTrialRunning, monthlyPriceCents, usageLevel, usagePercent } from "./plan";
+import { isTrialRunning, monthlyPriceCents, planChangeWarnings, usageLevel, usagePercent } from "./plan";
 
 describe("usageLevel", () => {
   it.each([
@@ -49,6 +49,7 @@ function summaryWith(overrides: Partial<PlanSummary>): PlanSummary {
     },
     trialEndsAt: null,
     trialActive: false,
+    canChangePlan: false,
     unitPriceCents: null,
     usage: { customers: { used: 0, limit: 300 }, users: { used: 1, limit: 3 } },
     ...overrides,
@@ -86,5 +87,52 @@ describe("isTrialRunning", () => {
 
   it("is not running without a trial", () => {
     expect(isTrialRunning(null, now)).toBe(false);
+  });
+});
+
+describe("planChangeWarnings", () => {
+  const free = {
+    ...summaryWith({}).plan,
+    id: 1,
+    key: "free",
+    name: "Gratis",
+    priceCents: 0,
+    maxCustomers: 50,
+    maxUsers: 2,
+    historyDays: 60,
+    imagesEnabled: false,
+    exportsEnabled: false,
+  };
+  const unlimited = { ...summaryWith({}).plan, id: 3, maxCustomers: null, maxUsers: null, historyDays: null };
+
+  it("warns about nothing when the new plan covers everything", () => {
+    expect(planChangeWarnings(summaryWith({}), unlimited)).toEqual([]);
+  });
+
+  it("lists what a smaller plan takes away", () => {
+    const summary = summaryWith({
+      trialActive: true,
+      usage: { customers: { used: 80, limit: 300 }, users: { used: 3, limit: 3 } },
+    });
+    const current = {
+      ...summary,
+      plan: { ...summary.plan, historyDays: null, imagesEnabled: true, exportsEnabled: true },
+    };
+
+    expect(planChangeWarnings(current, free)).toEqual([
+      { kind: "trialEnds" },
+      { kind: "customersOver", used: 80, limit: 50 },
+      { kind: "usersOver", used: 3, limit: 2 },
+      { kind: "imagesLost" },
+      { kind: "exportsLost" },
+      { kind: "historyShorter" },
+    ]);
+  });
+
+  it("accepts a usage that exactly fills the new limits", () => {
+    const summary = summaryWith({ usage: { customers: { used: 50, limit: 300 }, users: { used: 2, limit: 3 } } });
+    const current = { ...summary, plan: { ...free, id: 2 } };
+
+    expect(planChangeWarnings(current, free)).toEqual([]);
   });
 });

@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
+import { PlanChange } from "@/features/plans/plan-change";
 import { PlanOverview } from "@/features/plans/plan-overview";
 import { getPlanSummary, listPublicPlans } from "@/lib/api/plans";
 
@@ -24,7 +25,12 @@ export default async function PlanPage() {
       <Reveal variant="entrance" index={1}>
         <PageHeader title={t("title")} subtitle={t("subtitle")} />
       </Reveal>
-      <PlanOverview summary={summary} audience="business" fallbackPlanName={plans.find((plan) => plan.isDefault)?.name} />
+      <PlanOverview
+        summary={summary}
+        audience="business"
+        fallbackPlanName={plans.find((plan) => plan.isDefault)?.name}
+        changeControl={summary.canChangePlan ? <PlanChange summary={summary} plans={plans} /> : undefined}
+      />
     </>
   );
 }

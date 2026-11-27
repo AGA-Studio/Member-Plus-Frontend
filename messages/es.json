@@ -182,18 +182,7 @@
       "description": "Inténtalo de nuevo en un momento.",
       "retry": "Volver a intentar"
     },
-    "payment": {
-      "processingTitle": "Procesando tu pago",
-      "approvedTitle": "Pago aprobado",
-      "steps": {
-        "verifying": "Verificando tus datos…",
-        "charging": "Procesando el pago de tu suscripción…",
-        "activating": "Activando tu plan…"
-      },
-      "approvedDetail": "Tu plan {plan} está listo, con {days, plural, one {# día} other {# días}} de prueba.",
-      "summary": "Plan {plan}: {price} al mes",
-      "simulated": "Pago simulado: no se hace ningún cobro."
-    }
+    "paymentApproved": "Tu plan {plan} está listo, con {days, plural, one {# día} other {# días}} de prueba."
   },
   "cashier": {
     "header": {
@@ -981,7 +970,8 @@
     "logoSaved": "Logo guardado.",
     "logoRemoved": "Logo quitado.",
     "businessSuspended": "Negocio suspendido.",
-    "businessReactivated": "Negocio reactivado."
+    "businessReactivated": "Negocio reactivado.",
+    "planChanged": "Cambiaste al plan {plan}."
   },
   "system": {
     "notFound": {
@@ -1096,6 +1086,35 @@
         "title": "No hay planes",
         "description": "Los planes que se ofrezcan aparecerán aquí."
       }
+    },
+    "change": {
+      "open": "Cambiar de plan",
+      "choosingTitle": "Elige un plan",
+      "current": "Plan actual",
+      "currentTrial": "Plan actual, en prueba",
+      "choose": "Elegir plan",
+      "chooseNamed": "Elegir plan {plan}",
+      "confirmTitle": "Cambiar al plan {plan}",
+      "confirmPaid": "Pasarás del plan {current} al plan {plan} por {price} al mes. El pago es simulado: no se cobra nada.",
+      "confirmFree": "Pasarás del plan {current} al plan {plan}, sin costo.",
+      "back": "Volver",
+      "confirm": "Confirmar cambio",
+      "confirming": "Cambiando…",
+      "approvedDetail": "Tu negocio ya está en el plan {plan}.",
+      "warnings": {
+        "trialEnds": "Tu prueba termina con el cambio y no se puede recuperar.",
+        "customersOver": "Tienes {used, number} clientes y el plan permite {limit, number}. No se borra ninguno, pero no podrás dar de alta más.",
+        "usersOver": "Tienes {used, number} usuarios activos y el plan permite {limit, number}. No se borra ninguno, pero no podrás crear más.",
+        "imagesLost": "Ya no podrás subir logo ni fotos.",
+        "exportsLost": "Ya no podrás descargar movimientos.",
+        "historyShorter": "Verás menos días de historial de movimientos."
+      },
+      "failures": {
+        "closed": "El cambio de plan no está disponible por ahora.",
+        "invalid": "Ese plan ya no está disponible. Elige otro.",
+        "unchanged": "Tu negocio ya tiene ese plan.",
+        "unavailable": "No pudimos cambiar tu plan. Inténtalo de nuevo en un momento."
+      }
     }
   },
   "platform": {
@@ -1182,5 +1201,16 @@
       "label": "Plataforma",
       "role": "Dueño de la plataforma"
     }
+  },
+  "payment": {
+    "processingTitle": "Procesando tu pago",
+    "approvedTitle": "Pago aprobado",
+    "steps": {
+      "verifying": "Verificando tus datos…",
+      "charging": "Procesando el pago de tu suscripción…",
+      "activating": "Activando tu plan…"
+    },
+    "summary": "Plan {plan}: {price} al mes",
+    "simulated": "Pago simulado: no se hace ningún cobro."
   }
 }

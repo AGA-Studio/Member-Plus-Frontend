@@ -1,6 +1,6 @@
 import type { Plan, PlanSummary } from "@/lib/domain";
 import { canSignUpFor } from "@/lib/registration";
-import { backendGet, backendUrl } from "./backend";
+import { backendCall, backendGet, backendUrl } from "./backend";
 
 type BackendPlan = {
   id: number;
@@ -23,6 +23,7 @@ export type BackendPlanSummary = {
   plan: BackendPlan;
   trial_ends_at: string | null;
   trial_active: boolean;
+  can_change_plan?: boolean;
   unit_price_cents: number | null;
   usage: PlanSummary["usage"];
 };
@@ -51,6 +52,7 @@ export function toPlanSummary(summary: BackendPlanSummary): PlanSummary {
     plan: toPlan(summary.plan),
     trialEndsAt: summary.trial_ends_at,
     trialActive: summary.trial_active,
+    canChangePlan: summary.can_change_plan === true,
     unitPriceCents: summary.unit_price_cents,
     usage: summary.usage,
   };
@@ -77,4 +79,16 @@ export async function listPublicPlans(): Promise<Plan[]> {
 
 export async function getPlanSummary(): Promise<PlanSummary> {
   return toPlanSummary(await backendGet<BackendPlanSummary>("/plan/summary"));
+}
+
+export type PlanWriteResult = { ok: true } | { ok: false; reason: "closed" | "invalid" | "unchanged" | "unavailable" };
+
+export async function changePlan(planId: number): Promise<PlanWriteResult> {
+  const result = await backendCall<BackendPlanSummary>("PATCH", "/plan/update", { body: { plan_id: planId } });
+  if (result.ok) return { ok: true };
+  if (result.code === "plan_change_closed") return { ok: false, reason: "closed" };
+  if (result.code === "plan_invalid") return { ok: false, reason: "invalid" };
+  if (result.code === "plan_unchanged") return { ok: false, reason: "unchanged" };
+
+  return { ok: false, reason: "unavailable" };
 }

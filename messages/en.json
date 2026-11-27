@@ -182,18 +182,7 @@
       "description": "Try again in a moment.",
       "retry": "Try again"
     },
-    "payment": {
-      "processingTitle": "Processing your payment",
-      "approvedTitle": "Payment approved",
-      "steps": {
-        "verifying": "Checking your details…",
-        "charging": "Processing your subscription payment…",
-        "activating": "Activating your plan…"
-      },
-      "approvedDetail": "Your {plan} plan is ready, with a {days}-day trial.",
-      "summary": "{plan} plan: {price} per month",
-      "simulated": "Simulated payment: nothing is charged."
-    }
+    "paymentApproved": "Your {plan} plan is ready, with a {days}-day trial."
   },
   "cashier": {
     "header": {
@@ -981,7 +970,8 @@
     "logoSaved": "Logo saved.",
     "logoRemoved": "Logo removed.",
     "businessSuspended": "Business suspended.",
-    "businessReactivated": "Business reactivated."
+    "businessReactivated": "Business reactivated.",
+    "planChanged": "You switched to the {plan} plan."
   },
   "system": {
     "notFound": {
@@ -1096,6 +1086,35 @@
         "title": "No plans",
         "description": "Offered plans will show up here."
       }
+    },
+    "change": {
+      "open": "Change plan",
+      "choosingTitle": "Choose a plan",
+      "current": "Current plan",
+      "currentTrial": "Current plan, on trial",
+      "choose": "Choose plan",
+      "chooseNamed": "Choose plan {plan}",
+      "confirmTitle": "Switch to the {plan} plan",
+      "confirmPaid": "You will move from the {current} plan to the {plan} plan for {price} per month. The payment is simulated: nothing is charged.",
+      "confirmFree": "You will move from the {current} plan to the {plan} plan, free of charge.",
+      "back": "Back",
+      "confirm": "Confirm change",
+      "confirming": "Changing…",
+      "approvedDetail": "Your business is now on the {plan} plan.",
+      "warnings": {
+        "trialEnds": "Your trial ends with this change and cannot be restored.",
+        "customersOver": "You have {used, number} customers and the plan allows {limit, number}. None are deleted, but you will not be able to add more.",
+        "usersOver": "You have {used, number} active users and the plan allows {limit, number}. None are deleted, but you will not be able to create more.",
+        "imagesLost": "You will no longer be able to upload a logo or photos.",
+        "exportsLost": "You will no longer be able to download transactions.",
+        "historyShorter": "You will see fewer days of transaction history."
+      },
+      "failures": {
+        "closed": "Changing plans is not available right now.",
+        "invalid": "That plan is no longer available. Choose another one.",
+        "unchanged": "Your business already has that plan.",
+        "unavailable": "We could not change your plan. Try again in a moment."
+      }
     }
   },
   "platform": {
@@ -1182,5 +1201,16 @@
       "label": "Platform",
       "role": "Platform owner"
     }
+  },
+  "payment": {
+    "processingTitle": "Processing your payment",
+    "approvedTitle": "Payment approved",
+    "steps": {
+      "verifying": "Checking your details…",
+      "charging": "Processing your subscription payment…",
+      "activating": "Activating your plan…"
+    },
+    "summary": "{plan} plan: {price} per month",
+    "simulated": "Simulated payment: nothing is charged."
   }
 }

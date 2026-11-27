@@ -12,6 +12,8 @@ import { TextField } from "@/components/ui/text-field";
 import { loginWithBackend } from "@/features/auth/auth-client";
 import { useEntryTransition } from "@/features/auth/entry-transition";
 import { TurnstileWidget } from "@/features/auth/turnstile-widget";
+import { PaymentDialog } from "@/features/payments/payment-dialog";
+import { usePaymentSimulation } from "@/features/payments/use-payment-simulation";
 import { revealClasses } from "@/lib/motion";
 import {
   passwordMinLength,
@@ -22,10 +24,8 @@ import {
   type RegistrationValues,
 } from "@/lib/registration";
 import type { Plan } from "@/lib/domain";
-import { PaymentDialog } from "./payment-dialog";
 import { PlanPicker } from "./plan-picker";
 import { registerBusiness } from "./registration-client";
-import { usePaymentSimulation } from "./use-payment-simulation";
 import { useTurnstile } from "./use-turnstile";
 
 type FormFailure = Exclude<RegistrationFailure, { kind: "fields" }>;
@@ -156,7 +156,7 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
         stage={payment.stage}
         planName={selectedPlan.name}
         priceCents={selectedPlan.priceCents}
-        trialDays={selectedPlan.trialDays}
+        approvedDetail={t("paymentApproved", { plan: selectedPlan.name, days: selectedPlan.trialDays })}
       />
       <FormSection title={t("sections.business")} index={1}>
         <TextField

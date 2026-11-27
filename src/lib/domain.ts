@@ -146,6 +146,7 @@ export type PlanSummary = {
   plan: Plan;
   trialEndsAt: string | null;
   trialActive: boolean;
+  canChangePlan: boolean;
   unitPriceCents: number | null;
   usage: { customers: PlanUsageItem; users: PlanUsageItem };
 };

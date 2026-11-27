@@ -12,11 +12,11 @@ type PaymentDialogProps = {
   stage: PaymentStage;
   planName: string;
   priceCents: number;
-  trialDays: number;
+  approvedDetail: string;
 };
 
-export function PaymentDialog({ open, stage, planName, priceCents, trialDays }: PaymentDialogProps) {
-  const t = useTranslations("registration.payment");
+export function PaymentDialog({ open, stage, planName, priceCents, approvedDetail }: PaymentDialogProps) {
+  const t = useTranslations("payment");
   const format = useFormatter();
   const approved = stage === "approved";
 
@@ -38,7 +38,7 @@ export function PaymentDialog({ open, stage, planName, priceCents, trialDays }: 
           key={stage}
           className="text-base font-semibold text-foreground transition-[opacity,translate] duration-200 ease-out starting:translate-y-1 starting:opacity-0"
         >
-          {stage === "approved" ? t("approvedDetail", { plan: planName, days: trialDays }) : t(`steps.${stage}`)}
+          {stage === "approved" ? approvedDetail : t(`steps.${stage}`)}
         </p>
         <p className="text-sm tabular-nums text-muted">
           {t("summary", { plan: planName, price: formatMoney(format, priceCents) })}

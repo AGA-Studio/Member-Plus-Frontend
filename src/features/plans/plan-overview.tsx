@@ -1,5 +1,6 @@
 import { Check, Minus } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Reveal } from "@/components/ui/reveal";
 import type { PlanSummary } from "@/lib/domain";
@@ -11,11 +12,12 @@ type PlanOverviewProps = {
   summary: PlanSummary;
   audience: "business" | "platform";
   fallbackPlanName?: string;
+  changeControl?: ReactNode;
 };
 
 const cardClasses = "flex h-full flex-col gap-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-6";
 
-export function PlanOverview({ summary, audience, fallbackPlanName }: PlanOverviewProps) {
+export function PlanOverview({ summary, audience, fallbackPlanName, changeControl }: PlanOverviewProps) {
   const t = useTranslations("plans");
   const copy = useTranslations(`plans.${audience}`);
   const format = useFormatter();
@@ -96,7 +98,9 @@ export function PlanOverview({ summary, audience, fallbackPlanName }: PlanOvervi
               <UsageMeter label={t("usage.users")} item={usage.users} reachedMessage={t("usage.usersReached")} />
             </div>
             {audience === "business" ? (
-              <p className="mt-auto border-t border-border pt-5 text-sm text-muted">{t("business.changeHint")}</p>
+              <div className="mt-auto border-t border-border pt-5">
+                {changeControl ?? <p className="text-sm text-muted">{t("business.changeHint")}</p>}
+              </div>
             ) : null}
           </section>
         </Reveal>
