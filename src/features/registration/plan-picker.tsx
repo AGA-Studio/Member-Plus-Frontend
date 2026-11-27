@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { usePlanHighlights } from "@/features/plans/use-plan-highlights";
+import { usePlanName } from "@/features/plans/use-plan-name";
 import { cx } from "@/lib/cx";
 import type { Plan } from "@/lib/domain";
 import { formatMoney } from "@/lib/format";
@@ -18,6 +19,7 @@ export function PlanPicker({ plans, selectedId, onSelect }: PlanPickerProps) {
   const t = useTranslations("registration.plans");
   const format = useFormatter();
   const highlightsOf = usePlanHighlights();
+  const planName = usePlanName();
 
   return (
     <div className="flex flex-col gap-3">
@@ -43,7 +45,7 @@ export function PlanPicker({ plans, selectedId, onSelect }: PlanPickerProps) {
             />
             <span className="flex min-w-0 flex-1 flex-col gap-2">
               <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                <span className="text-base font-semibold text-foreground">{plan.name}</span>
+                <span className="text-base font-semibold text-foreground">{planName(plan)}</span>
                 <span className="text-base font-semibold tabular-nums text-foreground">
                   {plan.priceCents === 0
                     ? t("free")

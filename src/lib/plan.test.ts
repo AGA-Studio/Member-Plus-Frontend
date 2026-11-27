@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { PlanSummary } from "./domain";
-import { isTrialRunning, monthlyPriceCents, planChangeWarnings, usageLevel, usagePercent } from "./plan";
+import {
+  isTrialRunning,
+  localizedPlanName,
+  monthlyPriceCents,
+  planChangeWarnings,
+  usageLevel,
+  usagePercent,
+} from "./plan";
 
 describe("usageLevel", () => {
   it.each([
@@ -134,5 +141,17 @@ describe("planChangeWarnings", () => {
     const current = { ...summary, plan: { ...free, id: 2 } };
 
     expect(planChangeWarnings(current, free)).toEqual([]);
+  });
+});
+
+describe("localizedPlanName", () => {
+  const translate = (key: string) => `translated ${key}`;
+
+  it.each(["free", "counter", "business", "chain"])("translates the %s plan by its key", (key) => {
+    expect(localizedPlanName({ key, name: "Nombre del API" }, translate)).toBe(`translated ${key}`);
+  });
+
+  it.each(["enterprise", ""])("keeps the API name for the unknown key %j", (key) => {
+    expect(localizedPlanName({ key, name: "Corporativo" }, translate)).toBe("Corporativo");
   });
 });

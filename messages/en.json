@@ -1020,7 +1020,7 @@
   },
   "plans": {
     "viewUsage": "View plan and usage",
-    "free": "Free",
+    "free": "Free of charge",
     "monthly": "{price} per month",
     "trialPrice": "Free during the trial",
     "unlimited": "Unlimited",
@@ -1115,6 +1115,12 @@
         "unchanged": "Your business already has that plan.",
         "unavailable": "We could not change your plan. Try again in a moment."
       }
+    },
+    "names": {
+      "free": "Free",
+      "counter": "Counter",
+      "business": "Business",
+      "chain": "Chain"
     }
   },
   "platform": {

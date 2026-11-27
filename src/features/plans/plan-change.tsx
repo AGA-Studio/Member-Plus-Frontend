@@ -14,6 +14,7 @@ import { useAttempt } from "@/lib/use-action-guard";
 import { changePlanAction, type PlanChangeFailure } from "./actions";
 import { PlanChangeConfirmation } from "./plan-change-confirmation";
 import { PlanChoices } from "./plan-choices";
+import { usePlanName } from "./use-plan-name";
 
 type PlanChangeProps = {
   summary: PlanSummary;
@@ -29,6 +30,7 @@ export function PlanChange({ summary, plans }: PlanChangeProps) {
   const { show } = useToast();
   const attempt = useAttempt();
   const payment = usePaymentSimulation();
+  const planName = usePlanName();
   const [step, setStep] = useState<Step>("closed");
   const [target, setTarget] = useState<Plan | null>(null);
   const [confirmationSummary, setConfirmationSummary] = useState(summary);
@@ -63,7 +65,7 @@ export function PlanChange({ summary, plans }: PlanChangeProps) {
 
       if (paidPlan) await payment.approve();
       setStep("closed");
-      show("success", toasts("planChanged", { plan: plan.name }));
+      show("success", toasts("planChanged", { plan: planName(plan) }));
     });
   }
 
@@ -85,7 +87,7 @@ export function PlanChange({ summary, plans }: PlanChangeProps) {
         onClose={() => {
           if (!pending) setStep("closed");
         }}
-        title={target ? t("confirmTitle", { plan: target.name }) : t("choosingTitle")}
+        title={target ? t("confirmTitle", { plan: planName(target) }) : t("choosingTitle")}
       >
         {target ? (
           <PlanChangeConfirmation
@@ -102,9 +104,9 @@ export function PlanChange({ summary, plans }: PlanChangeProps) {
         <PaymentDialog
           open={payment.open}
           stage={payment.stage}
-          planName={target.name}
+          planName={planName(target)}
           priceCents={target.priceCents}
-          approvedDetail={t("approvedDetail", { plan: target.name })}
+          approvedDetail={t("approvedDetail", { plan: planName(target) })}
         />
       ) : null}
     </>

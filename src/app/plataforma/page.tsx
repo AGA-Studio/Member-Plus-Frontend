@@ -15,7 +15,7 @@ import { PlatformTabs } from "@/features/platform/platform-tabs";
 import { parsePage } from "@/lib/api/paginate";
 import { getPlatformSummary, listBusinesses } from "@/lib/api/platform";
 import { businessStatuses, type BusinessStatus } from "@/lib/domain";
-import { isTrialRunning } from "@/lib/plan";
+import { isTrialRunning, localizedPlanName } from "@/lib/plan";
 
 export const instant = false;
 
@@ -61,9 +61,11 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
   const formatDate = (iso: string) =>
     format.dateTime(new Date(iso), { day: "numeric", month: "short", year: "numeric" });
   const planT = await getTranslations("plans.platform");
+  const planNames = await getTranslations("plans.names");
   const now = new Date();
   const rows = result.items.map((business) => ({
     ...business,
+    planName: localizedPlanName({ key: business.planKey, name: business.planName }, planNames),
     trialUntil:
       business.trialEndsAt && isTrialRunning(business.trialEndsAt, now)
         ? planT("trialUntil", { date: formatDate(business.trialEndsAt) })
