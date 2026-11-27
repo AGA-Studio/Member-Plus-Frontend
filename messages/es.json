@@ -1225,5 +1225,45 @@
     },
     "summary": "Plan {plan}: {price} al mes",
     "simulated": "Pago simulado: no se hace ningún cobro."
+  },
+  "assistant": {
+    "open": "Abrir el asistente",
+    "title": "Asistente Member+",
+    "subtitle": "Datos de tu negocio",
+    "close": "Cerrar el asistente",
+    "newChat": "Nueva conversación",
+    "newChatTitle": "Empezar una conversación nueva",
+    "newChatBody": "Se borra esta conversación. No se puede recuperar.",
+    "newChatKeep": "Conservar",
+    "newChatConfirm": "Borrar y empezar",
+    "greeting": "Hola, {name}",
+    "intro": "Pregúntame por tus clientes, movimientos y niveles. Solo consulto; no cambio nada.",
+    "suggestions": {
+      "customers": "¿Cuántos clientes activos tengo?",
+      "expiring": "¿Cuántas membresías están por vencer?",
+      "movements": "Resume los movimientos recientes",
+      "tiers": "¿Qué beneficios da cada nivel?"
+    },
+    "inputLabel": "Pregunta para el asistente",
+    "placeholder": "Pregunta sobre tu negocio",
+    "send": "Enviar",
+    "stop": "Detener la respuesta",
+    "typing": "El asistente está escribiendo",
+    "you": "Tú:",
+    "assistantName": "Asistente:",
+    "copy": "Copiar respuesta",
+    "copied": "Respuesta copiada",
+    "scrollDown": "Ir al último mensaje",
+    "counter": "{count, number} de {max, number}",
+    "privacy": "Tus preguntas y los datos consultados se envían a un proveedor externo de IA, que puede equivocarse. No escribas datos sensibles. <link>Aviso de privacidad</link>",
+    "retry": "Intentar de nuevo",
+    "seePlans": "Ver plan y uso",
+    "failures": {
+      "planRequired": "Tu plan no incluye el asistente.",
+      "unavailable": "El asistente no está disponible ahora.",
+      "offline": "Sin conexión. Revisa tu internet.",
+      "stopped": "Detuviste la respuesta.",
+      "sessionExpired": "Tu sesión terminó."
+    }
   }
 }

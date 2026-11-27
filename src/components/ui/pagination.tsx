@@ -60,7 +60,7 @@ export function Pagination({ pathname, params, page, pageCount, summary, classNa
   }, [page]);
 
   return (
-    <div className={cx("sticky bottom-4 z-10", className)}>
+    <div data-sticky-bar className={cx("sticky bottom-4 z-10", className)}>
       <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-3 shadow-md sm:px-6">
         <p
           key={summary}

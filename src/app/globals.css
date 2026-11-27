@@ -97,6 +97,22 @@
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   --animate-scan: scan-sweep 2.4s ease-in-out infinite;
+  --animate-typing-first: typing-dot 1.2s ease-in-out infinite;
+  --animate-typing-second: typing-dot 1.2s ease-in-out 0.15s infinite;
+  --animate-typing-third: typing-dot 1.2s ease-in-out 0.3s infinite;
+
+  @keyframes typing-dot {
+    0%,
+    60%,
+    100% {
+      opacity: 0.4;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(-0.25rem);
+    }
+  }
 
   @keyframes scan-sweep {
     0%,
