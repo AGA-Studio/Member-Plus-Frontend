@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { CheckboxField } from "@/components/ui/checkbox-field";
@@ -21,8 +22,10 @@ import {
   type RegistrationFailure,
   type RegistrationValues,
 } from "@/lib/registration";
+import { PaymentDialog } from "./payment-dialog";
 import { PlanPicker } from "./plan-picker";
 import { registerBusiness } from "./registration-client";
+import { usePaymentSimulation } from "./use-payment-simulation";
 import { useTurnstile } from "./use-turnstile";
 
 type FormFailure = Exclude<RegistrationFailure, { kind: "fields" }>;
@@ -62,6 +65,7 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
   const router = useRouter();
   const { begin } = useEntryTransition();
   const turnstile = useTurnstile();
+  const payment = usePaymentSimulation();
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [created, setCreated] = useState(false);
@@ -88,8 +92,7 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
     if (element instanceof HTMLElement) element.focus();
   }
 
-  async function enterNewAccount(email: string) {
-    const loginToken = widgetEnabled ? await turnstile.requestFreshToken() : null;
+  async function enterNewAccount(email: string, loginToken: string | null) {
     const login = await loginWithBackend(email, values.password, loginToken);
 
     if (login.ok) {
@@ -113,15 +116,21 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
       return;
     }
 
+    const paidPlan = selectedPlan.priceCents > 0;
+    if (paidPlan) payment.start();
+
     startTransition(async () => {
       const outcome = await registerBusiness(values, selectedPlan.id, turnstile.token);
 
       if (outcome.ok) {
         setCreated(true);
-        await enterNewAccount(outcome.email);
+        const loginToken = widgetEnabled ? turnstile.requestFreshToken() : Promise.resolve(null);
+        if (paidPlan) await payment.approve();
+        await enterNewAccount(outcome.email, await loginToken);
         return;
       }
 
+      if (paidPlan) flushSync(payment.cancel);
       if (widgetEnabled) turnstile.reset();
 
       if (outcome.failure.kind === "fields") {
@@ -142,6 +151,13 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
+      <PaymentDialog
+        open={payment.open}
+        stage={payment.stage}
+        planName={selectedPlan.name}
+        priceCents={selectedPlan.priceCents}
+        trialDays={selectedPlan.trialDays}
+      />
       <FormSection title={t("sections.business")} index={1}>
         <TextField
           name="businessName"
