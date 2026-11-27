@@ -7,6 +7,7 @@ import type { Plan, PlanSummary } from "@/lib/domain";
 import { formatMoney } from "@/lib/format";
 import { planChangeWarnings } from "@/lib/plan";
 import type { PlanChangeFailure } from "./actions";
+import { usePlanName } from "./use-plan-name";
 
 type PlanChangeConfirmationProps = {
   summary: PlanSummary;
@@ -27,6 +28,7 @@ export function PlanChangeConfirmation({
 }: PlanChangeConfirmationProps) {
   const t = useTranslations("plans.change");
   const format = useFormatter();
+  const planName = usePlanName();
   const warnings = planChangeWarnings(summary, target);
 
   return (
@@ -34,10 +36,10 @@ export function PlanChangeConfirmation({
       {failure ? <Alert tone="danger">{t(`failures.${failure}`)}</Alert> : null}
       <p className="text-base text-foreground">
         {target.priceCents === 0
-          ? t("confirmFree", { current: summary.plan.name, plan: target.name })
+          ? t("confirmFree", { current: planName(summary.plan), plan: planName(target) })
           : t("confirmPaid", {
-              current: summary.plan.name,
-              plan: target.name,
+              current: planName(summary.plan),
+              plan: planName(target),
               price: formatMoney(format, target.priceCents),
             })}
       </p>

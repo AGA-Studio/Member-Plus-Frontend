@@ -162,6 +162,7 @@ export type PlatformBusiness = {
   customersCount: number;
   logoUrl: string | null;
   createdAt: string;
+  planKey: string;
   planName: string;
   trialEndsAt: string | null;
 };

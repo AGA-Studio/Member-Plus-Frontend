@@ -40,6 +40,7 @@ type BackendBusiness = {
   customers_count: number;
   logo_url?: string | null;
   created_at: string;
+  plan_key: string;
   plan_name: string;
   trial_ends_at: string | null;
 };
@@ -52,6 +53,7 @@ function toPlatformBusiness(business: BackendBusiness): PlatformBusiness {
     customersCount: business.customers_count,
     logoUrl: business.logo_url ?? null,
     createdAt: business.created_at,
+    planKey: business.plan_key,
     planName: business.plan_name,
     trialEndsAt: business.trial_ends_at,
   };

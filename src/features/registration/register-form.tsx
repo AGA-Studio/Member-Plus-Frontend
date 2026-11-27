@@ -14,6 +14,7 @@ import { useEntryTransition } from "@/features/auth/entry-transition";
 import { TurnstileWidget } from "@/features/auth/turnstile-widget";
 import { PaymentDialog } from "@/features/payments/payment-dialog";
 import { usePaymentSimulation } from "@/features/payments/use-payment-simulation";
+import { usePlanName } from "@/features/plans/use-plan-name";
 import { revealClasses } from "@/lib/motion";
 import {
   passwordMinLength,
@@ -66,6 +67,7 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
   const { begin } = useEntryTransition();
   const turnstile = useTurnstile();
   const payment = usePaymentSimulation();
+  const planName = usePlanName();
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, startTransition] = useTransition();
   const [created, setCreated] = useState(false);
@@ -154,9 +156,9 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
       <PaymentDialog
         open={payment.open}
         stage={payment.stage}
-        planName={selectedPlan.name}
+        planName={planName(selectedPlan)}
         priceCents={selectedPlan.priceCents}
-        approvedDetail={t("paymentApproved", { plan: selectedPlan.name, days: selectedPlan.trialDays })}
+        approvedDetail={t("paymentApproved", { plan: planName(selectedPlan), days: selectedPlan.trialDays })}
       />
       <FormSection title={t("sections.business")} index={1}>
         <TextField
@@ -217,7 +219,7 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
         <PlanPicker plans={plans} selectedId={selectedPlan.id} onSelect={setPlanId} />
         {selectedPlan.trialDays > 0 ? (
           <Alert key={selectedPlan.id} tone="info">
-            {t("plans.trialNote", { plan: defaultPlan.name })}
+            {t("plans.trialNote", { plan: planName(defaultPlan) })}
           </Alert>
         ) : null}
       </FormSection>

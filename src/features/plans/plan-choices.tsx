@@ -9,6 +9,7 @@ import type { Plan } from "@/lib/domain";
 import { revealClasses } from "@/lib/motion";
 import { PlanPrice } from "./plan-price";
 import { usePlanHighlights } from "./use-plan-highlights";
+import { usePlanName } from "./use-plan-name";
 
 type PlanChoicesProps = {
   plans: Plan[];
@@ -20,6 +21,7 @@ type PlanChoicesProps = {
 export function PlanChoices({ plans, currentPlanId, trialActive, onChoose }: PlanChoicesProps) {
   const t = useTranslations("plans.change");
   const highlightsOf = usePlanHighlights();
+  const planName = usePlanName();
 
   return (
     <ul className="grid gap-3 sm:grid-cols-3">
@@ -36,7 +38,7 @@ export function PlanChoices({ plans, currentPlanId, trialActive, onChoose }: Pla
               )}
             >
               <div className="flex flex-col gap-1">
-                <h3 className="text-subheading text-foreground">{plan.name}</h3>
+                <h3 className="text-subheading text-foreground">{planName(plan)}</h3>
                 <p className="text-base font-semibold tabular-nums text-foreground">
                   <PlanPrice cents={plan.priceCents} />
                 </p>
@@ -56,7 +58,7 @@ export function PlanChoices({ plans, currentPlanId, trialActive, onChoose }: Pla
                   <Button
                     variant="outline"
                     fullWidth
-                    aria-label={t("chooseNamed", { plan: plan.name })}
+                    aria-label={t("chooseNamed", { plan: planName(plan) })}
                     onClick={() => onChoose(plan)}
                   >
                     {t("choose")}

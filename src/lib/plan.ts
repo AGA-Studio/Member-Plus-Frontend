@@ -51,3 +51,16 @@ export function planChangeWarnings({ plan, trialActive, usage }: PlanSummary, ta
 
   return warnings;
 }
+
+const translatedPlanKeys = ["free", "counter", "business", "chain"] as const;
+
+export type TranslatedPlanKey = (typeof translatedPlanKeys)[number];
+
+export function localizedPlanName(
+  { key, name }: { key: string; name: string },
+  translate: (key: TranslatedPlanKey) => string,
+): string {
+  const translatedKey = translatedPlanKeys.find((candidate) => candidate === key);
+
+  return translatedKey ? translate(translatedKey) : name;
+}

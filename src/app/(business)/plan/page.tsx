@@ -28,7 +28,7 @@ export default async function PlanPage() {
       <PlanOverview
         summary={summary}
         audience="business"
-        fallbackPlanName={plans.find((plan) => plan.isDefault)?.name}
+        fallbackPlan={plans.find((plan) => plan.isDefault)}
         changeControl={summary.canChangePlan ? <PlanChange summary={summary} plans={plans} /> : undefined}
       />
     </>

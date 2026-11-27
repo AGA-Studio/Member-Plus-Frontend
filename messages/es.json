@@ -1115,6 +1115,12 @@
         "unchanged": "Tu negocio ya tiene ese plan.",
         "unavailable": "No pudimos cambiar tu plan. Inténtalo de nuevo en un momento."
       }
+    },
+    "names": {
+      "free": "Gratis",
+      "counter": "Mostrador",
+      "business": "Negocio",
+      "chain": "Cadena"
     }
   },
   "platform": {

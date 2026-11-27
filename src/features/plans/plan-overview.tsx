@@ -3,24 +3,26 @@ import { useFormatter, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Reveal } from "@/components/ui/reveal";
-import type { PlanSummary } from "@/lib/domain";
+import type { Plan, PlanSummary } from "@/lib/domain";
 import { monthlyPriceCents } from "@/lib/plan";
 import { PlanPrice } from "./plan-price";
 import { UsageMeter } from "./usage-meter";
+import { usePlanName } from "./use-plan-name";
 
 type PlanOverviewProps = {
   summary: PlanSummary;
   audience: "business" | "platform";
-  fallbackPlanName?: string;
+  fallbackPlan?: Plan;
   changeControl?: ReactNode;
 };
 
 const cardClasses = "flex h-full flex-col gap-5 rounded-lg border border-border bg-surface p-5 shadow-sm sm:p-6";
 
-export function PlanOverview({ summary, audience, fallbackPlanName, changeControl }: PlanOverviewProps) {
+export function PlanOverview({ summary, audience, fallbackPlan, changeControl }: PlanOverviewProps) {
   const t = useTranslations("plans");
   const copy = useTranslations(`plans.${audience}`);
   const format = useFormatter();
+  const planName = usePlanName();
   const { plan, trialEndsAt, trialActive, usage } = summary;
   const trialDate = trialEndsAt
     ? format.dateTime(new Date(trialEndsAt), { day: "numeric", month: "short", year: "numeric" })
@@ -42,13 +44,13 @@ export function PlanOverview({ summary, audience, fallbackPlanName, changeContro
         <Reveal variant="entrance" index={2}>
           {trialActive ? (
             <Alert tone="info">
-              {copy("trialRunning", { plan: plan.name, date: trialDate })}
-              {audience === "business" && fallbackPlanName
-                ? ` ${t("business.trialAfter", { plan: fallbackPlanName })}`
+              {copy("trialRunning", { plan: planName(plan), date: trialDate })}
+              {audience === "business" && fallbackPlan
+                ? ` ${t("business.trialAfter", { plan: planName(fallbackPlan) })}`
                 : null}
             </Alert>
           ) : (
-            <Alert tone="warning">{copy("trialEnded", { plan: plan.name, date: trialDate })}</Alert>
+            <Alert tone="warning">{copy("trialEnded", { plan: planName(plan), date: trialDate })}</Alert>
           )}
         </Reveal>
       ) : null}
@@ -57,7 +59,7 @@ export function PlanOverview({ summary, audience, fallbackPlanName, changeContro
           <section className={cardClasses}>
             <div className="flex flex-col gap-1">
               <h2 className="text-sm font-medium text-muted">{copy("planTitle")}</h2>
-              <p className="font-display text-heading font-semibold text-foreground">{plan.name}</p>
+              <p className="font-display text-heading font-semibold text-foreground">{planName(plan)}</p>
               <p className="text-base tabular-nums text-muted">
                 {trialActive ? t("trialPrice") : <PlanPrice cents={monthlyPriceCents(summary)} />}
               </p>
