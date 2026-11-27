@@ -16,11 +16,11 @@ import {
   passwordMinLength,
   registrationFieldOrder,
   validateRegistration,
-  type Plan,
   type RegistrationErrors,
   type RegistrationFailure,
   type RegistrationValues,
 } from "@/lib/registration";
+import type { Plan } from "@/lib/domain";
 import { PlanPicker } from "./plan-picker";
 import { registerBusiness } from "./registration-client";
 import { useTurnstile } from "./use-turnstile";

@@ -4,8 +4,8 @@ import { Check } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { cx } from "@/lib/cx";
+import type { Plan } from "@/lib/domain";
 import { formatMoney } from "@/lib/format";
-import type { Plan } from "@/lib/registration";
 
 type PlanPickerProps = {
   plans: Plan[];

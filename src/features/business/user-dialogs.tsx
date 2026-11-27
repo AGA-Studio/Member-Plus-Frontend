@@ -9,6 +9,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
+import { PlanAlert } from "@/features/plans/plan-alert";
 import type { BusinessUser } from "@/lib/api/users";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
 import { useNotifyOnce } from "@/lib/use-notify-once";
@@ -50,7 +51,13 @@ export function NewUserButton() {
       <Dialog open={visible} onClose={() => setOpen(false)} title={t("new.title")}>
         <form key={formKey} action={formAction} noValidate className="flex flex-col gap-5">
           <p className="text-base text-muted">{t("new.description")}</p>
-          {state.errors.form ? <Alert tone="danger">{t(`errors.${state.errors.form}`)}</Alert> : null}
+          {state.errors.form === "limitReached" ? (
+            <PlanAlert attempt={state} onNavigate={() => setOpen(false)}>
+              {t("errors.limitReached")}
+            </PlanAlert>
+          ) : state.errors.form ? (
+            <Alert tone="danger">{t(`errors.${state.errors.form}`)}</Alert>
+          ) : null}
           <TextField
             name="name"
             label={t("fields.name")}
@@ -139,7 +146,7 @@ export function UserRowActions({ user, isSelf }: UserRowActionsProps) {
         return;
       }
 
-      show("danger", t(result.reason === "cannotDeactivateSelf" ? "errors.cannotDeactivateSelf" : "errors.unavailable"));
+      show("danger", t(`errors.${result.reason === "failed" ? "unavailable" : result.reason}`));
     });
   }
 

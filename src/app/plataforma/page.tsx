@@ -11,9 +11,11 @@ import { Pagination } from "@/components/ui/pagination";
 import { Reveal } from "@/components/ui/reveal";
 import { FilterBar } from "@/features/business/filter-bar";
 import { readParam } from "@/features/business/member-status";
+import { PlatformTabs } from "@/features/platform/platform-tabs";
 import { parsePage } from "@/lib/api/paginate";
 import { getPlatformSummary, listBusinesses } from "@/lib/api/platform";
 import { businessStatuses, type BusinessStatus } from "@/lib/domain";
+import { isTrialRunning } from "@/lib/plan";
 
 export const instant = false;
 
@@ -58,6 +60,15 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
 
   const formatDate = (iso: string) =>
     format.dateTime(new Date(iso), { day: "numeric", month: "short", year: "numeric" });
+  const planT = await getTranslations("plans.platform");
+  const now = new Date();
+  const rows = result.items.map((business) => ({
+    ...business,
+    trialUntil:
+      business.trialEndsAt && isTrialRunning(business.trialEndsAt, now)
+        ? planT("trialUntil", { date: formatDate(business.trialEndsAt) })
+        : null,
+  }));
 
   const pagination = (
     <Pagination
@@ -72,6 +83,7 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
 
   return (
     <>
+      <PlatformTabs active="businesses" />
       <Reveal className="flex flex-col gap-1">
         <h1 className="text-title text-foreground">{t("title")}</h1>
         <p className="text-base text-muted">{t("subtitle", { count: result.total })}</p>
@@ -117,13 +129,16 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                   <tr>
                     <th scope="col" className="px-6 py-3 font-medium">{t("columns.business")}</th>
                     <th scope="col" className="px-4 py-3 font-medium">{t("columns.status")}</th>
+                    <th scope="col" className="px-4 py-3 font-medium">{t("columns.plan")}</th>
                     <th scope="col" className="px-4 py-3 text-right font-medium">{t("columns.customers")}</th>
-                    <th scope="col" className="px-4 py-3 text-right font-medium">{t("columns.createdAt")}</th>
+                    <th scope="col" className="hidden px-4 py-3 text-right font-medium lg:table-cell">
+                      {t("columns.createdAt")}
+                    </th>
                     <th scope="col" aria-hidden className="w-12" />
                   </tr>
                 </thead>
                 <tbody className="table-reveal">
-                  {result.items.map((business) => (
+                  {rows.map((business) => (
                     <tr
                       key={business.id}
                       className="relative cursor-pointer border-t border-border transition-colors duration-150 ease-out hover:bg-surface-muted"
@@ -141,17 +156,27 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                       <td className="px-4 py-3">
                         <Badge tone={statusTones[business.status]}>{statusLabels(business.status)}</Badge>
                       </td>
+                      <td className="px-4 py-3">
+                        <span className="flex flex-col">
+                          <span className="text-base text-foreground">{business.planName}</span>
+                          {business.trialUntil ? (
+                            <span className="text-sm text-muted">{business.trialUntil}</span>
+                          ) : null}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-right text-base tabular-nums text-foreground">
                         {format.number(business.customersCount)}
                       </td>
-                      <td className="px-4 py-3 text-right text-base text-muted">{formatDate(business.createdAt)}</td>
+                      <td className="hidden px-4 py-3 text-right text-base text-muted lg:table-cell">
+                        {formatDate(business.createdAt)}
+                      </td>
                       <td aria-hidden className="pr-6 text-muted"><ChevronRight strokeWidth={1.75} className="size-5" /></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               <ul className="row-reveal sm:hidden">
-                {result.items.map((business) => (
+                {rows.map((business) => (
                   <li key={business.id} className="border-t border-border first:border-t-0">
                     <Link
                       href={`/plataforma/${business.id}`}
@@ -162,6 +187,11 @@ export default async function PlatformPage({ searchParams }: PageProps<"/platafo
                         <span className="truncate text-base font-medium text-foreground">{business.name}</span>
                         <span className="text-sm text-muted">
                           {t("customersCount", { count: business.customersCount })}
+                        </span>
+                        <span className="truncate text-sm text-muted">
+                          {business.trialUntil
+                            ? planT("trialPlan", { plan: business.planName })
+                            : planT("planLine", { plan: business.planName })}
                         </span>
                       </span>
                       <Badge tone={statusTones[business.status]}>{statusLabels(business.status)}</Badge>

@@ -1,10 +1,10 @@
-import { ArrowLeftRight, Layers, LayoutDashboard, Settings, UserCog, Users, type LucideIcon } from "lucide-react";
+import { ArrowLeftRight, Gauge, Layers, LayoutDashboard, Settings, UserCog, Users, type LucideIcon } from "lucide-react";
 
 export type NavSection = "general" | "operation" | "management";
 
 export type BusinessNavItem = {
   href: string;
-  key: "dashboard" | "customers" | "levels" | "movements" | "users" | "settings";
+  key: "dashboard" | "customers" | "levels" | "movements" | "users" | "plan" | "settings";
   icon: LucideIcon;
   section: NavSection;
   onBottomBar: boolean;
@@ -18,5 +18,6 @@ export const businessNavItems: BusinessNavItem[] = [
   { href: "/movimientos", key: "movements", icon: ArrowLeftRight, section: "operation", onBottomBar: true },
   { href: "/niveles", key: "levels", icon: Layers, section: "management", onBottomBar: true },
   { href: "/usuarios", key: "users", icon: UserCog, section: "management", onBottomBar: false },
+  { href: "/plan", key: "plan", icon: Gauge, section: "management", onBottomBar: false },
   { href: "/configuracion", key: "settings", icon: Settings, section: "management", onBottomBar: false },
 ];

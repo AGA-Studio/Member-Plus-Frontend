@@ -8,6 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { PhotoField } from "@/components/ui/photo-field";
 import { SelectField } from "@/components/ui/select-field";
 import { Switch } from "@/components/ui/switch";
+import { PlanAlert } from "@/features/plans/plan-alert";
 import { paymentMethods } from "@/lib/domain";
 import { useGuardedAction } from "@/lib/use-action-guard";
 import { formatPlainPesos } from "@/lib/format";
@@ -50,7 +51,13 @@ export function NewMembershipDialog({ triggerLabel, triggerClassName, levelOptio
       </button>
       <Dialog open={open} onClose={() => setOpen(false)} title={t("title")}>
         <form action={formAction} noValidate className="flex flex-col gap-5">
-          {state.errors.form ? <Alert tone="danger">{t(`errors.${state.errors.form}`)}</Alert> : null}
+          {state.errors.form === "limitReached" ? (
+            <PlanAlert attempt={state} onNavigate={() => setOpen(false)}>
+              {t("errors.limitReached")}
+            </PlanAlert>
+          ) : state.errors.form ? (
+            <Alert tone="danger">{t(`errors.${state.errors.form}`)}</Alert>
+          ) : null}
           <TextField
             name="fullName"
             label={t("fullName")}

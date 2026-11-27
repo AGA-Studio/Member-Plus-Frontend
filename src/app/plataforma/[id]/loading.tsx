@@ -1,5 +1,6 @@
 import { LoadingRegion } from "@/components/ui/loading-region";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PlanOverviewSkeleton } from "@/features/plans/plan-overview-skeleton";
 
 export default function Loading() {
   return (
@@ -23,6 +24,7 @@ export default function Loading() {
           </div>
         ))}
       </div>
+      <PlanOverviewSkeleton />
     </LoadingRegion>
   );
 }

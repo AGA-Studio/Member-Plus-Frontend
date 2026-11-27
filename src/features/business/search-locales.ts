@@ -2,7 +2,7 @@ import type { MemberStatus } from "@/lib/domain";
 import en from "../../../messages/en.json";
 import es from "../../../messages/es.json";
 
-export type NavKey = "dashboard" | "customers" | "levels" | "movements" | "users" | "settings";
+export type NavKey = "dashboard" | "customers" | "levels" | "movements" | "users" | "plan" | "settings";
 
 export type SearchLocaleLabels = {
   pages: Record<NavKey, string>;
@@ -24,6 +24,7 @@ function pick(messages: Messages): SearchLocaleLabels {
       levels: messages.business.nav.levels,
       movements: messages.business.nav.movements,
       users: messages.business.nav.users,
+      plan: messages.business.nav.plan,
       settings: messages.business.nav.settings,
     },
     keywords: search.keywords,

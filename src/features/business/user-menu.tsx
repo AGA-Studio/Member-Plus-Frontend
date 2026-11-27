@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Camera, Languages, LogOut, Moon, Settings, Sun, UserCog } from "lucide-react";
+import { ChevronDown, Camera, Gauge, Languages, LogOut, Moon, Settings, Sun, UserCog } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRef, useState, type MouseEvent } from "react";
@@ -176,6 +176,12 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
                 </Link>
               </div>
               <div className={cx(staggerClasses(5), "lg:hidden")}>
+                <Link href="/plan" onClick={closeMenu} className={itemClasses}>
+                  <Gauge aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
+                  {t("plan")}
+                </Link>
+              </div>
+              <div className={cx(staggerClasses(6), "lg:hidden")}>
                 <Link href="/configuracion" onClick={closeMenu} className={itemClasses}>
                   <Settings aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
                   {t("settings")}
@@ -185,7 +191,7 @@ export function UserMenu({ fullName, photoUrl, role, initialTheme }: UserMenuPro
           ) : null}
         </div>
 
-        <div className={cx("mt-2 border-t border-border pt-2", staggerClasses(6))}>
+        <div className={cx("mt-2 border-t border-border pt-2", staggerClasses(7))}>
           <button type="button" onClick={() => openDialog("logout")} className={itemClasses}>
             <LogOut aria-hidden strokeWidth={1.75} className="size-5 text-muted" />
             {t("signOut")}

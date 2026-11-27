@@ -57,6 +57,7 @@
         "tooLarge": "La foto pesa más de 2 MB. Elige una más ligera.",
         "invalid": "No pudimos leer esa imagen. Prueba con otra foto.",
         "storageUnavailable": "El almacenamiento de imágenes no está disponible por ahora. Inténtalo más tarde.",
+        "planRequired": "El plan del negocio no incluye fotos.",
         "unavailable": "No pudimos guardar tu foto. Inténtalo de nuevo."
       }
     },
@@ -299,6 +300,7 @@
       "levels": "Niveles",
       "movements": "Movimientos",
       "users": "Usuarios",
+      "plan": "Plan y uso",
       "settings": "Configuración",
       "sections": {
         "general": "General",
@@ -516,6 +518,7 @@
         "passwordRequired": "Escribe una contraseña.",
         "passwordInvalid": "La contraseña debe tener entre 8 y 128 caracteres.",
         "cannotDeactivateSelf": "No puedes desactivar tu propia cuenta.",
+        "limitReached": "Tu plan ya no admite más usuarios activos.",
         "notFound": "No encontramos a ese usuario. Recarga la pantalla.",
         "unavailable": "No pudimos completar la acción. Inténtalo de nuevo."
       }
@@ -570,7 +573,8 @@
           "emailInvalid": "Revisa el correo: parece incompleto.",
           "emailTaken": "Este correo ya tiene una membresía en tu negocio.",
           "unavailable": "No pudimos crear la membresía. Inténtalo de nuevo.",
-          "phoneInvalid": "Revisa el teléfono: usa solo números."
+          "phoneInvalid": "Revisa el teléfono: usa solo números.",
+          "limitReached": "No creamos la membresía: tu plan ya no admite más clientes. Cuentan todas las tarjetas sin cancelar."
         },
         "sendCard": "Enviar tarjeta por correo",
         "sendCardHint": "El cliente recibe un enlace para guardarla en Google Wallet o descargarla.",
@@ -658,6 +662,7 @@
           "phoneInvalid": "Revisa el teléfono: usa solo números.",
           "photoFailed": "Guardamos los datos, pero no pudimos guardar la foto. Inténtalo de nuevo.",
           "photoCancelled": "Esta membresía está cancelada y no admite foto.",
+          "photoPlan": "Guardamos los datos, pero tu plan no incluye fotos de clientes.",
           "photoRemoveFailed": "No pudimos quitar la foto. Inténtalo de nuevo."
         },
         "level": "Nivel",
@@ -853,7 +858,8 @@
         "preparing": "Preparando…",
         "fileName": "movimientos.csv",
         "done": "Archivo descargado: {count, plural, one {# movimiento} other {# movimientos}}.",
-        "failed": "No pudimos preparar el archivo. Inténtalo de nuevo."
+        "failed": "No pudimos preparar el archivo. Inténtalo de nuevo.",
+        "planRequired": "Tu plan no incluye descargar movimientos. Revisa Plan y uso."
       },
       "vsPrevious": "Frente al periodo anterior"
     },
@@ -872,6 +878,7 @@
         "tooLarge": "La imagen pesa más de 2 MB. Elige una más ligera.",
         "invalid": "No pudimos leer esa imagen. Usa un archivo JPEG, PNG o WebP.",
         "storageUnavailable": "El almacenamiento de imágenes no está disponible por ahora. Inténtalo más tarde.",
+        "planRequired": "Tu plan no incluye subir un logo.",
         "unavailable": "No pudimos guardar el logo. Inténtalo de nuevo."
       },
       "editHint": "Editar negocio"
@@ -911,6 +918,7 @@
           "levels": "niveles beneficios descuento cashback precios",
           "movements": "movimientos compras ventas transacciones cobros",
           "users": "usuarios empleados cajeros administradores equipo",
+          "plan": "plan uso limites precio prueba cobro",
           "settings": "configuracion ajustes logo color negocio vigencia"
         }
       },
@@ -921,6 +929,7 @@
         "darkMode": "Modo oscuro",
         "settings": "Configuración",
         "users": "Usuarios",
+        "plan": "Plan y uso",
         "signOut": "Cerrar sesión"
       }
     }
@@ -945,6 +954,7 @@
     "membershipCreatedSent": "Membresía creada. Enviamos la tarjeta por correo.",
     "membershipCreatedEmailFailed": "Membresía creada, pero no pudimos enviar el correo. Puedes enviarlo desde su ficha.",
     "membershipCreatedPhotoFailed": "Membresía creada, pero no pudimos guardar la foto del cliente.",
+    "membershipCreatedPhotoPlan": "Membresía creada sin foto: tu plan no incluye fotos de clientes.",
     "customerPhotoRemoved": "Foto del cliente quitada.",
     "profilePhotoSaved": "Foto de perfil guardada.",
     "profilePhotoRemoved": "Foto de perfil quitada.",
@@ -1006,6 +1016,76 @@
     "card": "Tarjeta",
     "transfer": "Transferencia"
   },
+  "plans": {
+    "viewUsage": "Ver plan y uso",
+    "free": "Sin costo",
+    "monthly": "{price} al mes",
+    "trialPrice": "Sin costo durante la prueba",
+    "unlimited": "Sin límite",
+    "usage": {
+      "title": "Uso",
+      "customers": "Clientes",
+      "customersHint": "Cuentan todas las tarjetas sin cancelar, también las vencidas.",
+      "users": "Usuarios activos",
+      "count": "{used, number} de {limit, number}",
+      "countUnlimited": "{used, number} · sin límite",
+      "near": "Cerca del límite del plan.",
+      "customersReached": "Límite alcanzado: no se pueden dar de alta más clientes.",
+      "usersReached": "Límite alcanzado: no se pueden crear ni reactivar usuarios."
+    },
+    "features": {
+      "title": "Qué incluye",
+      "history": "Historial de movimientos de {days, number} días",
+      "historyFull": "Historial completo de movimientos",
+      "images": "Logo y fotos",
+      "exports": "Descargar movimientos en CSV",
+      "excluded": "{feature} (no incluido)"
+    },
+    "business": {
+      "metaTitle": "Plan y uso · Member+",
+      "title": "Plan y uso",
+      "subtitle": "Qué incluye tu plan y cuánto llevas usado.",
+      "planTitle": "Tu plan",
+      "trialRunning": "Estás en la prueba del plan {plan} hasta el {date}. No se cobra nada mientras dure.",
+      "trialAfter": "Al terminar, tu negocio sigue con el plan {plan} y no se borra nada.",
+      "trialEnded": "Tu prueba terminó el {date}. Ahora aplica el plan {plan}. No se borró nada.",
+      "changeHint": "Para cambiar de plan, habla con el equipo de Member+. El cobro se hace fuera de la aplicación."
+    },
+    "platform": {
+      "planTitle": "Plan",
+      "trialRunning": "Prueba del plan {plan} hasta el {date}.",
+      "trialEnded": "La prueba terminó el {date}. Aplica el plan {plan}.",
+      "trialUntil": "Prueba hasta el {date}",
+      "planLine": "Plan {plan}",
+      "trialPlan": "Plan {plan} · en prueba"
+    },
+    "catalog": {
+      "metaTitle": "Planes · Member+",
+      "title": "Planes",
+      "subtitle": "Límites y funciones de cada plan.",
+      "default": "Por omisión",
+      "trial": "{days, plural, one {# día} other {# días}} de prueba",
+      "historyDays": "{days, number} días",
+      "historyFull": "Completo",
+      "included": "Incluido",
+      "excluded": "No incluido",
+      "aiMessages": "{count, plural, one {# mensaje al mes} other {# mensajes al mes}}",
+      "hint": "Aquí aparecen los planes públicos; uno asignado a mano puede no estar. El límite de lectores y el de mensajes de IA todavía no se aplican.",
+      "rows": {
+        "customers": "Clientes (una tarjeta cada uno)",
+        "users": "Usuarios",
+        "devices": "Lectores",
+        "history": "Historial",
+        "images": "Logo y fotos",
+        "exports": "Descargar CSV",
+        "ai": "Asistente de IA"
+      },
+      "empty": {
+        "title": "No hay planes",
+        "description": "Los planes que se ofrezcan aparecerán aquí."
+      }
+    }
+  },
   "platform": {
     "metaTitle": "Negocios · Member+",
     "title": "Negocios",
@@ -1027,6 +1107,7 @@
     "columns": {
       "business": "Negocio",
       "status": "Estado",
+      "plan": "Plan",
       "customers": "Clientes",
       "createdAt": "Alta"
     },
@@ -1037,6 +1118,11 @@
     },
     "customersCount": "{count, plural, one {# cliente} other {# clientes}}",
     "openBusiness": "Abrir {name}",
+    "tabs": {
+      "label": "Secciones de la plataforma",
+      "businesses": "Negocios",
+      "plans": "Planes"
+    },
     "range": "{from}–{to} de {total} negocios",
     "empty": {
       "title": "Aún no hay negocios",

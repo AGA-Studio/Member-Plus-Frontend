@@ -9,6 +9,7 @@ import { getInitials } from "@/components/ui/avatar";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { BusinessLogo } from "@/components/ui/business-logo";
 import { Reveal } from "@/components/ui/reveal";
+import { PlanOverview } from "@/features/plans/plan-overview";
 import { BusinessStatusButton } from "@/features/platform/business-status-button";
 import { getPlatformBusiness } from "@/lib/api/platform";
 import type { BusinessStatus } from "@/lib/domain";
@@ -108,6 +109,8 @@ export default async function PlatformBusinessPage({ params }: PageProps<"/plata
         </dl>
         <p className="mt-3 text-sm text-muted">{t("privacyHint")}</p>
       </Reveal>
+
+      <PlanOverview summary={business.plan} audience="platform" />
     </>
   );
 }

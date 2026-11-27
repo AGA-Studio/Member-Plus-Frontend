@@ -10,6 +10,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
 import { useToast } from "@/components/ui/toast-provider";
+import { PlanAlert } from "@/features/plans/plan-alert";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
 import { useNotifyOnce } from "@/lib/use-notify-once";
 import { useSelectedImage } from "@/lib/use-selected-image";
@@ -107,6 +108,10 @@ export function LogoDialog({ businessName, initials, logoUrl, compact = false }:
           <p className="text-base text-muted">{t("description")}</p>
           {fileTooLarge ? (
             <Alert tone="danger">{t("errors.tooLarge")}</Alert>
+          ) : state.error === "planRequired" ? (
+            <PlanAlert attempt={state} onNavigate={() => setOpen(false)}>
+              {t("errors.planRequired")}
+            </PlanAlert>
           ) : state.error ? (
             <Alert tone="danger">{t(`errors.${state.error}`)}</Alert>
           ) : null}

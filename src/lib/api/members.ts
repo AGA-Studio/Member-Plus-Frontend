@@ -132,7 +132,7 @@ export type CardEmailStatus = "sent" | "failed" | "pending" | "skipped";
 
 export type CreateMemberResult =
   | { ok: true; id: number; code: string; cardEmail: CardEmailStatus }
-  | { ok: false; reason: CustomerWriteFailure };
+  | { ok: false; reason: CustomerWriteFailure | "limitReached" };
 
 type CreateMemberInput = CustomerFields & {
   levelId: number;
@@ -157,7 +157,11 @@ export async function createMember(input: CreateMemberInput): Promise<CreateMemb
       },
     },
   );
-  if (!result.ok) return { ok: false, reason: toWriteFailure(result.status, result.code, result.detail) };
+  if (!result.ok) {
+    if (result.code === "limit_reached") return { ok: false, reason: "limitReached" };
+
+    return { ok: false, reason: toWriteFailure(result.status, result.code, result.detail) };
+  }
 
   return { ok: true, id: result.data.id, code: result.data.code, cardEmail: result.data.card_email.status };
 }
