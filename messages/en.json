@@ -180,6 +180,18 @@
       "title": "We couldn't load sign-up",
       "description": "Try again in a moment.",
       "retry": "Try again"
+    },
+    "payment": {
+      "processingTitle": "Processing your payment",
+      "approvedTitle": "Payment approved",
+      "steps": {
+        "verifying": "Checking your details…",
+        "charging": "Processing your subscription payment…",
+        "activating": "Activating your plan…"
+      },
+      "approvedDetail": "Your {plan} plan is ready, with a {days}-day trial.",
+      "summary": "{plan} plan: {price} per month",
+      "simulated": "Simulated payment: nothing is charged."
     }
   },
   "cashier": {
