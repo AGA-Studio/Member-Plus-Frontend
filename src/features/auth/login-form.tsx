@@ -6,18 +6,13 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
-import { loginWithBackend, type LoginFailure, type LoginRole } from "./auth-client";
+import { roleHomePaths } from "@/lib/roles";
+import { loginWithBackend, type LoginFailure } from "./auth-client";
 import { useEntryTransition } from "./entry-transition";
 import { TurnstileWidget, type TurnstileStatus } from "./turnstile-widget";
 
 const enterClasses =
   "transition-[opacity,translate] duration-250 ease-out starting:translate-y-2 starting:opacity-0";
-
-const roleHomePaths: Record<LoginRole, string> = {
-  cashier: "/caja",
-  admin: "/panel",
-  platform: "/plataforma",
-};
 
 type LoginFormProps = {
   turnstileSiteKey: string;

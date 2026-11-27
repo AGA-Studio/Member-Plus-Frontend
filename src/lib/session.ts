@@ -3,13 +3,10 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { fetchSessionUser } from "@/lib/api/current-user";
 import type { SessionUser, UserRole } from "@/lib/domain";
+import { roleHomePaths } from "./roles";
 import { sessionCookieName } from "./session-cookie";
 
-export const roleHomePaths: Record<UserRole, string> = {
-  cashier: "/caja",
-  admin: "/panel",
-  platform: "/plataforma",
-};
+export { roleHomePaths };
 
 type SessionState =
   | { status: "ok"; user: SessionUser }

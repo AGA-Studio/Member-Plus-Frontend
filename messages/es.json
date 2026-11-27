@@ -67,7 +67,8 @@
     "role": {
       "admin": "Administrador",
       "cashier": "Cajero",
-      "platform": "Plataforma"
+      "platform": "Plataforma",
+      "manager": "Encargado"
     }
   },
   "auth": {
@@ -150,6 +151,7 @@
       "images": "Logo y fotos de clientes",
       "exports": "Exportar movimientos"
     },
+    "privacyNotice": "Member+, con domicilio en Tijuana, Baja California, México, trata tu nombre, correo, contraseña y los datos de tu negocio para crear tu cuenta y darte el servicio. No los usa para publicidad ni los vende. Para limitar su uso, presenta tu solicitud a Neyzer Toledo. El aviso completo está en el enlace de la casilla.",
     "privacy": "Acepto el <link>aviso de privacidad</link>",
     "submit": "Crear cuenta",
     "submitting": "Creando cuenta…",
@@ -188,7 +190,8 @@
     "header": {
       "role": "Caja",
       "workspace": "Punto de cobro",
-      "signOut": "Cerrar sesión"
+      "signOut": "Cerrar sesión",
+      "customers": "Clientes"
     },
     "scan": {
       "readerConnected": "Lector conectado",
@@ -307,7 +310,8 @@
         "general": "General",
         "operation": "Operación",
         "management": "Administración"
-      }
+      },
+      "checkout": "Caja"
     },
     "signOut": "Cerrar sesión",
     "roles": {
@@ -472,7 +476,8 @@
       },
       "roles": {
         "admin": "Administrador",
-        "employee": "Cajero"
+        "employee": "Cajero",
+        "manager": "Encargado"
       },
       "status": {
         "active": "Activo",
@@ -495,7 +500,7 @@
       "new": {
         "trigger": "Nuevo usuario",
         "title": "Nuevo usuario",
-        "description": "El cajero cobra en caja. El administrador también maneja clientes, niveles, usuarios y la configuración.",
+        "description": "El cajero cobra en caja. El encargado además maneja clientes y movimientos. El administrador maneja también niveles, usuarios y la configuración.",
         "submit": "Crear usuario",
         "creating": "Creando…"
       },
@@ -893,6 +898,7 @@
       "search": {
         "label": "Buscar en Member+",
         "placeholder": "Buscar clientes, membresías, usuarios…",
+        "operationPlaceholder": "Buscar clientes, membresías, movimientos…",
         "clear": "Borrar búsqueda",
         "suggestions": "Ir a",
         "loading": "Buscando…",
@@ -920,7 +926,8 @@
           "movements": "movimientos compras ventas transacciones cobros",
           "users": "usuarios empleados cajeros administradores equipo",
           "plan": "plan uso limites precio prueba cobro",
-          "settings": "configuracion ajustes logo color negocio vigencia"
+          "settings": "configuracion ajustes logo color negocio vigencia",
+          "checkout": "caja cobrar compra escanear lector qr"
         }
       },
       "account": {

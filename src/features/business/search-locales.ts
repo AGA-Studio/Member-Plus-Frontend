@@ -1,14 +1,15 @@
+import type { BusinessUserRole } from "@/lib/api/users";
 import type { MemberStatus } from "@/lib/domain";
 import en from "../../../messages/en.json";
 import es from "../../../messages/es.json";
 
-export type NavKey = "dashboard" | "customers" | "levels" | "movements" | "users" | "plan" | "settings";
+export type NavKey = "dashboard" | "customers" | "levels" | "movements" | "checkout" | "users" | "plan" | "settings";
 
 export type SearchLocaleLabels = {
   pages: Record<NavKey, string>;
   keywords: Record<NavKey, string>;
   status: Record<MemberStatus, string>;
-  roles: Record<"admin" | "employee", string>;
+  roles: Record<BusinessUserRole, string>;
   noConcept: string;
 };
 
@@ -23,13 +24,14 @@ function pick(messages: Messages): SearchLocaleLabels {
       customers: messages.business.nav.customers,
       levels: messages.business.nav.levels,
       movements: messages.business.nav.movements,
+      checkout: messages.business.nav.checkout,
       users: messages.business.nav.users,
       plan: messages.business.nav.plan,
       settings: messages.business.nav.settings,
     },
     keywords: search.keywords,
     status: messages.memberStatus,
-    roles: { admin: messages.business.users.roles.admin, employee: messages.business.users.roles.employee },
+    roles: messages.business.users.roles,
     noConcept: messages.business.movements.noConcept,
   };
 }

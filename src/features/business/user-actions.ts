@@ -53,7 +53,7 @@ function toFieldErrors(reason: UserWriteFailure): UserFormErrors {
 }
 
 function readRole(value: string): BusinessUserRole {
-  return value === "admin" ? "admin" : "employee";
+  return value === "admin" || value === "manager" ? value : "employee";
 }
 
 function passwordProblem(password: string): UserFormErrors["password"] {

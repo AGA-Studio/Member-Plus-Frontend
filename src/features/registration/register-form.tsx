@@ -225,6 +225,7 @@ export function RegisterForm({ plans, turnstileSiteKey }: RegisterFormProps) {
       </FormSection>
 
       <div className={`flex flex-col gap-4 ${revealClasses(4)}`}>
+        <p className="text-sm text-muted">{t("privacyNotice")}</p>
         <CheckboxField
           name="acceptsPrivacy"
           checked={values.acceptsPrivacy}

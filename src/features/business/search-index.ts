@@ -1,3 +1,4 @@
+import type { BusinessUserRole } from "@/lib/api/users";
 import type { MemberStatus, Tier } from "@/lib/domain";
 import type { Equivalent, SearchEntry } from "@/lib/search";
 import type { SearchSource } from "./search-actions";
@@ -57,7 +58,7 @@ export function buildSearchEntries(source: SearchSource | null, labels: SearchLa
     shown: statusLabel(status),
     others: others(labels, (locale) => locale.status[status]),
   });
-  const roleEquivalent = (role: "admin" | "employee"): Equivalent => ({
+  const roleEquivalent = (role: BusinessUserRole): Equivalent => ({
     shown: current.roles[role],
     others: others(labels, (locale) => locale.roles[role]),
   });

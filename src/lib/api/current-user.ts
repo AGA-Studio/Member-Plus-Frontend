@@ -1,8 +1,8 @@
 import { backendUrl } from "./backend";
-import type { SessionUser, UserRole } from "@/lib/domain";
+import type { SessionUser } from "@/lib/domain";
+import { userRoleOf, type BackendRole } from "@/lib/roles";
 import { sessionCookieName } from "@/lib/session-cookie";
 
-type BackendRole = "platform" | "admin" | "employee";
 
 type BackendUser = {
   id: number;
@@ -24,12 +24,6 @@ type BackendUser = {
 };
 
 const fallbackBusinessName = "Member+";
-
-const roleMap: Record<BackendRole, UserRole> = {
-  platform: "platform",
-  admin: "admin",
-  employee: "cashier",
-};
 
 function getInitials(name: string): string {
   return name
@@ -68,7 +62,7 @@ export async function fetchSessionUser(accessToken: string): Promise<SessionLook
     status: "ok",
     user: {
       id: user.id,
-      role: roleMap[user.role],
+      role: userRoleOf[user.role],
       fullName: user.name,
       email: user.email,
       businessId: user.business_id,

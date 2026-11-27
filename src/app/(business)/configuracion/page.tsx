@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
 import { LogoSection } from "@/features/business/logo-section";
 import { SettingsForm } from "@/features/business/settings-form";
-import { requireSession } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 
 export const instant = false;
 
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettingsPage() {
   await connection();
-  const user = await requireSession();
+  const user = await requireUser(["admin"]);
   const t = await getTranslations("business.settings");
 
   return (
