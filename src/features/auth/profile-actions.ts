@@ -6,7 +6,7 @@ import { requireActionUser } from "@/lib/session";
 
 export type ProfilePhotoState = {
   status: "idle" | "saved";
-  error?: "noFile" | "tooLarge" | "invalid" | "storageUnavailable" | "unavailable";
+  error?: "noFile" | "tooLarge" | "invalid" | "storageUnavailable" | "planRequired" | "unavailable";
 };
 
 export async function uploadProfilePhotoAction(

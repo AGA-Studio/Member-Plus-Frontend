@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <LoadingRegion>
+      <Skeleton className="h-11 w-56" />
       <div className="flex flex-col gap-2">
         <Skeleton className="h-9 w-48" />
         <Skeleton className="h-6 w-72" />

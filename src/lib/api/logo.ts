@@ -2,7 +2,7 @@ import { backendCall } from "./backend";
 
 export type LogoResult =
   | { ok: true }
-  | { ok: false; reason: "tooLarge" | "invalid" | "storageUnavailable" | "unavailable" };
+  | { ok: false; reason: "tooLarge" | "invalid" | "storageUnavailable" | "planRequired" | "unavailable" };
 
 export async function uploadLogo(file: File): Promise<LogoResult> {
   const body = new FormData();
@@ -13,6 +13,7 @@ export async function uploadLogo(file: File): Promise<LogoResult> {
   if (result.code === "image_too_large") return { ok: false, reason: "tooLarge" };
   if (result.code === "image_invalid") return { ok: false, reason: "invalid" };
   if (result.code === "storage_unavailable") return { ok: false, reason: "storageUnavailable" };
+  if (result.code === "plan_required") return { ok: false, reason: "planRequired" };
 
   return { ok: false, reason: "unavailable" };
 }

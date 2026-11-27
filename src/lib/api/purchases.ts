@@ -228,11 +228,17 @@ export async function summarizePreviousPeriod({ query, days }: PreviousWindow): 
   };
 }
 
-export async function exportMovementsCsv({ query, period = defaultMovementPeriod }: Omit<MovementFilters, "page">): Promise<string> {
+export type MovementExport = { ok: true; csv: string } | { ok: false; reason: "planRequired" };
+
+export async function exportMovementsCsv({
+  query,
+  period = defaultMovementPeriod,
+}: Omit<MovementFilters, "page">): Promise<MovementExport> {
   const result = await backendCall<string>("GET", "/movement/export", {
     query: { q: query, from: periodStart(period) },
   });
-  if (!result.ok) throw new Error(`Movement export failed with status ${result.status}`);
+  if (result.ok) return { ok: true, csv: result.data };
+  if (result.code === "plan_required") return { ok: false, reason: "planRequired" };
 
-  return result.data;
+  throw new Error(`Movement export failed with status ${result.status}`);
 }

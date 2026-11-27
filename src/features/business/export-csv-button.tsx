@@ -26,8 +26,13 @@ export function ExportCsvButton({ query, period }: ExportCsvButtonProps) {
 
   function handleClick() {
     startTransition(async () => {
-      const csv = await attempt(() => exportMovementsAction({ query, period }), t("failed"));
-      if (csv === undefined) return;
+      const result = await attempt(() => exportMovementsAction({ query, period }), t("failed"));
+      if (result === undefined) return;
+      if (!result.ok) {
+        show("danger", t(result.reason));
+        return;
+      }
+      const { csv } = result;
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");

@@ -2,7 +2,10 @@ import { backendCall } from "./backend";
 
 export type MemberPhotoResult =
   | { ok: true }
-  | { ok: false; reason: "tooLarge" | "invalid" | "storageUnavailable" | "cancelled" | "unavailable" };
+  | {
+      ok: false;
+      reason: "tooLarge" | "invalid" | "storageUnavailable" | "cancelled" | "planRequired" | "unavailable";
+    };
 
 export async function uploadMemberPhoto(id: number, file: File): Promise<MemberPhotoResult> {
   const body = new FormData();
@@ -14,6 +17,7 @@ export async function uploadMemberPhoto(id: number, file: File): Promise<MemberP
   if (result.code === "image_invalid") return { ok: false, reason: "invalid" };
   if (result.code === "storage_unavailable") return { ok: false, reason: "storageUnavailable" };
   if (result.code === "customer_cancelled") return { ok: false, reason: "cancelled" };
+  if (result.code === "plan_required") return { ok: false, reason: "planRequired" };
 
   return { ok: false, reason: "unavailable" };
 }

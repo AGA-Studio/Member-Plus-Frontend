@@ -3,9 +3,10 @@
 import { Check } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
+import { usePlanHighlights } from "@/features/plans/use-plan-highlights";
 import { cx } from "@/lib/cx";
+import type { Plan } from "@/lib/domain";
 import { formatMoney } from "@/lib/format";
-import type { Plan } from "@/lib/registration";
 
 type PlanPickerProps = {
   plans: Plan[];
@@ -16,16 +17,7 @@ type PlanPickerProps = {
 export function PlanPicker({ plans, selectedId, onSelect }: PlanPickerProps) {
   const t = useTranslations("registration.plans");
   const format = useFormatter();
-
-  function featuresOf(plan: Plan): string[] {
-    return [
-      plan.maxCustomers === null ? t("customersUnlimited") : t("customers", { count: plan.maxCustomers }),
-      plan.maxUsers === null ? t("usersUnlimited") : t("users", { count: plan.maxUsers }),
-      plan.historyDays === null ? t("historyFull") : t("history", { days: plan.historyDays }),
-      ...(plan.imagesEnabled ? [t("images")] : []),
-      ...(plan.exportsEnabled ? [t("exports")] : []),
-    ];
-  }
+  const highlightsOf = usePlanHighlights();
 
   return (
     <div className="flex flex-col gap-3">
@@ -64,7 +56,7 @@ export function PlanPicker({ plans, selectedId, onSelect }: PlanPickerProps) {
                 </span>
               ) : null}
               <span className="flex flex-col gap-1">
-                {featuresOf(plan).map((feature) => (
+                {highlightsOf(plan).map((feature) => (
                   <span key={feature} className="flex items-start gap-2 text-sm text-foreground">
                     <Check aria-hidden strokeWidth={1.75} className="mt-0.5 size-4 shrink-0 text-primary-text" />
                     {feature}

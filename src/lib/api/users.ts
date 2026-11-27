@@ -49,6 +49,7 @@ export type UserWriteFailure =
   | "emailInvalid"
   | "passwordInvalid"
   | "cannotDeactivateSelf"
+  | "limitReached"
   | "notFound"
   | "unavailable";
 
@@ -56,6 +57,7 @@ export type UserWriteResult = { ok: true } | { ok: false; reason: UserWriteFailu
 
 function toFailure(status: number, code: string | null, detail: unknown, isDeactivation: boolean): UserWriteFailure {
   if (code === "email_taken") return "emailTaken";
+  if (code === "limit_reached") return "limitReached";
   if (status === 404) return "notFound";
   if (status === 400 && isDeactivation) return "cannotDeactivateSelf";
   if (status === 422) {

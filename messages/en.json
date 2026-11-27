@@ -57,6 +57,7 @@
         "tooLarge": "The photo is larger than 2 MB. Choose a lighter one.",
         "invalid": "We couldn't read that image. Try another photo.",
         "storageUnavailable": "Image storage is not available right now. Try again later.",
+        "planRequired": "The business plan does not include photos.",
         "unavailable": "We couldn't save your photo. Try again."
       }
     },
@@ -181,18 +182,7 @@
       "description": "Try again in a moment.",
       "retry": "Try again"
     },
-    "payment": {
-      "processingTitle": "Processing your payment",
-      "approvedTitle": "Payment approved",
-      "steps": {
-        "verifying": "Checking your details…",
-        "charging": "Processing your subscription payment…",
-        "activating": "Activating your plan…"
-      },
-      "approvedDetail": "Your {plan} plan is ready, with a {days}-day trial.",
-      "summary": "{plan} plan: {price} per month",
-      "simulated": "Simulated payment: nothing is charged."
-    }
+    "paymentApproved": "Your {plan} plan is ready, with a {days}-day trial."
   },
   "cashier": {
     "header": {
@@ -311,6 +301,7 @@
       "levels": "Levels",
       "movements": "Transactions",
       "users": "Users",
+      "plan": "Plan and usage",
       "settings": "Settings",
       "sections": {
         "general": "General",
@@ -528,6 +519,7 @@
         "passwordRequired": "Write a password.",
         "passwordInvalid": "The password must have between 8 and 128 characters.",
         "cannotDeactivateSelf": "You can't deactivate your own account.",
+        "limitReached": "Your plan does not allow more active users.",
         "notFound": "We couldn't find that user. Reload the screen.",
         "unavailable": "We couldn't complete the action. Try again."
       }
@@ -582,7 +574,8 @@
           "emailInvalid": "Check the email: it looks incomplete.",
           "emailTaken": "This email already has a membership in your business.",
           "unavailable": "We couldn't create the membership. Try again.",
-          "phoneInvalid": "Check the phone number: use digits only."
+          "phoneInvalid": "Check the phone number: use digits only.",
+          "limitReached": "We did not create the membership: your plan does not allow more customers. Every card that is not cancelled counts."
         },
         "sendCard": "Email the card",
         "sendCardHint": "The customer gets a link to save it to Google Wallet or download it.",
@@ -670,6 +663,7 @@
           "phoneInvalid": "Check the phone number: use digits only.",
           "photoFailed": "We saved the details, but we couldn't save the photo. Try again.",
           "photoCancelled": "This membership is cancelled and does not accept a photo.",
+          "photoPlan": "We saved the details, but your plan does not include customer photos.",
           "photoRemoveFailed": "We couldn't remove the photo. Try again."
         },
         "level": "Level",
@@ -865,7 +859,8 @@
         "preparing": "Preparing…",
         "fileName": "transactions.csv",
         "done": "File downloaded: {count, plural, one {# transaction} other {# transactions}}.",
-        "failed": "We couldn't prepare the file. Try again."
+        "failed": "We couldn't prepare the file. Try again.",
+        "planRequired": "Your plan does not include downloading activity. Check Plan and usage."
       },
       "vsPrevious": "Compared with the previous period"
     },
@@ -884,6 +879,7 @@
         "tooLarge": "The image is larger than 2 MB. Choose a lighter one.",
         "invalid": "We couldn't read that image. Use a JPEG, PNG or WebP file.",
         "storageUnavailable": "Image storage isn't available right now. Try again later.",
+        "planRequired": "Your plan does not include uploading a logo.",
         "unavailable": "We couldn't save the logo. Try again."
       },
       "editHint": "Edit business"
@@ -923,6 +919,7 @@
           "levels": "levels tiers benefits discount cashback prices",
           "movements": "transactions purchases sales payments movements",
           "users": "users staff employees cashiers administrators team",
+          "plan": "plan usage limits price trial billing",
           "settings": "settings preferences logo color business validity"
         }
       },
@@ -933,6 +930,7 @@
         "darkMode": "Dark mode",
         "settings": "Settings",
         "users": "Users",
+        "plan": "Plan and usage",
         "signOut": "Sign out"
       }
     }
@@ -957,6 +955,7 @@
     "membershipCreatedSent": "Membership created. We emailed the card.",
     "membershipCreatedEmailFailed": "Membership created, but we couldn't send the email. You can send it from their profile.",
     "membershipCreatedPhotoFailed": "Membership created, but we couldn't save the customer's photo.",
+    "membershipCreatedPhotoPlan": "Membership created without a photo: your plan does not include customer photos.",
     "customerPhotoRemoved": "Customer photo removed.",
     "profilePhotoSaved": "Profile photo saved.",
     "profilePhotoRemoved": "Profile photo removed.",
@@ -971,7 +970,8 @@
     "logoSaved": "Logo saved.",
     "logoRemoved": "Logo removed.",
     "businessSuspended": "Business suspended.",
-    "businessReactivated": "Business reactivated."
+    "businessReactivated": "Business reactivated.",
+    "planChanged": "You switched to the {plan} plan."
   },
   "system": {
     "notFound": {
@@ -1018,6 +1018,105 @@
     "card": "Card",
     "transfer": "Transfer"
   },
+  "plans": {
+    "viewUsage": "View plan and usage",
+    "free": "Free",
+    "monthly": "{price} per month",
+    "trialPrice": "Free during the trial",
+    "unlimited": "Unlimited",
+    "usage": {
+      "title": "Usage",
+      "customers": "Customers",
+      "customersHint": "Every card that is not cancelled counts, expired ones too.",
+      "users": "Active users",
+      "count": "{used, number} of {limit, number}",
+      "countUnlimited": "{used, number} · unlimited",
+      "near": "Close to the plan limit.",
+      "customersReached": "Limit reached: no more customers can be added.",
+      "usersReached": "Limit reached: users cannot be created or reactivated."
+    },
+    "features": {
+      "title": "What is included",
+      "history": "{days, number} days of activity history",
+      "historyFull": "Full activity history",
+      "images": "Logo and photos",
+      "exports": "Download activity as CSV",
+      "excluded": "{feature} (not included)"
+    },
+    "business": {
+      "metaTitle": "Plan and usage · Member+",
+      "title": "Plan and usage",
+      "subtitle": "What your plan includes and how much you have used.",
+      "planTitle": "Your plan",
+      "trialRunning": "You are trying the {plan} plan until {date}. Nothing is charged during the trial.",
+      "trialAfter": "When it ends, your business moves to the {plan} plan and nothing is deleted.",
+      "trialEnded": "Your trial ended on {date}. The {plan} plan now applies. Nothing was deleted.",
+      "changeHint": "To change plans, talk to the Member+ team. Payment happens outside the app."
+    },
+    "platform": {
+      "planTitle": "Plan",
+      "trialRunning": "{plan} plan trial until {date}.",
+      "trialEnded": "The trial ended on {date}. The {plan} plan applies.",
+      "trialUntil": "Trial until {date}",
+      "planLine": "{plan} plan",
+      "trialPlan": "{plan} plan · trial"
+    },
+    "catalog": {
+      "metaTitle": "Plans · Member+",
+      "title": "Plans",
+      "subtitle": "Limits and features of each plan.",
+      "default": "Default",
+      "trial": "{days, plural, one {#-day} other {#-day}} trial",
+      "historyDays": "{days, number} days",
+      "historyFull": "Full",
+      "included": "Included",
+      "excluded": "Not included",
+      "aiMessages": "{count, plural, one {# message per month} other {# messages per month}}",
+      "hint": "Public plans are listed here; one assigned by hand may be missing. The reader and AI message limits are not enforced yet.",
+      "rows": {
+        "customers": "Customers (one card each)",
+        "users": "Users",
+        "devices": "Readers",
+        "history": "History",
+        "images": "Logo and photos",
+        "exports": "CSV download",
+        "ai": "AI assistant"
+      },
+      "empty": {
+        "title": "No plans",
+        "description": "Offered plans will show up here."
+      }
+    },
+    "change": {
+      "open": "Change plan",
+      "choosingTitle": "Choose a plan",
+      "current": "Current plan",
+      "currentTrial": "Current plan, on trial",
+      "choose": "Choose plan",
+      "chooseNamed": "Choose plan {plan}",
+      "confirmTitle": "Switch to the {plan} plan",
+      "confirmPaid": "You will move from the {current} plan to the {plan} plan for {price} per month. The payment is simulated: nothing is charged.",
+      "confirmFree": "You will move from the {current} plan to the {plan} plan, free of charge.",
+      "back": "Back",
+      "confirm": "Confirm change",
+      "confirming": "Changing…",
+      "approvedDetail": "Your business is now on the {plan} plan.",
+      "warnings": {
+        "trialEnds": "Your trial ends with this change and cannot be restored.",
+        "customersOver": "You have {used, number} customers and the plan allows {limit, number}. None are deleted, but you will not be able to add more.",
+        "usersOver": "You have {used, number} active users and the plan allows {limit, number}. None are deleted, but you will not be able to create more.",
+        "imagesLost": "You will no longer be able to upload a logo or photos.",
+        "exportsLost": "You will no longer be able to download transactions.",
+        "historyShorter": "You will see fewer days of transaction history."
+      },
+      "failures": {
+        "closed": "Changing plans is not available right now.",
+        "invalid": "That plan is no longer available. Choose another one.",
+        "unchanged": "Your business already has that plan.",
+        "unavailable": "We could not change your plan. Try again in a moment."
+      }
+    }
+  },
   "platform": {
     "metaTitle": "Businesses · Member+",
     "title": "Businesses",
@@ -1039,6 +1138,7 @@
     "columns": {
       "business": "Business",
       "status": "Status",
+      "plan": "Plan",
       "customers": "Customers",
       "createdAt": "Joined"
     },
@@ -1049,6 +1149,11 @@
     },
     "customersCount": "{count, plural, one {# customer} other {# customers}}",
     "openBusiness": "Open {name}",
+    "tabs": {
+      "label": "Platform sections",
+      "businesses": "Businesses",
+      "plans": "Plans"
+    },
     "range": "{from}–{to} of {total} businesses",
     "empty": {
       "title": "No businesses yet",
@@ -1096,5 +1201,16 @@
       "label": "Platform",
       "role": "Platform owner"
     }
+  },
+  "payment": {
+    "processingTitle": "Processing your payment",
+    "approvedTitle": "Payment approved",
+    "steps": {
+      "verifying": "Checking your details…",
+      "charging": "Processing your subscription payment…",
+      "activating": "Activating your plan…"
+    },
+    "summary": "{plan} plan: {price} per month",
+    "simulated": "Simulated payment: nothing is charged."
   }
 }

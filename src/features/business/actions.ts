@@ -8,7 +8,7 @@ import { removeLogo, uploadLogo } from "@/lib/api/logo";
 import { cancelMember, createMember, renewMember, updateMember } from "@/lib/api/members";
 import { removeMemberPhoto, uploadMemberPhoto } from "@/lib/api/member-photo";
 import { toFieldErrors, type CustomerFieldErrors } from "@/lib/customer-errors";
-import { exportMovementsCsv, type MovementPeriod } from "@/lib/api/purchases";
+import { exportMovementsCsv, type MovementExport, type MovementPeriod } from "@/lib/api/purchases";
 import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
 import { requireActionUser } from "@/lib/session";
@@ -43,7 +43,7 @@ function readLevelId(formData: FormData): number {
 
 export type NewMembershipState = {
   values: { fullName: string; email: string; phone: string; levelId: string; paymentMethod: string; amount: string };
-  errors: CustomerFieldErrors;
+  errors: Omit<CustomerFieldErrors, "form"> & { form?: "unavailable" | "limitReached" };
 };
 
 export async function createMembershipAction(
@@ -62,7 +62,7 @@ export async function createMembershipAction(
   };
   const levelId = readLevelId(formData);
   const levelPrice = await findLevelPrice(levelId);
-  const errors: CustomerFieldErrors = {};
+  const errors: NewMembershipState["errors"] = {};
 
   if (!values.fullName) errors.fullName = "fullNameRequired";
   if (!emailPattern.test(values.email)) errors.email = "emailInvalid";
@@ -80,11 +80,15 @@ export async function createMembershipAction(
     paymentMethod: values.paymentMethod,
     amountCents: levelPrice,
   });
-  if (!result.ok) return { values, errors: toFieldErrors(result.reason) };
+  if (!result.ok) {
+    return {
+      values,
+      errors: result.reason === "limitReached" ? { form: "limitReached" } : toFieldErrors(result.reason),
+    };
+  }
 
   const photo = formData.get("photo");
-  const photoSaved =
-    photo instanceof File && photo.size > 0 ? (await uploadMemberPhoto(result.id, photo)).ok : true;
+  const photoResult = photo instanceof File && photo.size > 0 ? await uploadMemberPhoto(result.id, photo) : null;
 
   revalidatePath("/", "layout");
   const toastByEmailStatus = {
@@ -94,7 +98,13 @@ export async function createMembershipAction(
     skipped: "membershipCreated",
   } as const;
 
-  const toast = photoSaved ? toastByEmailStatus[result.cardEmail] : "membershipCreatedPhotoFailed";
+  const photoFailureToast =
+    photoResult && !photoResult.ok
+      ? photoResult.reason === "planRequired"
+        ? "membershipCreatedPhotoPlan"
+        : "membershipCreatedPhotoFailed"
+      : null;
+  const toast = photoFailureToast ?? toastByEmailStatus[result.cardEmail];
 
   redirect(`/clientes/${encodeURIComponent(result.code)}?toast=${toast}`);
 }
@@ -157,7 +167,9 @@ export async function renewMembershipAction(
 export type EditCustomerState = {
   status: "idle" | "saved";
   values: { fullName: string; email: string; phone: string; levelId: string };
-  errors: Omit<CustomerFieldErrors, "form"> & { form?: "unavailable" | "photoFailed" | "photoCancelled" };
+  errors: Omit<CustomerFieldErrors, "form"> & {
+    form?: "unavailable" | "photoFailed" | "photoCancelled" | "photoPlan";
+  };
 };
 
 export async function updateCustomerAction(
@@ -191,11 +203,14 @@ export async function updateCustomerAction(
     const uploaded = await uploadMemberPhoto(id, photo);
     if (!uploaded.ok) {
       revalidatePath("/", "layout");
-      return {
-        status: "idle",
-        values,
-        errors: { form: uploaded.reason === "cancelled" ? "photoCancelled" : "photoFailed" },
-      };
+      const form =
+        uploaded.reason === "cancelled"
+          ? "photoCancelled"
+          : uploaded.reason === "planRequired"
+            ? "photoPlan"
+            : "photoFailed";
+
+      return { status: "idle", values, errors: { form } };
     }
   }
 
@@ -284,7 +299,7 @@ export async function updateLevelAction(
 export async function exportMovementsAction(filters: {
   query?: string;
   period: MovementPeriod;
-}): Promise<string> {
+}): Promise<MovementExport> {
   await requireActionUser(["admin"]);
 
   return exportMovementsCsv(filters);
@@ -292,7 +307,7 @@ export async function exportMovementsAction(filters: {
 
 export type LogoState = {
   status: "idle" | "saved";
-  error?: "noFile" | "tooLarge" | "invalid" | "storageUnavailable" | "unavailable";
+  error?: "noFile" | "tooLarge" | "invalid" | "storageUnavailable" | "planRequired" | "unavailable";
 };
 
 export async function uploadLogoAction(_previousState: LogoState, formData: FormData): Promise<LogoState> {

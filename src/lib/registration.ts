@@ -1,16 +1,4 @@
-export type Plan = {
-  id: number;
-  key: string;
-  name: string;
-  priceCents: number;
-  maxCustomers: number | null;
-  maxUsers: number | null;
-  historyDays: number | null;
-  imagesEnabled: boolean;
-  exportsEnabled: boolean;
-  trialDays: number;
-  isDefault: boolean;
-};
+import type { Plan } from "./domain";
 
 export type RegistrationValues = {
   businessName: string;

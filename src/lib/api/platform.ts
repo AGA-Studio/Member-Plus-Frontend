@@ -1,5 +1,6 @@
 import type { BusinessStatus, Page, PlatformBusiness, PlatformBusinessDetail } from "@/lib/domain";
 import { BackendError, backendCall, backendGet, toPage, type BackendPage } from "./backend";
+import { toPlanSummary, type BackendPlanSummary } from "./plans";
 
 export type PlatformSummary = {
   all: number;
@@ -39,6 +40,8 @@ type BackendBusiness = {
   customers_count: number;
   logo_url?: string | null;
   created_at: string;
+  plan_name: string;
+  trial_ends_at: string | null;
 };
 
 function toPlatformBusiness(business: BackendBusiness): PlatformBusiness {
@@ -49,12 +52,15 @@ function toPlatformBusiness(business: BackendBusiness): PlatformBusiness {
     customersCount: business.customers_count,
     logoUrl: business.logo_url ?? null,
     createdAt: business.created_at,
+    planName: business.plan_name,
+    trialEndsAt: business.trial_ends_at,
   };
 }
 
 type BackendBusinessDetail = BackendBusiness & {
   validity_months: number;
   users_count: number;
+  plan: BackendPlanSummary;
 };
 
 function toPlatformBusinessDetail(business: BackendBusinessDetail): PlatformBusinessDetail {
@@ -62,6 +68,7 @@ function toPlatformBusinessDetail(business: BackendBusinessDetail): PlatformBusi
     ...toPlatformBusiness(business),
     validityMonths: business.validity_months,
     usersCount: business.users_count,
+    plan: toPlanSummary(business.plan),
   };
 }
 

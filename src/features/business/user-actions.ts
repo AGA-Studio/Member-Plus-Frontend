@@ -12,7 +12,7 @@ export type UserFormErrors = {
   name?: "nameRequired" | "nameInvalid";
   email?: "emailInvalid" | "emailTaken";
   password?: "passwordRequired" | "passwordInvalid";
-  form?: "unavailable" | "notFound";
+  form?: "unavailable" | "notFound" | "limitReached";
 };
 
 export type NewUserState = {
@@ -45,6 +45,8 @@ function toFieldErrors(reason: UserWriteFailure): UserFormErrors {
       return { password: "passwordInvalid" };
     case "notFound":
       return { form: "notFound" };
+    case "limitReached":
+      return { form: "limitReached" };
     default:
       return { form: "unavailable" };
   }
@@ -115,7 +117,9 @@ export async function updateUserAction(
   return { status: "saved", values: { name, email: values.email.trim() }, errors: {} };
 }
 
-export type SetUserActiveResult = { ok: true } | { ok: false; reason: "cannotDeactivateSelf" | "failed" };
+export type SetUserActiveResult =
+  | { ok: true }
+  | { ok: false; reason: "cannotDeactivateSelf" | "limitReached" | "failed" };
 
 export async function setUserActiveAction(id: number, isActive: boolean): Promise<SetUserActiveResult> {
   await requireActionUser(["admin"]);
@@ -126,5 +130,9 @@ export async function setUserActiveAction(id: number, isActive: boolean): Promis
     return { ok: true };
   }
 
-  return { ok: false, reason: result.reason === "cannotDeactivateSelf" ? "cannotDeactivateSelf" : "failed" };
+  if (result.reason === "cannotDeactivateSelf" || result.reason === "limitReached") {
+    return { ok: false, reason: result.reason };
+  }
+
+  return { ok: false, reason: "failed" };
 }

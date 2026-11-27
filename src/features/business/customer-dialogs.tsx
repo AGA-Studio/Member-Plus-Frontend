@@ -19,6 +19,7 @@ import { PhotoField } from "@/components/ui/photo-field";
 import { SelectField } from "@/components/ui/select-field";
 import { TextField } from "@/components/ui/text-field";
 import { useToast } from "@/components/ui/toast-provider";
+import { PlanAlert } from "@/features/plans/plan-alert";
 import { paymentMethods } from "@/lib/domain";
 import { useAttempt, useGuardedAction } from "@/lib/use-action-guard";
 import { useNotifyOnce } from "@/lib/use-notify-once";
@@ -161,7 +162,11 @@ export function CustomerDialogsProvider({
         title={t("editDialog.title", { name: fullName })}
       >
         <form action={formAction} noValidate className="flex flex-col gap-5">
-          {state.errors.form ? (
+          {state.errors.form === "photoPlan" ? (
+            <PlanAlert attempt={state} onNavigate={() => setEditOpen(false)}>
+              {t("editDialog.errors.photoPlan")}
+            </PlanAlert>
+          ) : state.errors.form ? (
             <Alert tone="danger">{t(`editDialog.errors.${state.errors.form}`)}</Alert>
           ) : null}
           <TextField

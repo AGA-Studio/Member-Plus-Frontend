@@ -120,6 +120,37 @@ export type MembershipPayment = {
   recordedByName: string;
 };
 
+export type Plan = {
+  id: number;
+  key: string;
+  name: string;
+  priceCents: number;
+  maxCustomers: number | null;
+  maxUsers: number | null;
+  maxDevices: number | null;
+  historyDays: number | null;
+  imagesEnabled: boolean;
+  exportsEnabled: boolean;
+  aiEnabled: boolean;
+  aiMessagesMonth: number;
+  trialDays: number;
+  isDefault: boolean;
+};
+
+export type PlanUsageItem = {
+  used: number;
+  limit: number | null;
+};
+
+export type PlanSummary = {
+  plan: Plan;
+  trialEndsAt: string | null;
+  trialActive: boolean;
+  canChangePlan: boolean;
+  unitPriceCents: number | null;
+  usage: { customers: PlanUsageItem; users: PlanUsageItem };
+};
+
 export type BusinessStatus = "trial" | "active" | "suspended";
 
 export const businessStatuses: readonly BusinessStatus[] = ["trial", "active", "suspended"];
@@ -131,9 +162,12 @@ export type PlatformBusiness = {
   customersCount: number;
   logoUrl: string | null;
   createdAt: string;
+  planName: string;
+  trialEndsAt: string | null;
 };
 
 export type PlatformBusinessDetail = PlatformBusiness & {
   validityMonths: number;
   usersCount: number;
+  plan: PlanSummary;
 };
