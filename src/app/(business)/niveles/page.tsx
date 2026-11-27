@@ -10,6 +10,7 @@ import { KpiGrid, type KpiItem } from "@/features/business/dashboard-parts";
 import { LevelCard } from "@/features/business/level-card";
 import { listLevels } from "@/lib/api/levels";
 import type { Level } from "@/lib/domain";
+import { requireUser } from "@/lib/session";
 
 export const instant = false;
 
@@ -34,6 +35,7 @@ function best(levels: Level[], read: (level: Level) => number): Level | null {
 
 export default async function LevelsPage() {
   await connection();
+  await requireUser(["admin"]);
   const t = await getTranslations("business.levels");
   const format = await getFormatter();
   const levels = await listLevels();

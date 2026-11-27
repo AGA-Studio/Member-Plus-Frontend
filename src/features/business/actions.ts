@@ -11,6 +11,7 @@ import { toFieldErrors, type CustomerFieldErrors } from "@/lib/customer-errors";
 import { exportMovementsCsv, type MovementExport, type MovementPeriod } from "@/lib/api/purchases";
 import { paymentMethods, type PaymentMethod } from "@/lib/domain";
 import { parseAmountToCents } from "@/lib/format";
+import { managementRoles } from "@/lib/roles";
 import { requireActionUser } from "@/lib/session";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,7 +51,7 @@ export async function createMembershipAction(
   _previousState: NewMembershipState,
   formData: FormData,
 ): Promise<NewMembershipState> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const values = {
     fullName: readText(formData, "fullName"),
@@ -112,7 +113,7 @@ export async function createMembershipAction(
 export type SendCardEmailState = { ok: true } | { ok: false; reason: "rateLimited" | "failed" };
 
 export async function sendCardEmailAction(id: number): Promise<SendCardEmailState> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const result = await sendCardEmail(id);
   if (result.ok) return { ok: true };
@@ -123,7 +124,7 @@ export async function sendCardEmailAction(id: number): Promise<SendCardEmailStat
 export type CardLinkState = { ok: true; url: string } | { ok: false };
 
 export async function createCardLinkAction(id: number): Promise<CardLinkState> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const result = await createCardLink(id);
 
@@ -141,7 +142,7 @@ export async function renewMembershipAction(
   _previousState: RenewMembershipState,
   formData: FormData,
 ): Promise<RenewMembershipState> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const values = {
     levelId: readText(formData, "levelId"),
@@ -177,7 +178,7 @@ export async function updateCustomerAction(
   _previousState: EditCustomerState,
   formData: FormData,
 ): Promise<EditCustomerState> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const values = {
     fullName: readText(formData, "fullName"),
@@ -219,7 +220,7 @@ export async function updateCustomerAction(
 }
 
 export async function removeCustomerPhotoAction(id: number): Promise<boolean> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const removed = await removeMemberPhoto(id);
   if (removed) revalidatePath("/", "layout");
@@ -228,7 +229,7 @@ export async function removeCustomerPhotoAction(id: number): Promise<boolean> {
 }
 
 export async function cancelMembershipAction(id: number): Promise<boolean> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   const cancelled = await cancelMember(id);
   if (cancelled) revalidatePath("/", "layout");
@@ -300,7 +301,7 @@ export async function exportMovementsAction(filters: {
   query?: string;
   period: MovementPeriod;
 }): Promise<MovementExport> {
-  await requireActionUser(["admin"]);
+  await requireActionUser(managementRoles);
 
   return exportMovementsCsv(filters);
 }

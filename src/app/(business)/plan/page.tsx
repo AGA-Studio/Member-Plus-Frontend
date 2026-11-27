@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { PlanChange } from "@/features/plans/plan-change";
 import { PlanOverview } from "@/features/plans/plan-overview";
 import { getPlanSummary, listPublicPlans } from "@/lib/api/plans";
+import { requireUser } from "@/lib/session";
 
 export const instant = false;
 
@@ -17,6 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PlanPage() {
   await connection();
+  await requireUser(["admin"]);
   const t = await getTranslations("plans.business");
   const [summary, plans] = await Promise.all([getPlanSummary(), listPublicPlans()]);
 

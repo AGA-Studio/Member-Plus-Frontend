@@ -3,8 +3,9 @@
 import { listLevels } from "@/lib/api/levels";
 import { listMembers } from "@/lib/api/members";
 import { listMovements } from "@/lib/api/purchases";
-import { listUsers } from "@/lib/api/users";
+import { listUsers, type BusinessUserRole } from "@/lib/api/users";
 import type { MemberStatus, Tier } from "@/lib/domain";
+import { managementRoles } from "@/lib/roles";
 import { requireActionUser } from "@/lib/session";
 
 export type SearchSource = {
@@ -18,7 +19,7 @@ export type SearchSource = {
     status: MemberStatus;
     validUntil: string;
   }>;
-  users: Array<{ id: number; name: string; email: string; role: "admin" | "employee"; isActive: boolean }>;
+  users: Array<{ id: number; name: string; email: string; role: BusinessUserRole; isActive: boolean }>;
   levels: Array<{ id: number; name: string; tier: Tier; customersCount: number }>;
   movements: Array<{
     id: string;
@@ -33,13 +34,14 @@ export type SearchSource = {
 const maxItems = 500;
 
 export async function loadSearchSourceAction(): Promise<SearchSource | null> {
-  await requireActionUser(["admin"]);
+  const user = await requireActionUser(managementRoles);
+  const administers = user.role === "admin";
 
   try {
     const [members, users, levels, movements] = await Promise.all([
       listMembers({ page: 1, pageSize: maxItems }),
-      listUsers(),
-      listLevels(),
+      administers ? listUsers() : [],
+      administers ? listLevels() : [],
       listMovements({ period: "all", page: 1, pageSize: maxItems }),
     ]);
 

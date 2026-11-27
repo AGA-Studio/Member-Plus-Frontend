@@ -1,4 +1,7 @@
-export type LoginRole = "cashier" | "admin" | "platform";
+import type { UserRole } from "@/lib/domain";
+import { userRoleOf, type BackendRole } from "@/lib/roles";
+
+export type LoginRole = UserRole;
 
 export type LoginFailure =
   | { kind: "invalidCredentials" }
@@ -10,7 +13,7 @@ export type LoginFailure =
 
 export type LoginOutcome = { ok: true; role: LoginRole } | ({ ok: false } & LoginFailure);
 
-type BackendMe = { role: "platform" | "admin" | "employee" };
+type BackendMe = { role: BackendRole };
 
 const lockedFallbackMinutes = 15;
 
@@ -60,9 +63,7 @@ export async function loginWithBackend(
 
   const me = (await meResponse.json()) as BackendMe;
 
-  const roleByBackendRole = { platform: "platform", admin: "admin", employee: "cashier" } as const;
-
-  return { ok: true, role: roleByBackendRole[me.role] };
+  return { ok: true, role: userRoleOf[me.role] };
 }
 
 export async function logoutFromBackend(): Promise<void> {

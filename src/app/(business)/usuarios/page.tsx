@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Reveal } from "@/components/ui/reveal";
 import { NewUserButton, UserRowActions } from "@/features/business/user-dialogs";
 import { listUsers } from "@/lib/api/users";
-import { requireSession } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 
 export const instant = false;
 
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function UsersPage() {
   await connection();
-  const session = await requireSession();
+  const session = await requireUser(["admin"]);
   const t = await getTranslations("business.users");
   const format = await getFormatter();
   const users = await listUsers();

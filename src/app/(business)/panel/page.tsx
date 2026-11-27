@@ -31,7 +31,7 @@ import {
   type PurchasePoint,
 } from "@/lib/dashboard";
 import { formatMoney } from "@/lib/format";
-import { requireSession } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 
 export const instant = false;
 
@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DashboardPage() {
   await connection();
-  const user = await requireSession();
+  const user = await requireUser(["admin"]);
   const t = await getTranslations("business.dashboard");
   const format = await getFormatter();
   const now = new Date();

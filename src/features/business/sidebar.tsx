@@ -5,13 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { BusinessLogo } from "@/components/ui/business-logo";
 import { Logo } from "@/components/ui/logo";
 import { Tooltip } from "@/components/ui/tooltip";
 import { cx } from "@/lib/cx";
+import type { UserRole } from "@/lib/domain";
 import { LogoDialog } from "./logo-dialog";
-import { businessNavItems, navSections } from "./nav-items";
+import { navItemsFor, navSections } from "./nav-items";
 
 type SidebarProps = {
+  role: UserRole;
   businessName: string;
   businessInitials: string;
   businessLogoUrl: string | null;
@@ -20,7 +23,7 @@ type SidebarProps = {
 const labelEnter =
   "transition-opacity duration-200 ease-out delay-100 starting:opacity-0";
 
-export function Sidebar({ businessName, businessInitials, businessLogoUrl }: SidebarProps) {
+export function Sidebar({ role, businessName, businessInitials, businessLogoUrl }: SidebarProps) {
   const t = useTranslations("business");
   const pathname = usePathname();
   const panelId = useId();
@@ -28,7 +31,8 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl }: Sid
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const linkRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const [expanded, setExpanded] = useState(false);
-  const activeIndex = businessNavItems.findIndex(
+  const items = navItemsFor(role);
+  const activeIndex = items.findIndex(
     ({ href }) => pathname === href || pathname.startsWith(`${href}/`),
   );
 
@@ -126,7 +130,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl }: Sid
               aria-hidden
               className="absolute inset-x-0 top-0 h-12 rounded-lg bg-primary-soft opacity-0 transition-[translate,opacity] duration-300 ease-in-out"
             />
-            {navSections.map((section) => {
+            {navSections.filter((section) => items.some((item) => item.section === section)).map((section) => {
               const title = t(`nav.sections.${section}`);
 
               return (
@@ -136,7 +140,7 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl }: Sid
                   ) : (
                     <span aria-hidden className="mx-3 my-2 h-px bg-border" />
                   )}
-                  {businessNavItems.map(({ href, key, icon: Icon, section: itemSection }, index) => {
+                  {items.map(({ href, key, icon: Icon, section: itemSection }, index) => {
                     if (itemSection !== section) return null;
 
                     const active = index === activeIndex;
@@ -175,12 +179,21 @@ export function Sidebar({ businessName, businessInitials, businessLogoUrl }: Sid
         </nav>
 
         <div className="flex shrink-0 flex-col border-t border-border pt-2">
-          <LogoDialog
-            businessName={businessName}
-            initials={businessInitials}
-            logoUrl={businessLogoUrl}
-            compact={!expanded}
-          />
+          {role === "admin" ? (
+            <LogoDialog
+              businessName={businessName}
+              initials={businessInitials}
+              logoUrl={businessLogoUrl}
+              compact={!expanded}
+            />
+          ) : (
+            <div className={cx("flex h-12 items-center gap-3", expanded ? "min-w-0 px-2" : "justify-center")}>
+              <BusinessLogo name={businessName} initials={businessInitials} logoUrl={businessLogoUrl} />
+              {expanded ? (
+                <span className={cx("truncate text-sm font-semibold text-foreground", labelEnter)}>{businessName}</span>
+              ) : null}
+            </div>
+          )}
         </div>
       </aside>
     </div>

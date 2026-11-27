@@ -7,6 +7,7 @@ import { MembershipCard } from "@/components/ui/membership-card";
 import { PrintButton } from "@/features/business/print-button";
 import { readParam } from "@/features/business/member-status";
 import { findMemberByCode, listActiveMembers } from "@/lib/api/members";
+import { managementRoles } from "@/lib/roles";
 import { requireUser } from "@/lib/session";
 
 export const instant = false;
@@ -19,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PrintCardsPage({ searchParams }: PageProps<"/imprimir">) {
   await connection();
-  const user = await requireUser(["admin"]);
+  const user = await requireUser(managementRoles);
   const params = await searchParams;
   const code = readParam(params.code);
   const t = await getTranslations("business.print");

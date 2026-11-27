@@ -1,6 +1,6 @@
 import { backendCall, backendGet, fieldFromValidationError } from "./backend";
 
-export type BusinessUserRole = "admin" | "employee";
+export type BusinessUserRole = "admin" | "manager" | "employee";
 
 export type BusinessUser = {
   id: number;

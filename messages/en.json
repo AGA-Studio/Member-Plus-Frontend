@@ -67,7 +67,8 @@
     "role": {
       "admin": "Administrator",
       "cashier": "Cashier",
-      "platform": "Platform"
+      "platform": "Platform",
+      "manager": "Manager"
     }
   },
   "auth": {
@@ -150,6 +151,7 @@
       "images": "Logo and customer photos",
       "exports": "Export transactions"
     },
+    "privacyNotice": "Member+, located in Tijuana, Baja California, Mexico, processes your name, email, password and your business details to create your account and provide the service. It does not use them for advertising or sell them. To limit their use, submit your request to Neyzer Toledo. The full notice is in the checkbox link.",
     "privacy": "I accept the <link>privacy notice</link>",
     "submit": "Create account",
     "submitting": "Creating account…",
@@ -188,7 +190,8 @@
     "header": {
       "role": "Register",
       "workspace": "Point of sale",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "customers": "Customers"
     },
     "scan": {
       "readerConnected": "Reader connected",
@@ -307,7 +310,8 @@
         "general": "General",
         "operation": "Operations",
         "management": "Management"
-      }
+      },
+      "checkout": "Checkout"
     },
     "signOut": "Sign out",
     "roles": {
@@ -472,7 +476,8 @@
       },
       "roles": {
         "admin": "Administrator",
-        "employee": "Cashier"
+        "employee": "Cashier",
+        "manager": "Manager"
       },
       "status": {
         "active": "Active",
@@ -495,7 +500,7 @@
       "new": {
         "trigger": "New user",
         "title": "New user",
-        "description": "The cashier charges at the counter. The administrator also manages customers, levels, users and the settings.",
+        "description": "A cashier charges at the register. A manager also handles customers and transactions. An administrator also handles levels, users and settings.",
         "submit": "Create user",
         "creating": "Creating…"
       },
@@ -893,6 +898,7 @@
       "search": {
         "label": "Search Member+",
         "placeholder": "Search customers, memberships, users…",
+        "operationPlaceholder": "Search customers, memberships, transactions…",
         "clear": "Clear search",
         "suggestions": "Go to",
         "loading": "Searching…",
@@ -920,7 +926,8 @@
           "movements": "transactions purchases sales payments movements",
           "users": "users staff employees cashiers administrators team",
           "plan": "plan usage limits price trial billing",
-          "settings": "settings preferences logo color business validity"
+          "settings": "settings preferences logo color business validity",
+          "checkout": "checkout register charge purchase scan reader qr"
         }
       },
       "account": {

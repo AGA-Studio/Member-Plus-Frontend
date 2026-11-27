@@ -81,6 +81,7 @@ export function NewUserButton() {
             defaultValue={state.values.role}
             options={[
               { value: "employee", label: t("roles.employee") },
+              { value: "manager", label: t("roles.manager") },
               { value: "admin", label: t("roles.admin") },
             ]}
           />

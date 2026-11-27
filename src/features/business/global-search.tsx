@@ -18,6 +18,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState, type Keyboard
 import { Spinner } from "@/components/ui/spinner";
 import { cx } from "@/lib/cx";
 import { staggerClasses } from "@/lib/motion";
+import type { UserRole } from "@/lib/domain";
 import { formatMoney } from "@/lib/format";
 import {
   flattenResults,
@@ -31,7 +32,7 @@ import {
   type SearchResult,
   type SearchResults,
 } from "@/lib/search";
-import { businessNavItems } from "./nav-items";
+import { businessNavItems, navItemsFor } from "./nav-items";
 import { buildSearchEntries, type SearchLabels } from "./search-index";
 import type { SearchLocaleLabels } from "./search-locales";
 import { loadSearchSourceAction, type SearchSource } from "./search-actions";
@@ -43,21 +44,30 @@ const staleMilliseconds = 60_000;
 const debounceMilliseconds = 120;
 const exitMilliseconds = 150;
 
-let cachedSource: { source: SearchSource; loadedAt: number } | null = null;
-let pendingLoad: Promise<SearchSource | null> | null = null;
+type CachedSource = { ownerId: number; source: SearchSource; loadedAt: number };
 
-function loadSource(): Promise<SearchSource | null> {
-  pendingLoad ??= loadSearchSourceAction()
+let cachedSource: CachedSource | null = null;
+let pendingLoad: { ownerId: number; promise: Promise<SearchSource | null> } | null = null;
+
+function cachedFor(ownerId: number): CachedSource | null {
+  return cachedSource?.ownerId === ownerId ? cachedSource : null;
+}
+
+function loadSource(ownerId: number): Promise<SearchSource | null> {
+  if (pendingLoad?.ownerId === ownerId) return pendingLoad.promise;
+
+  const promise = loadSearchSourceAction()
     .then((source) => {
-      if (source) cachedSource = { source, loadedAt: Date.now() };
+      if (source) cachedSource = { ownerId, source, loadedAt: Date.now() };
       return source;
     })
     .catch(() => null)
     .finally(() => {
-      pendingLoad = null;
+      if (pendingLoad?.ownerId === ownerId) pendingLoad = null;
     });
+  pendingLoad = { ownerId, promise };
 
-  return pendingLoad;
+  return promise;
 }
 
 const groupIcons: Record<Exclude<SearchGroup, "pages">, LucideIcon> = {
@@ -93,11 +103,13 @@ function Highlight({ text, tokens, equivalents }: { text: string; tokens: string
 }
 
 type GlobalSearchProps = {
+  ownerId: number;
+  role: UserRole;
   locales: SearchLocaleLabels[];
   localeIndex: number;
 };
 
-export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
+export function GlobalSearch({ ownerId, role, locales, localeIndex }: GlobalSearchProps) {
   const t = useTranslations("business.topbar.search");
   const movements = useTranslations("business.movements");
   const format = useFormatter();
@@ -108,8 +120,8 @@ export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [source, setSource] = useState<SearchSource | null>(cachedSource?.source ?? null);
-  const [loadState, setLoadState] = useState<LoadState>(cachedSource ? "ready" : "idle");
+  const [source, setSource] = useState<SearchSource | null>(() => cachedFor(ownerId)?.source ?? null);
+  const [loadState, setLoadState] = useState<LoadState>(() => (cachedFor(ownerId) ? "ready" : "idle"));
   const [results, setResults] = useState<SearchResults>({});
   const [searching, setSearching] = useState(false);
   const [settledQuery, setSettledQuery] = useState<string | null>(null);
@@ -119,7 +131,7 @@ export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
     () => ({
       localeIndex,
       locales,
-      pages: businessNavItems.map((item) => ({ href: item.href, key: item.key })),
+      pages: navItemsFor(role).map((item) => ({ href: item.href, key: item.key })),
       pageHint: t("page"),
       noConcept: movements("noConcept"),
       validUntil: (date) =>
@@ -129,7 +141,7 @@ export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
       date: (iso) => format.dateTime(new Date(iso), { day: "numeric", month: "short" }),
       inactive: t("inactive"),
     }),
-    [format, localeIndex, locales, movements, t],
+    [format, localeIndex, locales, movements, role, t],
   );
 
   const entries = useMemo(() => buildSearchEntries(source, labels), [source, labels]);
@@ -143,23 +155,23 @@ export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
   const flat = useMemo(() => (hasQuery ? flattenResults(results) : suggestions), [hasQuery, results, suggestions]);
 
   const ensureSource = useCallback(async (force = false) => {
-    const fresh = cachedSource && Date.now() - cachedSource.loadedAt < staleMilliseconds;
-    if (fresh && !force) {
-      setSource(cachedSource!.source);
+    const cached = cachedFor(ownerId);
+    if (cached && Date.now() - cached.loadedAt < staleMilliseconds && !force) {
+      setSource(cached.source);
       setLoadState("ready");
       return;
     }
 
-    setLoadState((current) => (cachedSource && !force ? current : "loading"));
-    const loaded = await loadSource();
+    setLoadState((current) => (cached && !force ? current : "loading"));
+    const loaded = await loadSource(ownerId);
 
     if (loaded) {
       setSource(loaded);
       setLoadState("ready");
-    } else if (!cachedSource) {
+    } else if (!cachedFor(ownerId)) {
       setLoadState("error");
     }
-  }, []);
+  }, [ownerId]);
 
   if (open && !mounted) setMounted(true);
 
@@ -332,7 +344,7 @@ export function GlobalSearch({ locales, localeIndex }: GlobalSearchProps) {
           aria-activedescendant={open ? activeId : undefined}
           aria-autocomplete="list"
           aria-label={t("label")}
-          placeholder={t("placeholder")}
+          placeholder={t(role === "admin" ? "placeholder" : "operationPlaceholder")}
           autoComplete="off"
           spellCheck={false}
           value={query}

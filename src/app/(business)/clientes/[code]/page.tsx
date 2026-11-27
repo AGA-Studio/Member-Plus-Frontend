@@ -34,6 +34,7 @@ import {
   formatSignedPoints,
 } from "@/lib/format";
 import { entranceClasses } from "@/lib/motion";
+import { managementRoles } from "@/lib/roles";
 import { requireUser } from "@/lib/session";
 
 export const instant = false;
@@ -58,7 +59,7 @@ export default async function CustomerPage({
   await connection();
   const { code } = await params;
   const query = await searchParams;
-  const user = await requireUser(["admin"]);
+  const user = await requireUser(managementRoles);
   const member = await findMemberByCode(decodeURIComponent(code));
 
   if (!member) notFound();

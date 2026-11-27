@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cx } from "@/lib/cx";
-import { businessNavItems } from "./nav-items";
+import type { UserRole } from "@/lib/domain";
+import { navItemsFor } from "./nav-items";
 
-export function BottomNav() {
+export function BottomNav({ role }: { role: UserRole }) {
   const t = useTranslations("business");
   const pathname = usePathname();
 
@@ -16,7 +17,7 @@ export function BottomNav() {
       className="shrink-0 border-t border-border bg-surface lg:hidden"
     >
       <ul className="flex">
-        {businessNavItems.filter((item) => item.onBottomBar).map(({ href, key, icon: Icon }) => {
+        {navItemsFor(role).filter((item) => item.onBottomBar).map(({ href, key, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
 
           return (
