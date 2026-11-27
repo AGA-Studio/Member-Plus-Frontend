@@ -140,6 +140,7 @@ ESP32-S3 + cámara (solo lee el QR) o webcam del navegador
 - Un solo despliegue, muchos negocios. `negocio_id` en cada tabla, tomado **del token, nunca de lo que mande el cliente**. Nunca lo pidas ni lo envíes desde el frontend.
 - **El negocio NUNCA se elige en pantalla**: sale del usuario autenticado. Sin selector de negocio ni subdominios.
 - **Encargado:** entra en `/clientes` y su navegación suma `/movimientos` y `/caja`; en caja tiene el acceso de regreso a clientes. El buscador global no le ofrece usuarios ni niveles. Los permisos se resuelven por rol en `src/lib/roles.ts`, no por la lista `permissions` de `/auth/me`.
+- **Asistente de IA (solo admin):** botón flotante en el panel que abre un chat a pantalla completa (`src/features/assistant/`, `src/lib/assistant.ts`). Envía hasta 20 mensajes a `POST /api/v1/chat/send` con el `session_id`; muestra la respuesta de forma progresiva y avisa si el plan no incluye IA o si la ruta no está disponible. La conversación vive solo en la pestaña. El icono sale de `assistant-mark.tsx`, pendiente de cambiar por la mascota. El API lo trae apagado (`AI_ENABLED`).
 - Nombre y logo del negocio aparecen en todas sus pantallas. El admin cambia nombre, logo y color en `/configuracion`.
 
 ### Roles (4)

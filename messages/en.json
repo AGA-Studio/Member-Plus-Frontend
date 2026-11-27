@@ -1225,5 +1225,45 @@
     },
     "summary": "{plan} plan: {price} per month",
     "simulated": "Simulated payment: nothing is charged."
+  },
+  "assistant": {
+    "open": "Open the assistant",
+    "title": "Member+ Assistant",
+    "subtitle": "Your business data",
+    "close": "Close the assistant",
+    "newChat": "New conversation",
+    "newChatTitle": "Start a new conversation",
+    "newChatBody": "This conversation is deleted. It cannot be recovered.",
+    "newChatKeep": "Keep it",
+    "newChatConfirm": "Delete and start",
+    "greeting": "Hi, {name}",
+    "intro": "Ask me about your customers, transactions and levels. I only read; I change nothing.",
+    "suggestions": {
+      "customers": "How many active customers do I have?",
+      "expiring": "How many memberships are about to expire?",
+      "movements": "Summarize the recent transactions",
+      "tiers": "What benefits does each level give?"
+    },
+    "inputLabel": "Question for the assistant",
+    "placeholder": "Ask about your business",
+    "send": "Send",
+    "stop": "Stop the answer",
+    "typing": "The assistant is typing",
+    "you": "You:",
+    "assistantName": "Assistant:",
+    "copy": "Copy answer",
+    "copied": "Answer copied",
+    "scrollDown": "Go to the latest message",
+    "counter": "{count, number} of {max, number}",
+    "privacy": "Your questions and the data looked up are sent to an external AI provider, which can make mistakes. Do not type sensitive data. <link>Privacy notice</link>",
+    "retry": "Try again",
+    "seePlans": "View plan and usage",
+    "failures": {
+      "planRequired": "Your plan does not include the assistant.",
+      "unavailable": "The assistant is not available right now.",
+      "offline": "No connection. Check your internet.",
+      "stopped": "You stopped the answer.",
+      "sessionExpired": "Your session ended."
+    }
   }
 }
